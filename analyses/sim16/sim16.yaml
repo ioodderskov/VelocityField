@@ -1,0 +1,22 @@
+---
+halofile: ../analyses/sim16/parents_11
+hubblefile: ../analyses/sim16/Hubbleconstants.txt
+observerfile: ../analyses/sim16/howdy16.txt
+
+find_observers: 0
+
+boxsize: 16
+skyfraction: 1
+omegam: 0.306843
+
+number_of_cones: 1
+
+observed_halos: 50
+mind: 2
+maxd: 8
+width: 2
+
+host_min_m: 1e9
+host_max_m: 1e15
+sub_min_m: 1e8
+sub_max_m: 1e10
