@@ -3,7 +3,7 @@ halofile: ../analyses/sim16/parents_11
 hubblefile: ../analyses/sim16/Hubbleconstants.txt
 observerfile: ../analyses/sim16/howdy16.txt
 
-find_observers: 1
+find_observers: 0
 
 boxsize: 16
 skyfraction: 1
