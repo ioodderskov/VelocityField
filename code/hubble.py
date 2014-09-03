@@ -37,9 +37,10 @@ data = sp.loadtxt(param["halofile"])
 mass_sorted_data = sp.array(sorted(data,key=lambda data: data[2]))
 n_halos = len(mass_sorted_data)
 
-find_observers = int(param["find_observers"])
+observer_choice = param["observer_choice"]
 hubblefile = param["hubblefile"]
 observerfile = param["observerfile"]
+number_of_observers = int(param["number_of_observers"])
 [host_min_m, host_max_m] = sp.double([param["host_min_m"], param["host_max_m"]])
 [sub_min_m, sub_max_m] = sp.double([param["sub_min_m"], param["sub_max_m"]])
 [mind, maxd, width] = sp.double([param["mind"], param["maxd"], param["width"]])
@@ -63,7 +64,7 @@ for i in range(n_halos):
 masses = [halo.mass for halo in halo_list]
 
 # The observer positions are read or found:
-observer_list = hf.find_observers(find_observers,observerfile,halo_list,masses,sub_min_m,sub_max_m,host_min_m,host_max_m)
+observer_list = hf.find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo_list,masses,sub_min_m,sub_max_m,host_min_m,host_max_m)
 
 
 print "The number of observers is", len(observer_list)

@@ -48,10 +48,11 @@ def calculate_bindistances(mind, maxd, width):
 
 #This function finds the halos that are have the characteristics specified in the parameterfile
 #Or, if find_observers = 0, the positions are simple read from a file.
-def find_observers(find_observers,observerfile,halo_list,masses,sub_min_m,sub_max_m,host_min_m,host_max_m):
+def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo_list,masses,sub_min_m,sub_max_m,host_min_m,host_max_m):
   
-    # If find_observers = 0, the observer posistion are read from a file
-    if find_observers == 0:
+   
+   ###################### Reading observers from file ################################
+    if observer_choice == 'from_file':
         observer_positions = sp.loadtxt(observerfile)  
 
         observer_list = [None]*len(observer_positions)
@@ -62,14 +63,14 @@ def find_observers(find_observers,observerfile,halo_list,masses,sub_min_m,sub_ma
             [x,y,z] = sp.array([x,y,z])/1000
             observer = Observers(x,y,z,[],[])
             observer_list[observer_number] = observer
-        
+   ########################################################################################                    
         
 
 
 
     
-    # The observer positions are read or found:
-    if find_observers == 1:
+   ###################### Identifying subhalos as observers ################################
+    if observer_choice == 'subhalos':
 
         # Identifying halos with masses corresponding to the Virgo Supercluster or the Local Group
         localgroup_indices = (sub_min_m < masses) & (masses < sub_max_m)
@@ -91,8 +92,40 @@ def find_observers(find_observers,observerfile,halo_list,masses,sub_min_m,sub_ma
             [x,y,z] = [observer.x, observer.y, observer.z]
             observer = Observers(x,y,z,[],[])
             observer_list[observer_number] = observer
-        
+   ########################################################################################            
+            
+            
 
+
+            
+   ###################### Choosing random positions as observers ################################         
+    if observer_choice == 'random_positions':
+        observer_positions = boxsize*sp.rand(number_of_observers,3)
+        observer_list = [None]*len(observer_positions)
+        for observer_number in range(number_of_observers):
+            [x,y,z] = [observer_positions[observer_number,0],observer_positions[observer_number,1],observer_positions[observer_number,2]]
+            observer = Observers(x,y,z,[],[])
+            observer_list[observer_number] = observer
+   ########################################################################################            
+
+
+
+
+
+            
+            
+   ###################### Choosing random halos as observers ################################         
+    if observer_choice == 'random_halos':
+        random_halo_indices = sp.random.random_integers(0,len(halo_list)-1,number_of_observers)
+        observer_list = [None]*len(random_halo_indices)
+        
+        for halo_index,observer_number in zip(random_halo_indices,range(len(random_halo_indices))):
+            observer = halo_list[halo_index]
+            [x,y,z] = [observer.x,observer.y,observer.z]
+            observer = Observers(x,y,z,[],[])
+            observer_list[observer_number] = observer
+   ########################################################################################                    
+        
 
 
 

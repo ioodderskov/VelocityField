@@ -1,9 +1,23 @@
 ---
 halofile: ../cases/sim16/parents_11
 hubblefile: ../cases/sim16/Hubbleconstants.txt
+
+# Observer selection: from_file, subhalos, random_positions or random_halos
+observer_choice: random_positions
+# If from_file, specify the file here
 observerfile: ../cases/sim16/howdy16.txt
 
-find_observers: 0
+# If subhalos, specify the mass-requirements here
+host_min_m: 1e9
+host_max_m: 1e15
+sub_min_m: 1e8
+sub_max_m: 1e10
+
+# If random_positions or random_halos, specify the number of observers here
+number_of_observers: 1200
+
+
+
 
 boxsize: 16
 skyfraction: 1
@@ -16,7 +30,3 @@ mind: 2
 maxd: 8
 width: 2
 
-host_min_m: 1e9
-host_max_m: 1e15
-sub_min_m: 1e8
-sub_max_m: 1e10
