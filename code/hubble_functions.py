@@ -49,12 +49,7 @@ def calculate_bindistances(mind, maxd, width):
 #This function finds the halos that are have the characteristics specified in the parameterfile
 #Or, if find_observers = 0, the positions are simple read from a file.
 def find_observers(find_observers,observerfile,halo_list,masses,sub_min_m,sub_max_m,host_min_m,host_max_m):
-<<<<<<< HEAD:hubble_functions.py
-
-
-=======
->>>>>>> a318cc6350e9e8114b6be8fd392cd3a77ee0429e:code/hubble_functions.py
-   
+  
     # If find_observers = 0, the observer posistion are read from a file
     if find_observers == 0:
         observer_positions = sp.loadtxt(observerfile)  
@@ -89,24 +84,7 @@ def find_observers(find_observers,observerfile,halo_list,masses,sub_min_m,sub_ma
         observer_indices = sp.array(all_indices[localgroup_indices])[observers]
         
         observer_list = [None]*len(observer_indices)
-<<<<<<< HEAD:hubble_functions.py
-=======
-    
-        # Reading coordinates of the observers, and saving them in an observer list    
-        for halo_index,observer_number in zip(observer_indices,range(len(observer_indices))):
-            observer = halo_list[halo_index]
-            [x,y,z] = [observer.x, observer.y, observer.z]
-            observer = Observers(x,y,z,[],[])
-            observer_list[observer_number] = observer
-        
-
-
-
-
-
-    return observer_list
->>>>>>> a318cc6350e9e8114b6be8fd392cd3a77ee0429e:code/hubble_functions.py
-    
+   
         # Reading coordinates of the observers, and saving them in an observer list    
         for halo_index,observer_number in zip(observer_indices,range(len(observer_indices))):
             observer = halo_list[halo_index]
@@ -143,10 +121,6 @@ def find_hubble_constants_for_observer(x,y,z,halo_list,mind,maxd,observed_halos,
 #################################### selection of halos #############################    
     
 # This function select the halos observed by a given observer
-<<<<<<< HEAD:hubble_functions.py
-@profile
-=======
->>>>>>> a318cc6350e9e8114b6be8fd392cd3a77ee0429e:code/hubble_functions.py
 def select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cones,skyfraction):
     total_mass = 0
     halo_candidates = []
