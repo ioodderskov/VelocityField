@@ -7,7 +7,6 @@ Created on Sat Apr 19 14:21:19 2014
 
 from __future__ import division
 import scipy as sp
-import ios_constants as ic
 #import matplotlib.pyplot as plt
 from gplot import Plot
 import hubvar_functions as hf
@@ -44,11 +43,11 @@ plt.rc('font',family = 'serif')
 
 
 # Inputfile:
-fil = '/home/io/Desktop/PHD/Hubble/output/'+runname+'/Hubbleconstants.txt'
+fil = '../../cases/'+runname+'/Hubbleconstants.txt'
 
 # Load distances and Hubbleconstants, and count the maximal number of observers
 lightcone = 0;
-rmax, H, N=hf.load_Hubbleconstants(fil,a,N_observers);
+rmax, H=hf.load_Hubbleconstants(fil,a,N_observers);
 
 # Calculate the confidence limits, each containing the lower and upper bound  for every distance. 
 sigma68, sigma95, sigma99 = hf.calc_confidence_intervals(H);
@@ -58,7 +57,7 @@ print "The mean systematical error is", error*100, "%"
 # If activated, the result is compared with the results from the standard analysis
 if compare == 1:
     comparisonfil = '/home/io/Desktop/PHD/Hubble/output/Planck512/Hubbleconstants.txt' 
-    rmax_sml, H_sml, N = hf.load_Hubbleconstants(comparisonfil,1,N)
+    rmax_sml, H_sml= hf.load_Hubbleconstants(comparisonfil,1,N_observers)
     sigma68_sml, sigma95_sml, sigma99_sml = hf.calc_confidence_intervals(H_sml)
 
 # Things are plotted and saved
@@ -71,26 +70,30 @@ hf.plot_patch(rmax,H,sigma68,sigma95,sigma99)
 #plt.rcParams['axes.labelsize'] = 20
 #
 
-xmin = 67.3
-xmax = 256
+#xmin = 67.3
+#xmax = 256
+xmin = 4
+xmax = 8
 if planck_band == 1:
     ymin = 0.85
     ymax = 1.15
 else:
-    ymin = 0.9
-    ymax = 1.1
+#    ymin = 0.9
+#    ymax = 1.1
+    ymin = 0
+    ymax = 2
     
 if xaxis == 'rmax':
     plt.xlabel('$r_{max} [Mpc/h]$')
     plt.axis([xmin, xmax, ymin, ymax])
-    plt.xticks(sp.arange(80, 260, 20))
+#    plt.xticks(sp.arange(80, 260, 20))
 if xaxis == 'numSN':
     plt.xlabel('Number of observed halos')
     plt.axis([2, 200, ymin, ymax])
     plt.xticks(sp.arange(20,200,20))
 
 plt.ylabel('$H_{loc}/H_0$');
-plt.yticks(sp.arange(ymin, ymax+0.001, 0.025))
+#plt.yticks(sp.arange(ymin, ymax+0.001, 0.025))
 
 if compare == 1:
         hf.plot_lines(rmax_sml,H_sml,sigma68_sml,sigma95_sml,sigma99_sml)

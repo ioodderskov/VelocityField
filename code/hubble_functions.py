@@ -211,7 +211,7 @@ def Hubble(x,y,z,halo_list, selected_halos, bindistances,boxsize):
     radial_distances = []
     radial_velocities = []
 
-    Hubbleconstants = -1*sp.ones(len(bindistances))
+    Hubbleconstants = sp.nan*sp.ones(len(bindistances))
     rvsum = sp.zeros(len(bindistances))
     r2sum = sp.zeros(len(bindistances))
     halo_counts = sp.zeros(len(bindistances))
@@ -234,8 +234,10 @@ def Hubble(x,y,z,halo_list, selected_halos, bindistances,boxsize):
 
         b = len(bindistances)-1
         rb = bindistances[b]
+#        print "before while: b = ",b,"rb = ",rb, "and r = ",r
 
         while r < rb:
+#            print "in while: b = ",b,"rb = ",rb, "and r = ",r
             rvsum[b] = rvsum[b]+r*vr
             r2sum[b] = r2sum[b]+r**2
             halo_counts[b] = halo_counts[b]+1
@@ -246,11 +248,12 @@ def Hubble(x,y,z,halo_list, selected_halos, bindistances,boxsize):
     # Hubbleconstant for the innermost distance is -1, since there is no 
     #observed halos within this distance
     for b in range(len(bindistances)):
-
-            if halo_counts[b] == 0:
-                continue
-            else:
-                Hubbleconstants[b] = calculate_H(rvsum[b],r2sum[b],halo_counts[b])
+#        print "b = ",b,"and halo_counts[b] = ",halo_counts[b]
+        
+        if halo_counts[b] == 0:
+            continue
+        else:
+            Hubbleconstants[b] = calculate_H(rvsum[b],r2sum[b],halo_counts[b])
 
 
     return Hubbleconstants, radial_distances, radial_velocities
@@ -300,12 +303,12 @@ def print_hubbleconstants(hubblefile,bindistances,observer_list):
         
     #The number of bins is one less than the number of bin-distances, since the 
     # minimal distance does not count
-    number_of_bins = len(bindistances)-1
+    number_of_bins = len(bindistances)
     
     for i, observer in enumerate(observer_list):
         f.write("\n%s\t" % i)
 
-        for b in range(number_of_bins):
+        for b in range(1,number_of_bins):
             f.write("%s\t" % observer.Hubbleconstants[b])
             
         f.write("\n")

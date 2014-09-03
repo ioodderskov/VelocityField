@@ -1,7 +1,7 @@
 ---
-halofile: ../analyses/sim16/parents_11
-hubblefile: ../analyses/sim16/Hubbleconstants.txt
-observerfile: ../analyses/sim16/howdy16.txt
+halofile: ../cases/sim16/parents_11
+hubblefile: ../cases/sim16/Hubbleconstants.txt
+observerfile: ../cases/sim16/howdy16.txt
 
 find_observers: 0
 
