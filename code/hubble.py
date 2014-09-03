@@ -34,7 +34,8 @@ with open(parameterfile, 'r') as f:
 
 # The halo data is loaded. Lines starting with a # are ignored.
 data = sp.loadtxt(param["halofile"])
-n_halos = data.shape[0]
+mass_sorted_data = sp.array(sorted(data,key=lambda data: data[2]))
+n_halos = len(mass_sorted_data)
 
 find_observers = int(param["find_observers"])
 hubblefile = param["hubblefile"]
@@ -51,11 +52,11 @@ skyfraction = sp.double(param["skyfraction"])
 halo_list = [None]*n_halos
 
 for i in range(n_halos):
-    [x,y,z] = data[i,[8,9,10]]
-    [vx,vy,vz] = data[i,[11,12,13]]
-    mass = data[i,2]
-    ID = int(data[i,0])
-    ID_host = int(data[i,33])
+    [x,y,z] = mass_sorted_data[i,[8,9,10]]
+    [vx,vy,vz] = mass_sorted_data[i,[11,12,13]]
+    mass = mass_sorted_data[i,2]
+    ID = int(mass_sorted_data[i,0])
+    ID_host = int(mass_sorted_data[i,33])
     halo = hf.Halos(x,y,z,vx,vy,vz,mass,ID,ID_host)
     halo_list[i] = halo
     
