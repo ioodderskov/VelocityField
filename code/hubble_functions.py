@@ -41,6 +41,69 @@ def calculate_bindistances(mind, maxd, width):
     
     return bindistances
     
+    
+    
+    
+    
+################## Read the halo data ##############################################
+def read_halo_file(mass_sorted_data):
+
+    n_halos = len(mass_sorted_data)
+    halo_list = [None]*n_halos
+    
+    for i in range(n_halos):
+        [x,y,z] = mass_sorted_data[i,[8,9,10]]
+        [vx,vy,vz] = mass_sorted_data[i,[11,12,13]]
+        mass = mass_sorted_data[i,2]
+        ID = int(mass_sorted_data[i,0])
+        ID_host = int(mass_sorted_data[i,33])
+        halo = Halos(x,y,z,vx,vy,vz,mass,ID,ID_host)
+        halo_list[i] = halo
+    
+    return halo_list
+
+######################################################################################
+
+
+
+######## Calculating the Hubbleconstants for all observers ########################
+def calculate_hubble_constants_for_all_observers(observer_list, halo_list, observed_halos, bindistances, boxsize, number_of_cones, skyfraction):
+    for observer_number in range(len(observer_list)):
+        observer = observer_list[observer_number]
+        [x,y,z] = [observer.x, observer.y, observer.z]
+        Hubbleconstants, radial_distances, radial_velocities, selected_halos  = find_hubble_constants_for_observer(x,y,z,halo_list,observed_halos,bindistances,boxsize,number_of_cones,skyfraction)
+        observer.selected_halos = selected_halos
+        observer.Hubbleconstants = Hubbleconstants
+        
+##############################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
 
 
 ######################### Identification of observers #########################
@@ -48,7 +111,7 @@ def calculate_bindistances(mind, maxd, width):
 
 #This function finds the halos that are have the characteristics specified in the parameterfile
 #Or, if find_observers = 0, the positions are simple read from a file.
-def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo_list,masses,sub_min_m,sub_max_m,host_min_m,host_max_m):
+def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo_list,sub_min_m,sub_max_m,host_min_m,host_max_m):
   
    
    ###################### Reading observers from file ################################
@@ -72,6 +135,8 @@ def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo
    ###################### Identifying subhalos as observers ################################
     if observer_choice == 'subhalos':
 
+        masses = [halo.mass for halo in halo_list]
+        
         # Identifying halos with masses corresponding to the Virgo Supercluster or the Local Group
         localgroup_indices = (sub_min_m < masses) & (masses < sub_max_m)
         virgo_indices = (host_min_m < masses) & (masses < host_max_m)
@@ -143,7 +208,9 @@ def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo
     
 
 # This function calculates the Hubble constants for a given observer
-def find_hubble_constants_for_observer(x,y,z,halo_list,mind,maxd,observed_halos,bindistances,boxsize,number_of_cones,sky_cover):
+def find_hubble_constants_for_observer(x,y,z,halo_list,observed_halos,bindistances,boxsize,number_of_cones,sky_cover):
+    mind = bindistances[0]
+    maxd = bindistances[-1]
     selected_halos = select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cones,sky_cover)
     Hubbleconstants, radial_distances, radial_velocities = Hubble(x,y,z,halo_list, selected_halos, bindistances, boxsize)
     return Hubbleconstants, radial_distances, radial_velocities, selected_halos 
@@ -327,7 +394,7 @@ def periodic_boundaries(x,y,z,boxsize):
     
     
     
-################## Write Hubbleconstants and bindistances to file ##############
+################## Write Hubbleconstants and bindistances/number of SNe to file ##############
     
 #This function write the results to file    
 def print_hubbleconstants(hubblefile,bindistances,observer_list):
@@ -347,5 +414,8 @@ def print_hubbleconstants(hubblefile,bindistances,observer_list):
             f.write("%s\t" % observer.Hubbleconstants[b])
             
         f.write("\n")
-            
+#################################################################################
+        
+
+                    
       

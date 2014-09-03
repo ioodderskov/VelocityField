@@ -34,56 +34,83 @@ with open(parameterfile, 'r') as f:
 
 # The halo data is loaded. Lines starting with a # are ignored.
 data = sp.loadtxt(param["halofile"])
+
+# Sort the halo data from lightest to heaviest
 mass_sorted_data = sp.array(sorted(data,key=lambda data: data[2]))
-n_halos = len(mass_sorted_data)
+
+# The rest of the parameters are read from the parameterfile
+###############################################################################
+hubblefile = param["hubblefile"]
 
 observer_choice = param["observer_choice"]
-hubblefile = param["hubblefile"]
 observerfile = param["observerfile"]
 number_of_observers = int(param["number_of_observers"])
 [host_min_m, host_max_m] = sp.double([param["host_min_m"], param["host_max_m"]])
 [sub_min_m, sub_max_m] = sp.double([param["sub_min_m"], param["sub_max_m"]])
+
 [mind, maxd, width] = sp.double([param["mind"], param["maxd"], param["width"]])
-observed_halos = int(param["observed_halos"])
+number_of_SNe = int(param["number_of_SNe"])
 boxsize = sp.double(param["boxsize"])
 number_of_cones = int(param["number_of_cones"])
 skyfraction = sp.double(param["skyfraction"])
 
-# Making a list for the halos. Should I allocate memory more accurately?
-halo_list = [None]*n_halos
+vary_number_of_SNe = int(param["vary_number_of_SNe"])
+min_number_of_SNe = int(param["min_number_of_SNe"])
+max_number_of_SNe = int(param["max_number_of_SNe"])
+step_number_of_SNe = int(param["step_number_of_SNe"])
+###############################################################################
 
-for i in range(n_halos):
-    [x,y,z] = mass_sorted_data[i,[8,9,10]]
-    [vx,vy,vz] = mass_sorted_data[i,[11,12,13]]
-    mass = mass_sorted_data[i,2]
-    ID = int(mass_sorted_data[i,0])
-    ID_host = int(mass_sorted_data[i,33])
-    halo = hf.Halos(x,y,z,vx,vy,vz,mass,ID,ID_host)
-    halo_list[i] = halo
+
+
+
+# Read the halo data
+halo_list = hf.read_halo_file(mass_sorted_data)
     
-masses = [halo.mass for halo in halo_list]
-
 # The observer positions are read or found:
-observer_list = hf.find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo_list,masses,sub_min_m,sub_max_m,host_min_m,host_max_m)
-
-
+observer_list = hf.find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo_list,sub_min_m,sub_max_m,host_min_m,host_max_m)
 print "The number of observers is", len(observer_list)
-#observer_indices = sp.array([0,1])
 
 
-#observer_list = [None]*len(observer_indices)
-bindistances = hf.calculate_bindistances(mind, maxd, width)
-maxd = bindistances[-1]
-#
-for observer_number in range(len(observer_list)):
-    observer = observer_list[observer_number]
-    [x,y,z] = [observer.x, observer.y, observer.z]
-    Hubbleconstants, radial_distances, radial_velocities, selected_halos  = hf.find_hubble_constants_for_observer(x,y,z,halo_list,mind,maxd,observed_halos,bindistances,boxsize,number_of_cones,skyfraction)
 
-    observer.selected_halos = selected_halos
-    observer.Hubbleconstants = Hubbleconstants
 
-hf.print_hubbleconstants(hubblefile,bindistances,observer_list)
+if vary_number_of_SNe == 0:
+
+    # Calculate the bin-distances
+    bindistances = hf.calculate_bindistances(mind, maxd, width)
+    
+    # Calculate the Hubbleconstants for all observers and all distances (or number of SNe)
+    hf.calculate_hubble_constants_for_all_observers(observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
+    
+    # Print the results to a file
+    hf.print_hubbleconstants(hubblefile,bindistances,observer_list)
+
+
+
+
+
+
+
+# This is actually a terrible way of doing this! I really should make another version
+# of the calculate_hubbleconstants function, adding more and more halos for each observer.
+if vary_number_of_SNe == 1:
+    width = maxd-mind
+    
+    # Calculate the bin-distances
+    bindistances = hf.calculate_bindistances(mind, maxd, width)
+    
+    # Calculate the Hubbleconstants for all observers and all distances (or number of SNe)
+    for number_of_SNe in range(min_number_of_SNe,max_number_of_SNe+1,step_number_of_SNe):
+        hf.calculate_hubble_constants_for_all_observers(observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
+        
+        for observer in observer_list:
+            print observer.Hubbleconstants
+    #    # Print the results to a file
+    #    hf.print_hubbleconstants_varSN(hubblefile,number_of_SNe,observer_list)
+
+
+
+
+
 
 
 #radial_distances = sp.array(radial_distances)

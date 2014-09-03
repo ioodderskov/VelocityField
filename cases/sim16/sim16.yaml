@@ -3,6 +3,7 @@ halofile: ../cases/sim16/parents_11
 hubblefile: ../cases/sim16/Hubbleconstants.txt
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
+##########################################################################
 observer_choice: random_positions
 # If from_file, specify the file here
 observerfile: ../cases/sim16/howdy16.txt
@@ -15,6 +16,19 @@ sub_max_m: 1e10
 
 # If random_positions or random_halos, specify the number of observers here
 number_of_observers: 1200
+##########################################################################
+
+
+
+
+# Choose whether we should vary the number of supernovae (in that case, the distance aren't varied)
+##########################################################################
+vary_number_of_SNe: 0
+# If the number of SNe is varied, specify the details below 
+min_number_of_SNe: 2
+max_number_of_SNe: 240
+step_number_of_SNe: 10
+##########################################################################
 
 
 
@@ -25,7 +39,7 @@ omegam: 0.306843
 
 number_of_cones: 1
 
-observed_halos: 50
+number_of_SNe: 240
 mind: 2
 maxd: 8
 width: 2
