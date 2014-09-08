@@ -48,6 +48,7 @@ fil = '../../cases/'+runname+'/Hubbleconstants.txt'
 # Load distances and Hubbleconstants, and count the maximal number of observers
 lightcone = 0;
 rmax, H=hf.load_Hubbleconstants(fil,a,N_observers);
+print "Number of observers = ", len(H)
 
 # Calculate the confidence limits, each containing the lower and upper bound  for every distance. 
 sigma68, sigma95, sigma99 = hf.calc_confidence_intervals(H);
@@ -70,18 +71,18 @@ hf.plot_patch(rmax,H,sigma68,sigma95,sigma99)
 #plt.rcParams['axes.labelsize'] = 20
 #
 
-#xmin = 67.3
-#xmax = 256
-xmin = 4
-xmax = 8
+xmin = 67.3
+xmax = 256
+#xmin = 4
+#xmax = 8
 if planck_band == 1:
     ymin = 0.85
     ymax = 1.15
 else:
-#    ymin = 0.9
-#    ymax = 1.1
-    ymin = 0
-    ymax = 2
+    ymin = 0.9
+    ymax = 1.1
+#    ymin = 0
+#    ymax = 2
     
 if xaxis == 'rmax':
     plt.xlabel('$r_{max} [Mpc/h]$')

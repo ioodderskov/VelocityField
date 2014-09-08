@@ -7,30 +7,27 @@ Created on Wed Apr 30 12:04:29 2014
 
 from __future__ import division
 import scipy as sp
-import ios_constants as ic
 import matplotlib as m
 #import matplotlib.pyplot as plt
 import hubvar_functions as hf
-import sys
 from gplot import Plot
-import matplotlib.colorbar as mpl
 
 
 
 def get_data(inputdir):
 
     # Loading data (into a dictonary)
-    fil_fullsky = '/home/io/Desktop/PHD/Hubble/output/Planck512/Hubbleconstants.txt'
+    fil_fullsky = '/home/io/Dropbox/Projekter/Hubble/VelocityField/cases/Planck512/Hubbleconstants.txt'
     N = 600
     data = {}
     
     for f in range(1,10):
         fil = inputdir+'Hubbleconstants0.'+str(f)+'.txt'
-        rmax, H, N=hf.load_Hubbleconstants(fil,1,N)
+        rmax, H =hf.load_Hubbleconstants(fil,1,N)
         data[f] = H
     
     
-    rmax, H, N=hf.load_Hubbleconstants(fil_fullsky,1,N)
+    rmax, H =hf.load_Hubbleconstants(fil_fullsky,1,N)
     data[10] = H
     
     # Calculating skyfractions
@@ -64,9 +61,10 @@ def get_data(inputdir):
 plt = Plot('latex_full_hubble','h2c')
 plt.rc('font',family = 'serif')
 
-inputdir = '/home/io/Desktop/PHD/Hubble/output'
+inputdir = '/home/io/Dropbox/Projekter/Hubble/VelocityField/cases/Planck512_skyfraction'
 #output='/home/io/Dropbox/PHD/Python/tests/Planck512_skyfraction.pdf'
-output = '/home/io/Dropbox/hubble2013/Planck512_skyfraction.pdf'
+output1 = '/home/io/Dropbox/Projekter/Hubble/VelocityField/cases/Planck512_skyfraction/Planck512_skyfraction.pdf'
+output2 = '/home/io/Dropbox/SharedStuff/hubble2013/Planck512_skyfraction_256.pdf'
 
 cdict = {
   'blue'  :  ( (0.0, 0, 0), (0.02,0.3, 0.3), (0.3,1, 1), (1.,1, 1)),
@@ -125,8 +123,19 @@ plt.change_size(152.4,75)
 plt.finalize()
 
 #
-plt.savefig(output)
+plt.savefig(output1)
 plt.show()
+
+plt.close('all')
+plt.plot(patch,z68_1cone[-1,:]/2*100,'k')
+plt.plot(patch,z68_2cones[-1,:]/2*100,'k:')
+
+plt.xlabel('Fraction of sky observed')
+plt.ylabel('$\sigma_{256}$ [%]')
+
+plt.finalize()
+plt.savefig(output2)
+
 #print("Here!!!!")
 #from mpl_toolkits.mplot3d import Axes3D
 #import matplotlib.pyplot as mplt

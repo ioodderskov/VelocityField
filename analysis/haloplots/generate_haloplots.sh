@@ -10,12 +10,12 @@
 #	title (line 2 of plot title)
 
 exe=haloplots.py
-indir=/home/io/Desktop/PHD/Hubble/halofinders/Rockstar
+indir=/home/io/Dropbox/Projekter/Hubble/VelocityField/cases
 outdir=/home/io/Dropbox/hubble2013
 
 echo "A.0 and A.1: Standard simulation\nRandom and Local Group like observers"
 
-python $exe $indir/Planck512/parents_11 $outdir/haloplot_Planck512.png 0 0 512 "A.0, A.1 and A.2: Standard simulation" "Random and Local Group like observers"
+python $exe $indir/Planck512/parents_11 $outdir/haloplot_Planck512.png 0 0 512 "A.0, A.1 and A.2: Standard simulation" "Random and Local Group like halos as observers"
 python $exe $indir/Planck512/parents_11 $outdir/haloplot_Planck512_1cone.png 1 0 512 "A.3: Standard simulation" "One cone fraction"
 python $exe $indir/Planck512/parents_11 $outdir/haloplot_Planck512_2cones.png 2 0 512 "A.4: Standard simultion" "Two cones fraction"
 python $exe $indir/Planck512_lightcone/parents_0 $outdir/haloplot_Planck512_lightcone.png 0 1 512 "A.5: Standard simulation" "Halos from past lightcone of observer"

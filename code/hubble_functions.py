@@ -68,12 +68,15 @@ def read_halo_file(mass_sorted_data):
 
 ######## Calculating the Hubbleconstants for all observers ########################
 def calculate_hubble_constants_for_all_observers(observer_list, halo_list, observed_halos, bindistances, boxsize, number_of_cones, skyfraction):
-    for observer_number in range(len(observer_list)):
+#    for observer_number in range(len(observer_list)):
+    for observer_number in range(1):
         observer = observer_list[observer_number]
         [x,y,z] = [observer.x, observer.y, observer.z]
         Hubbleconstants, radial_distances, radial_velocities, selected_halos  = find_hubble_constants_for_observer(x,y,z,halo_list,observed_halos,bindistances,boxsize,number_of_cones,skyfraction)
         observer.selected_halos = selected_halos
         observer.Hubbleconstants = Hubbleconstants
+    
+    return radial_distances, radial_velocities
         
 ##############################################################################
 

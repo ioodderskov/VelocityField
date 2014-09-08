@@ -3,19 +3,19 @@ import scipy as sp
 import sys
 import yaml
 import hubble_functions as hf
+import matplotlib.pyplot as plt
 
-
-## Chosen plot options
+# Chosen plot options
 #from gplot import Plot 
-#plt = Plot('prezi_hubble')
-#plt.rc('font',family = 'serif')
-#
-## This function makes the plots a bit prettier
-#def prettify(ax):
-#
-#    for side in ['left','right','top','bottom']:
-#        ax.spines[side].set_linewidth(3)
-#
+#plt = Plot('latex_full_hubble')
+plt.rc('font',family = 'serif')
+
+# This function makes the plots a bit prettier
+def prettify(ax):
+
+    for side in ['left','right','top','bottom']:
+        ax.spines[side].set_linewidth(3)
+
 #    ax.tick_params('both', length=10, width=1, which='major')
 #    ax.tick_params('both', length=5, width=0.5, which='minor')
 
@@ -72,62 +72,56 @@ print "The number of observers is", len(observer_list)
 
 
 
+# Calculate the bin-distances
+bindistances = hf.calculate_bindistances(mind, maxd, width)
 
-if vary_number_of_SNe == 0:
+# Calculate the Hubbleconstants for all observers and all distances (or number of SNe)
+radial_distances, radial_velocities = hf.calculate_hubble_constants_for_all_observers(observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
 
-    # Calculate the bin-distances
-    bindistances = hf.calculate_bindistances(mind, maxd, width)
-    
-    # Calculate the Hubbleconstants for all observers and all distances (or number of SNe)
-    hf.calculate_hubble_constants_for_all_observers(observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
-    
-    # Print the results to a file
-    hf.print_hubbleconstants(hubblefile,bindistances,observer_list)
+# Print the results to a file
+#hf.print_hubbleconstants(hubblefile,bindistances,observer_list)
 
 
 
 
+radial_distances = sp.array(radial_distances)
+radial_velocities = sp.array(radial_velocities)
 
+z = radial_velocities/(3e5)
+H = 100
+c = 3e5
+zhub = H/c*radial_distances
 
+dL = radial_distances*(1+zhub)
+Mv = -19.3 # (wikipedia)
+m02 = 0.2*(5*sp.log10(dL)+Mv+25) # The apparent lumonisity is proportional to this quantity
+log_cz = sp.log10(radial_velocities)
 
-# This is actually a terrible way of doing this! I really should make another version
-# of the calculate_hubbleconstants function, adding more and more halos for each observer.
-if vary_number_of_SNe == 1:
-    width = maxd-mind
-    
-    # Calculate the bin-distances
-    bindistances = hf.calculate_bindistances(mind, maxd, width)
-    
-    # Calculate the Hubbleconstants for all observers and all distances (or number of SNe)
-    for number_of_SNe in range(min_number_of_SNe,max_number_of_SNe+1,step_number_of_SNe):
-        hf.calculate_hubble_constants_for_all_observers(observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
-        
-        for observer in observer_list:
-            print observer.Hubbleconstants
-    #    # Print the results to a file
-    #    hf.print_hubbleconstants_varSN(hubblefile,number_of_SNe,observer_list)
+m02_min = 0.2*(5*sp.log10(mind*(1+H/c*mind))+Mv+25)
+m02_max = 0.2*(5*sp.log10(maxd*(1+H/c*maxd))+Mv+25)
 
-
-
-
-
-
-
-#radial_distances = sp.array(radial_distances)
-#radial_velocities = sp.array(radial_velocities)
 #zo = sp.array(zo)
 #theta = sp.arccos(zo/radial_distances)    
-#
-#ax = plt.subplot(1,1,1)
-#ax.plot(radial_distances, radial_velocities,'x')
+
+ax = plt.subplot(1,1,1)
+ax.plot(m02, log_cz,'ro')
+#ax.plot([m02_min,m02_min], [3.3,4.7],'r')
+#ax.plot([m02_max,m02_max], [3.3,4.7],'r')
+
 #plt.xlabel('$r [Mpc/h]$')
 #plt.ylabel('$v_r [km/s]$')
-#
-#prettify(ax)
+
+
+plt.xlabel('$0.2m_V$ (mag)')
+plt.ylabel('$\log cz$')
+plt.axis([2.6,4.0,3.3,4.7])
+
+
+prettify(ax)
 #plt.finalize(custom = True)
-#
-#output = '/home/io/Dropbox/PHD/DelA_rapport/Images/Hubbleplot_observer0.pdf'
-#plt.savefig(output)
+
+output = '/home/io/Dropbox/SharedStuff/hubble2013/redshiftdistribution0.pdf'
+plt.savefig(output)
 
 #hp.make_3D_plot(xo,yo,zo)
     

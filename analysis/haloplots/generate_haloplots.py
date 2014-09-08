@@ -1,19 +1,14 @@
 
 
 from __future__ import division
-import scipy as sp
-import ios_constants as ic
-import matplotlib as m
-import matplotlib.pyplot as plt
-import hubvar_functions as hf
-import sys
+#import matplotlib.pyplot as plt
 import haloplot_functions as hp
 from gplot import Plot # Import gplot
 #
 plt = Plot('latex_full_hubble','halo') # Specifies 'h2' substyle - a layout with two horizontal subplots
 plt.rc('font',family = 'serif')
 
-indir='/home/io/Desktop/PHD/Hubble/halofinders/Rockstar'
+indir='/home/io/Dropbox/Projekter/Hubble/VelocityField/cases'
 outdir='/home/io/Dropbox/hubble2013'
 #outdir='/home/io/Dropbox/PHD/Python/tests'
 outname = outdir+'/haloplots.png'
@@ -26,7 +21,7 @@ adj = 'box'
 ax1 = plt.subplot(2,2,1)
 infil = indir+'/Planck512/parents_11'
 text1 = "A.0, A.1 and A.2: Standard simulation"
-text2 = "Random and Local Group like observers"
+text2 = "Random and Local Group like halos as observers"
 ax1.set_aspect('equal', adjustable=adj)
 hp.haloplot(infil, 0, 0, 512, text1, text2)
 
