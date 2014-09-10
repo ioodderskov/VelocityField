@@ -67,9 +67,9 @@ def read_halo_file(mass_sorted_data):
 
 
 ######## Calculating the Hubbleconstants for all observers ########################
-def calculate_hubble_constants_for_all_observers(observer_list, halo_list, observed_halos, bindistances, boxsize, number_of_cones, skyfraction):
+def calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, observed_halos, bindistances, boxsize, number_of_cones, skyfraction):
 #    for observer_number in range(len(observer_list)):
-    for observer_number in range(1):
+    for observer_number in range(obs,obs+1):
         observer = observer_list[observer_number]
         [x,y,z] = [observer.x, observer.y, observer.z]
         Hubbleconstants, radial_distances, radial_velocities, selected_halos  = find_hubble_constants_for_observer(x,y,z,halo_list,observed_halos,bindistances,boxsize,number_of_cones,skyfraction)
@@ -205,9 +205,6 @@ def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo
     
 
    
-    
-    
-    
     
 
 # This function calculates the Hubble constants for a given observer
@@ -360,7 +357,6 @@ def Hubble(x,y,z,halo_list, selected_halos, bindistances,boxsize):
         else:
             Hubbleconstants[b] = calculate_H(rvsum[b],r2sum[b],halo_counts[b])
 
-
     return Hubbleconstants, radial_distances, radial_velocities
 
 def calculate_H(rvsum,r2sum,halo_count):
@@ -410,7 +406,9 @@ def print_hubbleconstants(hubblefile,bindistances,observer_list):
     # minimal distance does not count
     number_of_bins = len(bindistances)
     
-    for i, observer in enumerate(observer_list):
+#    for i, observer in enumerate(observer_list):
+    for i in range(1):
+        observer = observer_list[i]
         f.write("\n%s\t" % i)
 
         for b in range(1,number_of_bins):

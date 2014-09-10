@@ -1,0 +1,196 @@
+                                                          Table 1
+                                                    SN Ia Discovery Data
+       SN Ia     Galaxy    Discovery Date (yyyy mm dd)              Position         CBET/IAUC         Discoverer
+      2001C     Anon Gal            2001 01 04             06:59:36.138 +59:31:01.21  IAUC 7555     Puckett, Sehgal
+      2001G  MCG +08-17-43          2001 01 08             09:09:33.215 +50:16:50.83  IAUC 7560        Armstrong
+      2001N    NGC 3327             2001 01 21             10:39:58.060 +24:05:25.68  IAUC 7568        Chornock
+      2001V    NGC 3987             2001 02 19             11:57:24.910 +25:12:09.49  IAUC 7585         Berlind
+      2001ah   UGC 6211             2001 03 27             11:10:29.838 +55:09:39.03  IAUC 7603    Puckett, Peoples
+      2001ay    IC 4423             2001 04 18             14:26:16.943 +26:14:55.24  IAUC 7611        LOTOSS
+      2001az   UGC 10483            2001 04 27             16:34:27.476 +76:01:46.34  IAUC 7614    Puckett, Peoples
+      2001bf MCG +04-42-22          2001 05 03             18:01:34.059 +26:15:01.82  IAUC 7620        Armstrong
+      2001cp   UGC 10738            2001 06 19             17:11:02.600 +05:50:27.04  IAUC 7645        LOTOSS
+      2001da   NGC 7780             2001 07 09             23:53:32.741 +08:07:02.20  IAUC 7658        LOTOSS
+      2001eh   UGC 1162             2001 09 09             01:38:12.056 +41:39:18.95  IAUC 7712        Armstrong
+      2001en    NGC 523             2001 09 26             01:25:22.856 +34:01:30.06  IAUC 7724     LOTOSS; BAO
+      2001ep   NGC 1699             2001 10 03             04:57:00.349 −04:45:40.04  IAUC 7727        LOTOSS
+      2001fe   UGC 5129             2001 11 02             09:37:57.021 +25:29:40.84  IAUC 7742        Armstrong
+      2001fh    Anon Gal            2001 11 03             21:20:42.538 +44:23:53.14  IAUC 7744        LOTOSS
+      2001gb     IC 582             2001 11 20             09:59:00.960 +17:49:12.32  IAUC 7758        LOTOSS
+      2001gc   UGC 3375             2001 11 21             05:55:26.111 +51:54:34.22  IAUC 7759        LOTOSS
+      2001ic   NGC 7503             2001 12 07             23:10:43.298 +07:34:10.25  IAUC 7770        LOTOSS
+      2001ie   UGC 5542             2001 12 09             10:16:50.954 +60:16:53.32  IAUC 7771        Bincoletto
+      2002G     Anon Gal            2002 01 18             13:07:55.285 +34:05:07.09  IAUC 7797        LOTOSS
+      2002ar   NGC 3746             2002 02 03             11:37:43.863 +22:00:34.47  IAUC 7819        LOTOSS
+      2002bf    Anon Gal            2002 02 22             10:15:42.314 +55:40:07.35  IAUC 7836        LOTOSS
+      2002bo   NGC 3190             2002 03 09             10:18:06.515 +21:49:41.63  IAUC 7847     Cacella; Hirose
+      2002bz MCG +05-34-33          2002 04 03             14:24:40.524 +26:37:35.29  IAUC 7866    Puckett, Gauthier
+      2002cd   NGC 6916             2002 04 08             20:23:34.402 +58:20:47.30  IAUC 7871        Armstrong
+      2002ck   UGC 10030            2002 04 23             15:47:00.762 −00:59:24.92  IAUC 7884        LOTOSS
+      2002cr   NGC 5468             2002 05 01             14:06:37.652 −05:26:21.34  IAUC 7890         Kushida
+      2002de   NGC 6104             2002 06 01             16:16:30.334 +35:42:30.09  IAUC 7914        LOTOSS
+      2002dj   NGC 5018             2002 06 12             13:13:00.414 −19:31:08.56  IAUC 7918        LOTOSS
+      2002do MCG +07-41-1           2002 06 17             19:56:12.853 +40:26:10.47  IAUC 7923        LOTOSS
+      2002dp   NGC 7678             2002 06 18             23:28:30.103 +22:25:38.05  IAUC 7924          Klotz
+      2002es   UGC 2708             2002 08 23             03:23:47.196 +40:33:53.56  IAUC 7959        LOTOSS
+      2002eu    Anon Gal            2002 08 30             01:49:43.549 +32:37:42.31  IAUC 7963        LOTOSS
+      2002fb    NGC 759             2002 09 06             01:57:48.869 +36:20:26.00  IAUC 7967        LOTOSS
+      2002fk   NGC 1309             2002 09 17             03:22:05.706 −15:24:02.99  IAUC 7973     Kushida; BAO
+      2002ha   NGC 6962             2002 10 21             20:47:18.592 +00:18:45.36  IAUC 7997        LOTOSS
+      2002hd MCG −01-23-8           2002 10 24             08:54:03.366 −07:11:21.48  IAUC 7999        LOTOSS
+      2002he   UGC 4322             2002 10 28             08:19:58.804 +62:49:13.71  IAUC 8002        LOTOSS
+      2002hu MCG +06-6-12           2002 11 07             02:18:20.027 +37:27:58.58  IAUC 8012          Boles
+      2002hw    UGC 52              2002 11 09             00:06:49.025 +08:37:48.64  IAUC 8014        LOTOSS
+      2002jy    NGC 477             2002 12 17             01:21:16.231 +40:29:55.27  IAUC 8035   Arbour; Vanmunster
+      2002kf    Anon Gal            2002 12 27             06:37:15.283 +49:51:10.87  IAUC 8040          Brady
+      2003D  MCG −01-25-9           2003 01 06             09:38:53.551 −04:51:05.61  IAUC 8043   Puckett, Langoussis
+      2003K     IC 1129             2003 01 11             15:32:01.832 +68:14:36.12  IAUC 8048   Puckett, Langoussis
+      2003U    NGC 6365             2003 01 27             17:22:45.626 +62:09:50.67  IAUC 8059          Boles
+      2003W    UGC 5234             2003 01 28             09:46:49.496 +16:02:37.77  IAUC 8061        LOTOSS
+      2003ae    Anon Gal            2003 01 23             09:28:22.570 +27:26:41.29  IAUC 8066 NEAT/Wood-Vasey et al.
+      2003ai    IC 4062             2003 02 08             13:00:58.699 +39:51:24.66  IAUC 8068        LOTOSS
+      2003cg   NGC 3169             2003 03 21             10:14:16.016 +03:28:02.01  IAUC 8097     Itagaki; Arbour
+      2003ch   UGC 3787             2003 03 21             07:17:57.890 +09:41:34.84  IAUC 8097        LOTOSS
+      2003cq   NGC 3978             2003 03 30             11:56:14.156 +60:31:19.67  IAUC 8103         Arbour
+      2003du   UGC 9391             2003 04 22             14:34:35.728 +59:20:03.93  IAUC 8121        LOTOSS
+      2003fa    Anon Gal            2003 06 01             17:44:07.733 +40:52:51.08  IAUC 8140        LOTOSS
+      2003hu    Anon Gal            2003 09 06             19:11:31.121 +77:53:34.91  IAUC 8196        Armstrong
+      2003ic MCG −02-2-86           2003 09 16             00:41:50.334 −09:18:19.11  IAUC 8201        LOTOSS
+      2003it    UGC 40              2003 10 13             00:05:48.523 +27:27:08.62  IAUC 8225       Puckett, Cox
+      2003iv MCG +02-8-14           2003 10 17             02:50:07.244 +12:50:45.29  IAUC 8226        LOTOSS
+      2003kc MCG +05-23-37          2003 11 21             09:46:34.293 +30:39:19.27  IAUC 8242          LOSS
+      2003kf MCG −02-16-2           2003 11 27             06:04:35.484 −12:37:42.87  IAUC 8245          LOSS
+      2004K   ESO 579-G22           2004 01 19             14:23:39.802 −19:26:50.13  IAUC 8273          LOSS
+      2004L  MCG +03-27-38          2004 01 21             10:27:04.125 +16:01:07.80  IAUC 8274          LOSS
+      2004ap    Anon Gal            2004 03 08             10:05:43.813 +10:16:16.68  IAUC 8300          LOSS
+      2004as    Anon Gal            2004 03 11             11:25:39.185 +22:49:49.05  IAUC 8302          LOSS
+      2004bg   UGC 6363             2004 04 07             11:21:01.542 +21:20:22.95  IAUC 8317        Armstrong
+      2004ef   UGC 12158            2004 09 04             22:42:10.021 +19:59:39.89  IAUC 8399    Boles; Armstrong
+336                                               HICKEN ET AL.                                                    Vol. 700
+                                                       Table 1
+                                                     (Continued)
+     SN Ia     Galaxy    Discovery Date (yyyy mm dd)             Position        CBET/IAUC          Discoverer
+    2004fu   NGC 6949             2004 11 04           20:35:11.608 +64:48:26.41  IAUC 8428          Arbour
+    2005M    NGC 2930             2005 01 19           09:37:32.356 +23:12:02.20  IAUC 8470      Puckett, George
+    2005am   NGC 2811             2005 02 22           09:16:13.087 −16:18:15.97  IAUC 8490           Martin
+    2005cf MCG −01-39-3           2005 05 28           15:21:32.225 −07:24:47.66   CBET 158            LOSS
+    2005dv   NGC 5283             2005 09 04           13:41:04.478 +67:40:19.53   CBET 217      Dainese, Dimai
+    2005el   NGC 1819             2005 09 25           05:11:48.744 +05:11:39.19   CBET 233            LOSS
+    2005eq  MCG −01-9-6           2005 09 30           03:08:49.357 −07:02:00.24  IAUC 8608            LOSS
+    2005eu    Anon Gal            2005 10 04           02:27:43.239 +28:10:36.71   CBET 242            LOSS
+    2005ew    Anon Gal            2005 10 04           03:39:23.747 +35:02:49.38   CBET 244    Nearby SN Factory
+    2005hc  MCG +00-6-3           2005 10 12           01:56:47.950 −00:12:49.42   CBET 259          SDSS-II
+    2005hf    Anon Gal            2005 10 25           01:27:05.991 +19:07:00.83  IAUC 8622       Quimby et al.
+    2005hj    Anon Gal            2005 10 26           01:26:48.397 −01:14:17.30   CBET 266       Quimby et al.
+    2005hk    UGC 272             2005 10 30           00:27:50.879 −01:11:53.32  IAUC 8625      SDSS-II; LOSS
+    2005iq  MCG −03-1-8           2005 11 05           23:58:32.422 −18:42:32.97  IAUC 8628            LOSS
+    2005ir    Anon Gal            2005 10 28           01:16:43.796 +00:47:40.89   CBET 277  SDSS II; Quimby et al.
+    2005kc   NGC 7311             2005 11 09           22:34:07.308 +05:34:06.04  IAUC 8629      Puckett, Sostero
+    2005ke   NGC 1371             2005 11 13           03:35:04.356 −24:56:38.93  IAUC 8630            LOSS
+    2005ki   NGC 3332             2005 11 18           10:40:28.219 +09:12:08.21  IAUC 8632            LOSS
+    2005ls  MCG +07-7-1           2005 12 09           02:54:15.914 +42:43:29.15  IAUC 8643         Armstrong
+    2005lu MCG −03-07-40          2005 12 11           02:36:03.753 −17:15:49.50  IAUC 8645            LOSS
+    2005lz   UGC 1666             2005 12 24           02:10:49.727 +34:58:57.84   CBET 329     Puckett, Gagliano
+    2005mc   UGC 4414             2005 12 23           08:27:06.277 +21:38:46.61   CBET 331 THCA Supernova Survey
+    2005ms   UGC 4614             2005 12 27           08:49:14.320 +36:07:46.72   CBET 343       Puckett, Kroes
+    2005mz   NGC 1275             2005 12 31           03:19:49.910 +41:30:18.86   CBET 347 Newton, Peoples, Puckett
+    2005na   UGC 3634             2005 12 31           07:01:36.659 +14:07:58.75   CBET 350 Newton, Ceravolo, Puckett
+    2006B    UGC 12538            2006 01 08           23:21:09.803 +33:24:00.74   CBET 356      Puckett, Sostero
+    2006D  MCG −01-33-34          2006 01 11           12:52:33.871 −09:46:30.56   CBET 362      Colesanti, et al.
+    2006H     Anon Gal            2006 01 15           03:26:01.533 +40:41:41.69   CBET 367      Puckett, Sostero
+    2006N  MCG +11-8-12           2006 01 21           06:08:31.268 +64:43:24.82   CBET 375         Armstrong
+    2006S    UGC 7934             2006 01 26           12:45:39.033 +35:05:12.16   CBET 379     Puckett, Gagliano
+    2006X    NGC 4321             2006 02 04           12:22:53.911 +15:48:31.65  IAUC 8667     Suzuki; Migliardi
+    2006ac   NGC 4619             2006 02 09           12:41:44.894 +35:04:07.93  IAUC 8669            LOSS
+    2006ah    Anon Gal            2006 02 09           13:46:13.540 −09:07:51.92   CBET 402    Nearby SN Factory
+    2006ak    Anon Gal            2006 02 17           11:09:32.640 +28:37:51.63   CBET 408   Tyurina, Lipunov et al.
+    2006al    Anon Gal            2006 02 19           10:39:28.238 +05:11:00.39  IAUC 8677      Holmes, Devore
+    2006an    Anon Gal            2006 02 21           12:14:38.749 +12:13:47.75   CBET 413      Quimby, Castro
+    2006ar MCG +11-13-36          2006 03 05           10:37:30.616 +65:00:57.78   CBET 420            Boles
+    2006ax   NGC 3663             2006 03 20           11:24:03.432 −12:17:29.52   CBET 435            LOSS
+    2006az   NGC 4172             2006 03 23           12:12:14.650 +56:10:47.11  IAUC 8691   Newton, Cox, Puckett
+    2006bb   UGC 4468             2006 03 25           08:33:31.096 +41:31:04.20  CBET 444      Puckett, Gagliano
+    2006bd   UGC 6609             2006 03 26           11:38:28.420 +20:31:34.45  CBET 448         Puckett, Cox
+    2006bk MCG +06-23-20          2006 04 03           15:04:33.606 +35:57:50.53   CBET 462            Boles
+    2006bq   NGC 6685             2006 04 23           18:39:58.941 +39:58:56.34  CBET 479       Puckett, Pelloni
+    2006br   NGC 5185             2006 04 25           13:30:01.716 +13:24:56.61  CBET 482       Puckett, Sostero
+    2006bt    Anon Gal            2006 04 26           15:56:30.526 +20:02:45.34   CBET 485            LOSS
+    2006bu    Anon Gal            2006 04 27           13:52:47.736 +05:18:48.41   CBET 490  Holmes, Devore, Graves
+    2006bw    Anon Gal            2006 04 27           14:33:56.806 +03:47:55.82   CBET 497            LOSS
+    2006bz    Anon Gal            2006 05 04           13:00:43.362 +27:57:41.28  IAUC 8707            LOSS
+    2006cc   UGC 10244            2006 05 06           16:09:56.460 +43:07:35.89   CBET 505           LOSS
+    2006cf   UGC 6015             2006 05 11           10:54:02.585 +46:01:36.44  IAUC 8710    LOSS; Puckett, Toth
+    2006cg    Anon Gal            2006 05 06           13:05:02.382 +28:44:25.11   CBET 509     Quimby, Mondol
+    2006cj    Anon Gal            2006 05 17           12:59:24.519 +28:20:51.36   CBET 515  Quimby, Mondol, Castro
+    2006cm   UGC 11723            2006 05 24           21:20:17.423 −01:41:02.08   CBET 521    Puckett, Langoussis
+    2006cp   UGC 7357             2006 05 28           12:19:14.890 +22:25:37.89   CBET 524           LOSS
+    2006cq    IC 4239             2006 05 29           13:24:25.040 +30:57:22.32  CBET 527   Newton, Briggs, Puckett
+    2006cs MCG +06-30-79          2006 06 03           13:45:33.879 +35:36:36.58   CBET 536            LOSS
+    2006cz MCG −01-38-2           2006 06 14           14:48:36.643 −04:44:30.91  IAUC 8721           LOSS
+    2006ef    NGC 809             2006 08 18           02:04:19.529 −08:43:42.50   CBET 597            LOSS
+    2006ej    NGC 191             2006 08 23           00:38:59.812 −09:00:57.43   CBET 603            LOSS
+    2006em    NGC 911             2006 08 25           02:25:44.313 +41:56:31.55   CBET 605           LOSS
+    2006en MCG +05-54-41          2006 08 26           23:10:05.053 +30:13:23.82  CBET 606      Puckett, Peoples
+    2006et    NGC 232             2006 09 03           00:42:45.779 −23:33:29.80  CBET 616            Itagaki
+    2006eu MCG +08-36-16          2006 09 03           20:02:51.147 +49:19:02.18   CBET 618            LOSS
+    2006ev   UGC 11758            2006 09 12           21:30:59.329 +13:59:21.30  IAUC 8747             Ory
+No. 1, 2009                                        185 TYPE Ia SUPERNOVA LIGHT CURVES                                                                      337
+                                                                            Table 1
+                                                                          (Continued)
+       SN Ia             Galaxy          Discovery Date (yyyy mm dd)                  Position               CBET/IAUC                  Discoverer
+      2006gj           UGC 2650                    2006 09 18               03:17:35.718 −01:41:30.18          CBET 631                Puckett, Toth
+      2006gr          UGC 12071                    2006 08 21               22:32:22.677 +30:49:43.80         CBET 638                    LOSS
+      2006gt           Anon Gal                    2006 09 18               00:56:17.318 −01:37:46.66          CBET 641             Quimby, Mondol
+      2006ha            IC 1461                    2006 09 27                22:58:34.280 +15:10:25.53         CBET 649                    LOSS
+      2006hb       MCG −04-12-34                   2006 09 27               05:02:01.302 −21:07:55.18          CBET 649                   LOSS
+      2006hn           UGC 6154                    2006 09 28               11:07:18.439 +76:41:50.52         CBET 653          Sehgal, Gagliano, Puckett
+      2006is           Anon Gal                    2006 09 18               05:17:34.372 −23:46:54.67         CBET 659                    LOSS
+      2006je            IC 1735                    2006 10 15                01:50:53.264 +33:05:53.27         CBET 675                    LOSS
+      2006ke           UGC 3365                    2006 10 19               05:52:37.391 +66:49:00.78         CBET 682                    LOSS
+      2006kf           UGC 2829                    2006 10 21               03:41:50.472 +08:09:24.93         CBET 686                    LOSS
+      2006le           UGC 3218                    2006 10 26                05:00:41.934 +62:15:18.98        CBET 700                    LOSS
+      2006lf           UGC 3108                    2006 10 26                04:38:29.511 +44:02:01.82        CBET 704                    LOSS
+      2006mo        MCG +06-02-17                  2006 11 01                00:46:38.479 +36:19:57.70         CBET 719                    LOSS
+      2006mp        MCG +08-31-29                  2006 11 03               17:12:00.194 +46:33:21.54         CBET 720              Puckett, Gagliano
+      2006mq         ESO 494-G26                   2006 10 22               08:06:12.378 −27:33:45.38         CBET 721                    LOSS
+      2006nz           Anon Gal                    2006 11 08               00:56:29.206 −01:13:35.90         CBET 743                   SDSS-II
+      2006oa           Anon Gal                    2006 11 11               21:23:42.939 −00:50:36.50         CBET 743                   SDSS-II
+      2006ob           Anon Gal                    2006 11 13               01:51:48.133 +00:15:48.46         CBET 743                   SDSS-II
+      2006on           Anon Gal                    2006 11 11               21:55:58.482 −01:04:12.79         CBET 745                   SDSS-II
+      2006or           NGC 3891                    2006 11 18               11:48:03.469 +30:21:23.02         CBET 749                Puckett, Kroes
+      2006os           UGC 2384                    2006 11 21               02:55:00.998 +16:00:35.26         CBET 751               Quimby, Castro
+      2006ot         ESO 544-G31                   2006 11 22               02:15:04.800 −20:45:58.97         CBET 754             LOSS (Joubert, Li)
+      2006qo           UGC 4133                    2006 11 29               08:00:08.422 +56:22:07.25         CBET 763             Joubert, Li (LOSS)
+      2006sr            UGC 14                     2006 12 12                00:03:35.024 +23:11:45.67        IAUC 8784                    Rich
+      2006td           Anon Gal                    2006 12 24                01:58:15.761 +36:20:57.76         CBET 787                   Kloehr
+      2006te           Anon Gal                    2006 12 28               08:11:42.963 +41:33:16.80         CBET 791          Trondal, Luckas, Schwartz
+      2007F            UGC 8162                    2007 01 11               13:03:15.059 +50:37:07.53         CBET 803              Puckett, Gagliano
+      2007H            Anon Gal                    2007 01 10               08:35:02.009 −08:20:16.00         CBET 806             Joubert, Li (LOSS)
+      2007N        MCG −01-33-12                   2007 01 21               12:49:01.212 −09:27:10.77         CBET 818               Lee, Li (LOSS)
+      2007O            UGC 9612                    2007 01 21               14:56:05.161 +45:24:17.37         CBET 818               Lee, Li (LOSS)
+      2007R            UGC 4008                    2007 01 26               07:46:37.513 +44:47:22.51         CBET 823                Puckett, Gray
+      2007S            UGC 5378                    2007 01 29               10:00:31.237 +04:24:25.26         CBET 825               Puckett, Gorelli
+      2007ae          UGC 10704                    2007 02 19               17:01:52.067 +79:01:54.26         CBET 856             Nissinen, Hentunen
+      2007af           NGC 5584                    2007 03 01               14:22:21.064 −00:23:37.92         CBET 863                    Itagaki
+      2007ai        MCG −04-38-4                   2007 03 06               16:12:53.740 −21:37:48.57         CBET 870                  Li (LOSS)
+      2007al           Anon Gal                    2007 03 10               09:59:18.467 −19:28:25.39         CBET 875             Madison, Li (LOSS)
+      2007ap        MCG +03-41-3                   2007 03 13               15:56:23.035 +16:30:57.92         CBET 883                Puckett, Kroes
+      2007ar        MCG +10-19-62                  2007 03 12               13:21:01.797 +58:33:02.80         CBET 886                Duszanowicz
+      2007au           UGC 3725                    2007 03 18               07:11:46.095 +49:51:13.08         CBET 895               Lee, Li (LOSS)
+      2007ax           NGC 2577                    2007 03 21                08:22:43.242 +22:33:16.91         CBET 904                  Arbour
+      2007ba           UGC 9798                    2007 03 29               15:16:42.581 +07:23:47.91         CBET 911             Winslow, Li (LOSS)
+      2007bc           UGC 6332                    2007 04 04               11:19:14.566 +20:48:32.26         CBET 913              Prasad, Li (LOSS)
+      2007bd           UGC 4455                    2007 04 04               08:31:33.375 −01:11:57.73         CBET 914              Prasad, Li (LOSS)
+      2007bm           NGC 3672                    2007 04 20               11:25:02.309 −09:47:53.96         CBET 936                    Martin
+      2007bz            IC 3918                    2007 04 22               12:56:53.764 +22:22:23.12         CBET 941             Nearby SN Factory
+      2007ca       MCG −02-34-61                   2007 04 25               13:31:05.840 −15:06:06.52         CBET 945                  Prasad, Li
+      2007cg         ESO 508-G75                   2007 05 11               13:25:33.588 −24:39:08.29         CBET 960             Thrasher, Li (LOSS)
+      2007ci           NGC 3873                    2007 05 15               11:45:45.851 +19:46:13.74         CBET 966              Puckett, Crowley
+      2007co        MCG +05-43-16                  2007 06 04                18:23:03.599 +29:53:49.39         CBET 977                  Nicolas
+      2007cp             IC 807                    2007 06 13               12:42:12.748 −17:24:07.45         CBET 980            Khandrika, Li (LOSS)
+      2007cq           Anon Gal                    2007 06 21                22:14:40.423 +05:04:48.57         CBET 983               Orff, Newton
+      2007qe           Anon Gal                    2007 11 13               23:54:12.958 +27:24:33.02         CBET 1138            Yuan et al. (ROTSE)
+      2007sr           NGC 4038                    2007 12 18               12:01:52.800 −18:58:21.83         CBET 1172                 Drake et al.
+      2008L            NGC 1259                    2008 01 14               03:17:16.596 +41:22:56.23         CBET 1212                    Fujita
+      2008af           UGC 9640                    2008 02 09                14:59:28.493 +16:39:11.77        CBET 1248                    Boles
+      2008bf           NGC 4055                    2008 03 18               12:04:02.877 +20:14:42.29         CBET 1307              Parisky (LOSS)
