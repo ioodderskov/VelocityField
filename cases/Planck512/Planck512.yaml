@@ -1,0 +1,52 @@
+---
+halofile: ../cases/Planck512/parents_11
+hubblefile: ../cases/Planck512/Hubbleconstants.txt
+
+# Observer selection: from_file, subhalos, random_positions or random_halos
+##########################################################################
+
+observer_choice: from_file
+
+# Specify the number of observers you want to use
+number_of_observers: 2
+
+# If from_file, specify the file here
+observerfile: ../cases/Planck512/observer_positions_Planck512.txt
+
+# If subhalos, specify the mass-requirements here
+host_min_m: 1e12
+host_max_m: 1e13
+sub_min_m: 5e14
+sub_max_m: 5e15
+
+##########################################################################
+
+# Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
+# If = 1, this and nothing else is done.
+calculate_std_of_deviation: 1
+
+
+
+# Choose whether we should vary the number of supernovae (in that case, the distance aren't varied)
+##########################################################################
+vary_number_of_SNe: 0
+# If the number of SNe is varied, specify the details below 
+min_number_of_SNe: 2
+max_number_of_SNe: 240
+step_number_of_SNe: 10
+##########################################################################
+
+
+
+
+boxsize: 512
+skyfraction: 1
+omegam: 0.306843
+
+number_of_cones: 1
+
+number_of_SNe: 240
+mind: 30
+maxd: 256
+width: 37.3
+
