@@ -18,18 +18,27 @@ def mean_sys_error(h,Wz):
     error = sp.sqrt(sp.sum(norm_Wz*dev**2)) 
     return error;
     
-    
+   
 def calculate_mean_deviation_over_surveyrange(observer_list, halo_list, boxsize, number_of_cones, skyfraction):    
 
     Wz, zbins = SN.get_z_distribution()
     #Wz, zbins = sp.array([13,30,22,26,26,23,10,5,4,3,3,2,3,2,0,1,0,0]), sp.arange(0.01,0.1,0.005)
     #Wz = Wz*100
+    
 
     N_observers = len(observer_list)    
     errors = sp.zeros(N_observers)
-
+    print "The number of observers is", N_observers
+    print "Wz = ", Wz
+    print "zbins = ", zbins
+    
+    sys.stdout.flush()
     
     for obs in range(0,N_observers):
+        
+        print "obs = ", obs
+        
+        sys.stdout.flush()
     
         # Calculate the bin-distances
         #bindistances = hf.calculate_bindistances(mind, maxd, width)
@@ -48,6 +57,8 @@ def calculate_mean_deviation_over_surveyrange(observer_list, halo_list, boxsize,
         
             bindistances[0] = distance(zmin)
             bindistances[1] = distance(zmax)
+            print bindistances[1]
+            sys.stdout.flush()
             if bindistances[1] > boxsize/2:
                 break
         
@@ -69,6 +80,7 @@ def calculate_mean_deviation_over_surveyrange(observer_list, halo_list, boxsize,
         
         error = mean_sys_error(Hubbleconstants/100,bindistances)
         errors[obs] = error*100 # %
-        print "obs = ",obs,": The std of the theoretical probability distribution is", error*100, "%" 
+        print "obs = ",obs,": The std of the theoretical probability distribution is", error*100, "%"
+        sys.stdout.flush()
     
     return sum(errors)/N_observers

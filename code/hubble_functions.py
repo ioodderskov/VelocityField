@@ -68,8 +68,11 @@ def read_halo_file(mass_sorted_data):
 
 ######## Calculating the Hubbleconstants for all observers ########################
 def calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, observed_halos, bindistances, boxsize, number_of_cones, skyfraction):
+    if isinstance(obs,int):    
+        obs = list([obs])
 #    for observer_number in range(len(observer_list)):
-    for observer_number in range(obs,obs+1):
+#    for observer_number in range(obs,obs+1):
+    for observer_number in obs:
         observer = observer_list[observer_number]
         [x,y,z] = [observer.x, observer.y, observer.z]
         Hubbleconstants, radial_distances, radial_velocities, selected_halos  = find_hubble_constants_for_observer(x,y,z,halo_list,observed_halos,bindistances,boxsize,number_of_cones,skyfraction)
@@ -79,26 +82,6 @@ def calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, o
     return radial_distances, radial_velocities
         
 ##############################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -207,13 +190,7 @@ def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo
    
     
 
-# This function calculates the Hubble constants for a given observer
-def find_hubble_constants_for_observer(x,y,z,halo_list,observed_halos,bindistances,boxsize,number_of_cones,sky_cover):
-    mind = bindistances[0]
-    maxd = bindistances[-1]
-    selected_halos = select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cones,sky_cover)
-    Hubbleconstants, radial_distances, radial_velocities = Hubble(x,y,z,halo_list, selected_halos, bindistances, boxsize)
-    return Hubbleconstants, radial_distances, radial_velocities, selected_halos 
+
     
     
     
@@ -368,6 +345,29 @@ def calculate_H(rvsum,r2sum,halo_count):
         return Hloc
 
 
+
+
+
+
+
+
+
+
+
+# This function calculates the Hubble constants for a given observer
+def find_hubble_constants_for_observer(x,y,z,halo_list,observed_halos,bindistances,boxsize,number_of_cones,sky_cover):
+    mind = bindistances[0]
+    maxd = bindistances[-1]
+    selected_halos = select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cones,sky_cover)
+    Hubbleconstants, radial_distances, radial_velocities = Hubble(x,y,z,halo_list, selected_halos, bindistances, boxsize)
+    return Hubbleconstants, radial_distances, radial_velocities, selected_halos 
+
+
+
+
+
+
+
 #################################################################################    
     
 # This function applies periodic boundaries
@@ -406,8 +406,7 @@ def print_hubbleconstants(hubblefile,bindistances,observer_list):
     # minimal distance does not count
     number_of_bins = len(bindistances)
     
-#    for i, observer in enumerate(observer_list):
-    for i in range(1):
+    for i in range(len(observer_list)):
         observer = observer_list[i]
         f.write("\n%s\t" % i)
 

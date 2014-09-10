@@ -33,7 +33,7 @@ def get_z_distribution():
     
     print "The number of supernovae is", N_tot
     
-    plt.figure()
+#    plt.figure()
     
     z_distribution = plt.hist(z_tot,sp.linspace(zmin,zmax,20))
     Wz = z_distribution[0]

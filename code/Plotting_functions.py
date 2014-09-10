@@ -22,9 +22,13 @@ def prettify(ax):
 def make_hubbleplot(radial_distances,radial_velocities,mind,maxd):
     
     # Chosen plot options
-    #from gplot import Plot 
-    #plt = Plot('latex_full_hubble')
+    from gplot import Plot 
+    plt = Plot('latex_full_hubble')
     plt.rc('font',family = 'serif')
+    
+    
+    radial_distances = sp.array(radial_distances)
+    radial_velocities = sp.array(radial_velocities)
 
     H = 100
     c = 3e5

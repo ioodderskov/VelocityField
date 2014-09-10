@@ -60,23 +60,41 @@ halo_list = hf.read_halo_file(mass_sorted_data)
 # The observer positions are read or found:
 observer_list = hf.find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo_list,sub_min_m,sub_max_m,host_min_m,host_max_m)
 print "The total number of observers is", len(observer_list)
-#Selecting some of the observers
-number_of_observers = 2
-observer_list = observer_list[0:number_of_observers]
 
+#Selecting some of the observers
+observer_list = observer_list[0:number_of_observers]
 print "The number of observers used is", len(observer_list)
 
+
+
+
 if calculate_std_of_deviation == 1:
+    print "Calculating the mean of the standard deviation over the survey-range specified in SN_redshiftdistribution.py"
     mean_deviation = md.calculate_mean_deviation_over_surveyrange(observer_list, halo_list, boxsize, number_of_cones, skyfraction)
-    print "The mean deviation is", mean_deviation 
+    print "The mean deviation is", mean_deviation, "%"
     
-
-
-
- 
-   
-
-
-
+else:
+    print "Calculating Hubble constants for increasing bin distances for all observers"     
     
-    
+#    # Calculate the bin-distances
+    bindistances = hf.calculate_bindistances(mind, maxd, width)
+#    
+#    # Calculate the Hubbleconstants for all observers and all distances (or number of SNe)
+    radial_distances, radial_velocities = hf.calculate_hubble_constants_for_all_observers(range(len(observer_list)),observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
+#    
+#    # Print the results to a file
+    hf.print_hubbleconstants(hubblefile, bindistances, observer_list)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
