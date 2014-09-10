@@ -4,7 +4,12 @@ hubblefile: ../cases/sim16/Hubbleconstants.txt
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
+#
 observer_choice: random_positions
+
+# Specify the number of observers you want to use
+number_of_observers: 2
+
 # If from_file, specify the file here
 observerfile: ../cases/sim16/howdy16.txt
 
@@ -14,9 +19,11 @@ host_max_m: 1e15
 sub_min_m: 1e8
 sub_max_m: 1e10
 
-# If random_positions or random_halos, specify the number of observers here
-number_of_observers: 1200
 ##########################################################################
+
+# Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
+# If = 1, this and nothing else is done.
+calculate_std_of_deviation: 1
 
 
 
