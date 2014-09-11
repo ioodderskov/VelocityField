@@ -127,8 +127,8 @@ plt.savefig(output1)
 plt.show()
 
 plt.close('all')
-plt.plot(patch,z68_1cone[-1,:]/2*100,'k')
-plt.plot(patch,z68_2cones[-1,:]/2*100,'k:')
+plt.plot(patch,z68_1cone[-1,:]/2*100,'b')
+plt.plot(patch,z68_2cones[-1,:]/2*100,'g')
 
 plt.xlabel('Fraction of sky observed')
 plt.ylabel('$\sigma_{256}$ [%]')
