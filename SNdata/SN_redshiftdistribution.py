@@ -7,7 +7,7 @@ import matplotlib.pyplot as mplt
 mplt.rc('font',family = 'serif')
 
 
-zmin = 0.01
+zmin = 0.023
 zmax = 0.1
 MV = -19.504
 Nbins = 20
@@ -27,11 +27,15 @@ def get_z_distribution():
     z_tot = sp.array([])
 
    
-    z_all = sp.loadtxt(table_folder+'Galaxies_Hicken2009a_z',usecols=(5,))
+    z_all = sp.loadtxt(table_folder+'Hicken2009a_galaxies',usecols=(5,))
     z = sp.array([z_all[i] for i in range(len(z_all)) if z_all[i] < zmax and z_all[i] > zmin])
     N_tot = N_tot+len(z)
     z_tot = sp.concatenate((z_tot,z)) 
 
+    z_all = sp.loadtxt(table_folder+'Jha2007_galaxies',usecols=(2,))
+    z = sp.array([z_all[i] for i in range(len(z_all)) if z_all[i] < zmax and z_all[i] > zmin])
+    N_tot = N_tot+len(z)
+    z_tot = sp.concatenate((z_tot,z)) 
     
 
     
@@ -44,26 +48,28 @@ def get_z_distribution():
 
 
     
-    return Wz, zbins
+    return Wz, zbins, N_tot
 
 
 def make_histograms(radial_velocities):
 
-    Wz_table, zbins_table = get_z_distribution()    
+    Wz_table, zbins_table, N_table = get_z_distribution()    
 
     c = 3e5 # km/s
-    z_obs = sp.array(radial_velocities)/c
-    weights = sp.ones_like(z_obs)/len(z_obs)
-    mplt.hist(z_obs,zbins_table, alpha = 0.3, color='blue', weights=weights)
-    mplt.xlabel('Redshift')
-    mplt.ylabel('Fraction of SN Ia')
+    z_mock = sp.array(radial_velocities)/c
+    weights = sp.ones_like(z_mock)/len(z_mock)
+    z_dist = mplt.hist(z_mock,zbins_table, alpha = 0.3, color='blue', weights=weights)
+    Wz_mock = z_dist[0]
+    z_mock = z_dist[1]
+    mplt.xlabel('Redshift',fontsize=16)
+    mplt.ylabel('Fraction of SN Ia',fontsize=16)
     mplt.axis([0,0.1,0,0.2])
 
-    return z_obs
+    return Wz_mock, z_mock, len(z_mock)
 
 get_z_distribution()
-mplt.xlabel('Redshift')
-mplt.ylabel('Fraction of SN Ia')
+mplt.xlabel('Redshift',fontsize=16)
+mplt.ylabel('Fraction of SN Ia',fontsize=16)
 mplt.axis([0,0.1,0,0.2])
 #mplt.figure(figsize=(1,2))
 

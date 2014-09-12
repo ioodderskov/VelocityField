@@ -41,7 +41,8 @@ def get_data(inputdir):
     number_of_bins = len(H[1,:]);
     z68 = sp.zeros((10*number_of_bins,1));
     
-    count = 0     
+    count = 0   
+    sigma = sp.zeros((10*number_of_bins,1))
     for i in range(1,11):
         H = data[i]
          
@@ -49,13 +50,26 @@ def get_data(inputdir):
             sl68, su68 = hf.confidenslimit(H[:,b],0.683)
             z68[count] = sl68+su68
             count = count+1
-        
+
+#        for b in range(0,number_of_bins):
+#            R = rmax[b]
+#            mu68, sigma68 = hf.mu_and_sigma(rmax,R,H)
+#            sigma[count] = sigma68
+#            count = count+1
+
+         
+#    sigma = sp.reshape(sigma,(10,number_of_bins))
+#    sigma = sigma.T
+#    sigma = sigma*2/100    
+
             
             
     z68 = sp.reshape(z68,(10,number_of_bins))
     z68 = z68.T
+    
 
     return(rmax,z68)
+#    return(rmax,sigma)
 
 # Making plots
 plt = Plot('latex_full_hubble','h2c')
@@ -63,8 +77,9 @@ plt.rc('font',family = 'serif')
 
 inputdir = '/home/io/Dropbox/Projekter/Hubble/VelocityField/cases/Planck512_skyfraction'
 #output='/home/io/Dropbox/PHD/Python/tests/Planck512_skyfraction.pdf'
-output1 = '/home/io/Dropbox/Projekter/Hubble/VelocityField/cases/Planck512_skyfraction/Planck512_skyfraction.pdf'
-output2 = '/home/io/Dropbox/SharedStuff/hubble2013/Planck512_skyfraction_256.pdf'
+output1 = '/home/io/Dropbox/SharedStuff/hubble2013/Planck512_skyfraction.pdf'
+output256 = '/home/io/Dropbox/SharedStuff/hubble2013/Planck512_skyfraction_256.pdf'
+
 
 cdict = {
   'blue'  :  ( (0.0, 0, 0), (0.02,0.3, 0.3), (0.3,1, 1), (1.,1, 1)),
@@ -113,10 +128,10 @@ cax = plt.subplot(1,3,3)
 cbar = plt.colorbar(im, cax = cax)
 #print  plt.axes
 cbar.set_ticks(l)
-cbar.set_ticklabels(L)
+cbar.set_ticklabels(L*100)
 cbar.ax.tick_params(labelsize=7) 
 
-plt.suptitle('Width of 68.3% confidence interval for $H_{loc}/H_0$',x = 0.425)
+plt.suptitle('Width of 68.3% confidence interval for $H_{loc}/H_0$ [%]',x = 0.425)
 
 
 plt.change_size(152.4,75)
@@ -127,14 +142,16 @@ plt.savefig(output1)
 plt.show()
 
 plt.close('all')
-plt.plot(patch,z68_1cone[-1,:]/2*100,'b')
-plt.plot(patch,z68_2cones[-1,:]/2*100,'g')
+import matplotlib.pyplot as mplt
+mplt.rc('font',family = 'serif')
+mplt.plot(patch,z68_1cone[-1,:]/2*100,'Navy',linewidth=1.5)
+mplt.plot(patch,z68_2cones[-1,:]/2*100,'Navy',linestyle='--',linewidth=1.5)
 
-plt.xlabel('Fraction of sky observed')
-plt.ylabel('$\sigma_{256}$ [%]')
+mplt.xlabel('Fraction of sky observed')
+mplt.ylabel('Width of confidence interval [%]')
 
-plt.finalize()
-plt.savefig(output2)
+#plt.finalize()
+mplt.savefig(output256)
 
 #print("Here!!!!")
 #from mpl_toolkits.mplot3d import Axes3D

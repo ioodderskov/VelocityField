@@ -23,6 +23,9 @@ sub_max_m: 1e10
 
 # Choose what to do:
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
+# 0: no
+# 1: Using Hicken+Jha redshiftdistribution
+# 2: Using mock redshiftdestribution
 calculate_std_of_deviation: 0
 # Calculate Hubble constants and write them to file?
 calculate_hubble_constants: 0

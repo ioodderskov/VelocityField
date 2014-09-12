@@ -8,7 +8,7 @@ hubblefile: ../cases/Planck512/Hubbleconstants.txt
 observer_choice: from_file
 
 # Specify the number of observers you want to use
-number_of_observers: 2
+number_of_observers: 10
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
@@ -23,11 +23,14 @@ sub_max_m: 5e15
 
 # Choose what to do:
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
-calculate_std_of_deviation: 0
+# 0: no
+# 1: Using Hicken+Jha redshiftdistribution
+# 2: Using mock redshiftdestribution
+calculate_std_of_deviation: 2
 # Calculate Hubble constants and write them to file?
 calculate_hubble_constants: 0
 # Calculate the redshiftdistribution for a specific observer and compare it to a real one?
-calculate_redshiftdistribution: 1
+calculate_redshiftdistribution: 0
 # Make Hubble diagram for one observer?
 make_hubblediagram: 0
 

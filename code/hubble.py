@@ -74,12 +74,7 @@ print "The number of observers used is", len(observer_list)
 
 
 
-if calculate_std_of_deviation == 1:
-    print "Calculating the mean of the standard deviation over the survey-range specified in SN_redshiftdistribution.py"
-    mean_deviation = md.calculate_mean_deviation_over_surveyrange(observer_list, halo_list, boxsize, number_of_cones, skyfraction)
-    print "The mean deviation is", mean_deviation, "%"
-    
-if calculate_hubble_constants == 1:
+if calculate_hubble_constants:
     print "Calculating Hubble constants for increasing bin distances for all observers"     
   
 #    # Calculate the bin-distances
@@ -92,20 +87,35 @@ if calculate_hubble_constants == 1:
     hf.print_hubbleconstants(hubblefile, bindistances, observer_list)
 
 
-if calculate_redshiftdistribution == 1:
+if calculate_redshiftdistribution:
     print "Calculating the redshift distribution and comparing it to the one specified in SN_redshiftdistribution.py"
     
     obs = 0
     
     bindistances = hf.calculate_bindistances(mind, maxd, width)
     skip, radial_velocities = hf.calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
-    z_mock = SN.make_histograms(radial_velocities)
+    Wz_mock, z_mock, N_tot = SN.make_histograms(radial_velocities)
     mplt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/redshiftdistribution.pdf')
     mplt.close('all')
 
+if calculate_std_of_deviation:
+    print "Calculating the mean of the standard deviation over the survey-range specified in SN_redshiftdistribution.py"
+
+    if calculate_std_of_deviation == 1:
+        Wz_norm, zbins, N_tot = SN.get_z_distribution()
+        
+    elif calculate_std_of_deviation == 2:
+        bindistances = hf.calculate_bindistances(mind, maxd, width)
+        skip, radial_velocities = hf.calculate_hubble_constants_for_all_observers(range(len(observer_list)),observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
+        Wz_norm, zbins, N_tot = SN.make_histograms(radial_velocities)
+ 
+    Wz = Wz_norm*N_tot    
+    
+    mean_deviation = md.calculate_mean_deviation_over_surveyrange(Wz, zbins, observer_list, halo_list, boxsize, number_of_cones, skyfraction)
+    print "The mean deviation is", mean_deviation, "%"
     
     
-if make_hubblediagram == 1:
+if make_hubblediagram:
     print "Making Hubble diagram for one observer."
 
     obs = 0    
@@ -116,7 +126,7 @@ if make_hubblediagram == 1:
     pf.make_hubbleplot(radial_distances,radial_velocities,mind,maxd,boxsize)
     mplt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/hubblediagram.pdf')
     mplt.close('all')
-    # Note! in the make_hubbleplot function I load matplotlib.pyplot, which overrule gplot.
+
     
 
 

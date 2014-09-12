@@ -19,10 +19,13 @@ def mean_sys_error(h,Wz):
     return error;
     
    
-def calculate_mean_deviation_over_surveyrange(observer_list, halo_list, boxsize, number_of_cones, skyfraction):    
+def calculate_mean_deviation_over_surveyrange(Wz, zbins, observer_list, halo_list, boxsize, number_of_cones, skyfraction):    
 
-    Wz, zbins = SN.get_z_distribution()
-    #Wz, zbins = sp.array([13,30,22,26,26,23,10,5,4,3,3,2,3,2,0,1,0,0]), sp.arange(0.01,0.1,0.005)
+
+#    z_CfA3 = sp.array([13,30,22,26,26,23,10,5,4,3,3,2,3,2,0,1,0,0,0,0])
+#    z_OLD  = sp.array([25,20,26,9,13,9,5,4,3,6,2,2,1,1,1,1,1,1,0,1,0])
+#    Wz, zbins = z_CfA3+z_OLD, sp.arange(0.01,0.1,0.005)
+               
     #Wz = Wz*100
     
 
@@ -32,14 +35,10 @@ def calculate_mean_deviation_over_surveyrange(observer_list, halo_list, boxsize,
     print "Wz = ", Wz
     print "zbins = ", zbins
     
-    sys.stdout.flush()
     
     for obs in range(0,N_observers):
         
-        print "obs = ", obs
-        
-        sys.stdout.flush()
-    
+         
         # Calculate the bin-distances
         #bindistances = hf.calculate_bindistances(mind, maxd, width)
         radial_distances_tot = list([])
@@ -57,7 +56,6 @@ def calculate_mean_deviation_over_surveyrange(observer_list, halo_list, boxsize,
         
             bindistances[0] = distance(zmin)
             bindistances[1] = distance(zmax)
-            print bindistances[1]
             sys.stdout.flush()
             if bindistances[1] > boxsize/2:
                 break
