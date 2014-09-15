@@ -15,7 +15,7 @@ mplt.rc('font',family = 'serif')
 
 # There is one argument, namely the parameterfile
 if len(sys.argv) != 2:
-    print "Wrong number of argument"
+    print "Wrong number of arguments"
     
 parameterfile = sys.argv[1]
 
@@ -110,8 +110,9 @@ if calculate_std_of_deviation:
         Wz_norm, zbins, N_tot = SN.make_histograms(radial_velocities)
  
     Wz = Wz_norm*N_tot    
-    
-    mean_deviation = md.calculate_mean_deviation_over_surveyrange(Wz, zbins, observer_list, halo_list, boxsize, number_of_cones, skyfraction)
+
+
+    mean_deviation = md.calculate_mean_deviation_over_surveyrange(observer_list, Wz, zbins,  halo_list, boxsize, number_of_cones, skyfraction)
     print "The mean deviation is", mean_deviation, "%"
     
     

@@ -61,7 +61,7 @@ def make_hubbleplot(radial_distances,radial_velocities,mind,maxd,boxsize):
 
 
     plt.axis([0,300,0,0.1])
-    plt.xlabel('$r [Mpc/h]$',fontsize=16)
+    plt.xlabel('$r[Mpc/h]$',fontsize=16)
     plt.ylabel('Redshift',fontsize=16)
     
     

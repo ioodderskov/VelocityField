@@ -144,8 +144,8 @@ plt.show()
 plt.close('all')
 import matplotlib.pyplot as mplt
 mplt.rc('font',family = 'serif')
-mplt.plot(patch,z68_1cone[-1,:]/2*100,'Navy',linewidth=1.5)
-mplt.plot(patch,z68_2cones[-1,:]/2*100,'Navy',linestyle='--',linewidth=1.5)
+mplt.plot(patch,z68_1cone[-1,:]*100,'Navy',linewidth=1.5)
+mplt.plot(patch,z68_2cones[-1,:]*100,'Navy',linestyle='--',linewidth=1.5)
 
 mplt.xlabel('Fraction of sky observed')
 mplt.ylabel('Width of confidence interval [%]')

@@ -70,8 +70,7 @@ def read_halo_file(mass_sorted_data):
 def calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, observed_halos, bindistances, boxsize, number_of_cones, skyfraction):
     if isinstance(obs,int):    
         obs = list([obs])
-#    for observer_number in range(len(observer_list)):
-#    for observer_number in range(obs,obs+1):
+
     for observer_number in obs:
         observer = observer_list[observer_number]
         [x,y,z] = [observer.x, observer.y, observer.z]
