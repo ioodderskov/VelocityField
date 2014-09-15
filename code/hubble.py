@@ -1,18 +1,21 @@
 from __future__ import division
-import scipy as sp
+import numpy as sp
 import sys
-sys.path.insert(0,'/home/io/Dropbox/Projekter/Hubble/VelocityField/SNdata')
+sys.path.insert(0,'../SNdata')
 import yaml
 import SN_redshiftdistribution as SN
 import hubble_functions as hf
 import Plotting_functions as pf
 import MeanDeviation_functions as md
-
+#from gplot import Plot 
+#plt = Plot('latex_full_hubble')
+import matplotlib.pyplot as mplt
+mplt.rc('font',family = 'serif')
 
 
 # There is one argument, namely the parameterfile
 if len(sys.argv) != 2:
-    print "Wrong number of argument"
+    print "Wrong number of arguments"
     
 parameterfile = sys.argv[1]
 
@@ -44,6 +47,9 @@ number_of_cones = int(param["number_of_cones"])
 skyfraction = sp.double(param["skyfraction"])
 
 calculate_std_of_deviation = int(param["calculate_std_of_deviation"])
+calculate_hubble_constants = int(param["calculate_hubble_constants"])
+calculate_redshiftdistribution = int(param["calculate_redshiftdistribution"])
+make_hubblediagram = int(param["make_hubblediagram"])
 
 vary_number_of_SNe = int(param["vary_number_of_SNe"])
 min_number_of_SNe = int(param["min_number_of_SNe"])
@@ -68,14 +74,9 @@ print "The number of observers used is", len(observer_list)
 
 
 
-if calculate_std_of_deviation == 1:
-    print "Calculating the mean of the standard deviation over the survey-range specified in SN_redshiftdistribution.py"
-    mean_deviation = md.calculate_mean_deviation_over_surveyrange(observer_list, halo_list, boxsize, number_of_cones, skyfraction)
-    print "The mean deviation is", mean_deviation, "%"
-    
-else:
+if calculate_hubble_constants:
     print "Calculating Hubble constants for increasing bin distances for all observers"     
-    
+  
 #    # Calculate the bin-distances
     bindistances = hf.calculate_bindistances(mind, maxd, width)
 #    
@@ -84,6 +85,51 @@ else:
 #    
 #    # Print the results to a file
     hf.print_hubbleconstants(hubblefile, bindistances, observer_list)
+
+
+if calculate_redshiftdistribution:
+    print "Calculating the redshift distribution and comparing it to the one specified in SN_redshiftdistribution.py"
+    
+    obs = 0
+    
+    bindistances = hf.calculate_bindistances(mind, maxd, width)
+    skip, radial_velocities = hf.calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
+    Wz_mock, z_mock, N_tot = SN.make_histograms(radial_velocities)
+    mplt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/redshiftdistribution.pdf')
+    mplt.close('all')
+
+if calculate_std_of_deviation:
+    print "Calculating the mean of the standard deviation over the survey-range specified in SN_redshiftdistribution.py"
+
+    if calculate_std_of_deviation == 1:
+        Wz_norm, zbins, N_tot = SN.get_z_distribution()
+        
+    elif calculate_std_of_deviation == 2:
+        bindistances = hf.calculate_bindistances(mind, maxd, width)
+        skip, radial_velocities = hf.calculate_hubble_constants_for_all_observers(range(len(observer_list)),observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
+        Wz_norm, zbins, N_tot = SN.make_histograms(radial_velocities)
+ 
+    Wz = Wz_norm*N_tot    
+
+
+    mean_deviation = md.calculate_mean_deviation_over_surveyrange(observer_list, Wz, zbins,  halo_list, boxsize, number_of_cones, skyfraction)
+    print "The mean deviation is", mean_deviation, "%"
+    
+    
+if make_hubblediagram:
+    print "Making Hubble diagram for one observer."
+
+    obs = 0    
+
+    bindistances = hf.calculate_bindistances(mind, maxd, width)
+    radial_distances, radial_velocities = hf.calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
+    
+    pf.make_hubbleplot(radial_distances,radial_velocities,mind,maxd,boxsize)
+    mplt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/hubblediagram.pdf')
+    mplt.close('all')
+
+    
+
 
 
 

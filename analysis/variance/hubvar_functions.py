@@ -26,8 +26,8 @@ def min_test(a):
 #plt.savefig("min_sinus_figur.pdf ")
 
 def load_Hubbleconstants(fil,a,N_observers):
-    print "Loading Hubbleconstants"
-    print fil
+#    print "Loading Hubbleconstants"
+#    print fil
     data = sp.loadtxt(fil);
     rmax = data[0,1:];
 
@@ -41,7 +41,7 @@ def load_Hubbleconstants(fil,a,N_observers):
 
     # Frasorterer nan-results
     Htot_nonan = Htot[~sp.isnan(Htot).any(axis=1)]
-    print "The total number of nan-results was", len(Htot)-len(Htot_nonan)
+#    print "The total number of nan-results was", len(Htot)-len(Htot_nonan)
 
     H = Htot_nonan[0:N_observers,:]/hubble; # Indeholer H/H0 for alle observatører 
 
