@@ -3,4 +3,4 @@
 # Halo files #
 parents_*
 # Grendel output-files #
-*.[oe][0123456789]
+*.[oe][0123456789]*
