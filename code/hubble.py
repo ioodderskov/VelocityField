@@ -1,16 +1,15 @@
 from __future__ import division
-import numpy as sp
+import scipy as sp
 import sys
 sys.path.insert(0,'../SNdata')
 import yaml
 import SN_redshiftdistribution as SN
 import hubble_functions as hf
-import Plotting_functions as pf
 import MeanDeviation_functions as md
 #from gplot import Plot 
 #plt = Plot('latex_full_hubble')
-import matplotlib.pyplot as mplt
-mplt.rc('font',family = 'serif')
+#import matplotlib.pyplot as mplt
+#mplt.rc('font',family = 'serif')
 
 
 # There is one argument, namely the parameterfile
@@ -81,10 +80,29 @@ if calculate_hubble_constants:
     bindistances = hf.calculate_bindistances(mind, maxd, width)
 #    
 #    # Calculate the Hubbleconstants for all observers and all distances (or number of SNe)
-    radial_distances, radial_velocities = hf.calculate_hubble_constants_for_all_observers(range(len(observer_list)),observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
+    hf.calculate_hubble_constants_for_all_observers(range(len(observer_list)),observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
 #    
 #    # Print the results to a file
     hf.print_hubbleconstants(hubblefile, bindistances, observer_list)
+
+
+if calculate_std_of_deviation:
+    print "Calculating the mean of the standard deviation over the survey-range specified in SN_redshiftdistribution.py"
+
+    if calculate_std_of_deviation == 1:
+        Wz_norm, zbins, N_tot = SN.get_table_distribution()
+        
+    elif calculate_std_of_deviation == 2:
+        bindistances = hf.calculate_bindistances(mind, maxd, width)
+        skip, radial_velocities = hf.calculate_hubble_constants_for_all_observers(range(len(observer_list)),observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
+        Wz_norm, zbins, N_tot = SN.get_mock_distribution(radial_velocities)
+ 
+    Wz = Wz_norm*N_tot    
+
+
+    mean_deviation = md.calculate_mean_deviation_over_surveyrange(observer_list, Wz, zbins,  halo_list, boxsize, number_of_cones, skyfraction)
+    print "The mean deviation is", mean_deviation, "%"
+    
 
 
 if calculate_redshiftdistribution:
@@ -94,39 +112,25 @@ if calculate_redshiftdistribution:
     
     bindistances = hf.calculate_bindistances(mind, maxd, width)
     skip, radial_velocities = hf.calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
-    Wz_mock, z_mock, N_tot = SN.make_histograms(radial_velocities)
-    mplt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/redshiftdistribution.pdf')
-    mplt.close('all')
 
-if calculate_std_of_deviation:
-    print "Calculating the mean of the standard deviation over the survey-range specified in SN_redshiftdistribution.py"
-
-    if calculate_std_of_deviation == 1:
-        Wz_norm, zbins, N_tot = SN.get_z_distribution()
-        
-    elif calculate_std_of_deviation == 2:
-        bindistances = hf.calculate_bindistances(mind, maxd, width)
-        skip, radial_velocities = hf.calculate_hubble_constants_for_all_observers(range(len(observer_list)),observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
-        Wz_norm, zbins, N_tot = SN.make_histograms(radial_velocities)
- 
-    Wz = Wz_norm*N_tot    
+    SN.get_table_distribution()
+    SN.get_mock_distribution(radial_velocities)
 
 
-    mean_deviation = md.calculate_mean_deviation_over_surveyrange(observer_list, Wz, zbins,  halo_list, boxsize, number_of_cones, skyfraction)
-    print "The mean deviation is", mean_deviation, "%"
-    
     
 if make_hubblediagram:
-    print "Making Hubble diagram for one observer."
 
-    obs = 0    
+    obs = 0
+    print "Saving data for the Hubble diagram for observer number", obs
 
     bindistances = hf.calculate_bindistances(mind, maxd, width)
     radial_distances, radial_velocities = hf.calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
+    sp.save('radial_distances.npy', radial_distances)
+    sp.save('radial_velocities.npy', radial_velocities)
     
-    pf.make_hubbleplot(radial_distances,radial_velocities,mind,maxd,boxsize)
-    mplt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/hubblediagram.pdf')
-    mplt.show()
+
+    
+
 
     
 

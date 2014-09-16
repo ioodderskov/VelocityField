@@ -1,26 +1,23 @@
 from __future__ import division
-import numpy as sp
-# Chosen plot options
-#from gplot import Plot 
-#plt = Plot('latex_full_hubble')
-import matplotlib.pyplot as mplt
-mplt.rc('font',family = 'serif')
+import scipy as sp
 
 
-zmin = 0.023
+
+zmin = 0.01
 zmax = 0.1
 MV = -19.504
 Nbins = 20
+bins = sp.linspace(zmin,zmax,Nbins)
 
 
 def plot_SNdata(z,mB):
     log_cz = sp.log10(3e5*z)
-    mplt.plot(0.2*mB,log_cz,'ro')
-    mplt.axis([2.6,4.0,3.3,4.7])
+    #mplt.plot(0.2*mB,log_cz,'ro')
+    #mplt.axis([2.6,4.0,3.3,4.7])
 
 
 
-def get_z_distribution():
+def get_table_distribution():
 
     table_folder = '../SNdata/'
     N_tot = 0
@@ -43,48 +40,30 @@ def get_z_distribution():
 
     weights=sp.ones_like(z_tot)/len(z_tot)
 
-    z_distribution = sp.histogram(z_tot,sp.linspace(zmin,zmax,Nbins), weights=weights ) #, alpha = 0.7, color='green')
-    z_distribution = mplt.hist(z_tot,sp.linspace(zmin,zmax,Nbins), alpha = 0.7, color='green', weights=weights)
-    Wz = z_distribution[0]
-    zbins = z_distribution[1]
-    print Wz
-    print zbins
-#    mplt.hist(z_distribution, alpha = 0.7, color='green', weights=weights)
+    histogram_table = sp.histogram(z_tot,bins, weights=weights)
+    sp.save('histogram_table.npy',histogram_table)
 
+    Wz = histogram_table[0]
+    zbins = histogram_table[1]
     
     return Wz, zbins, N_tot
 
 
-def make_histograms(radial_velocities):
 
-    Wz_table, zbins_table, N_table = get_z_distribution()    
+def get_mock_distribution(radial_velocities):
 
     c = 3e5 # km/s
-    z_mock = sp.array(radial_velocities)/c
-    weights = sp.ones_like(z_mock)/len(z_mock)
-    z_dist = mplt.hist(z_mock,zbins_table, alpha = 0.3, color='blue', weights=weights)
-    Wz_mock = z_dist[0]
-    z_mock = z_dist[1]
-    mplt.xlabel('Redshift',fontsize=16)
-    mplt.ylabel('Fraction of SN Ia',fontsize=16)
-    mplt.axis([0,0.1,0,0.2])
+    z_mock = radial_velocities/c
+    N_tot = len(z_mock)
+    weights = sp.ones_like(z_mock)/N_tot
 
-    return Wz_mock, z_mock, len(z_mock)
+    histogram_mock = sp.histogram(z_mock,bins, weights=weights)
+    sp.save('histogram_mock.npy',histogram_mock)
 
-get_z_distribution()
-mplt.xlabel('Redshift',fontsize=16)
-mplt.ylabel('Fraction of SN Ia',fontsize=16)
-mplt.axis([0,0.1,0,0.2])
+    N_tot = len(z_mock)
+    Wz = histogram_mock[0]
+    zbins = histogram_mock[1]
+    
+    return Wz, zbins, N_tot
 
-
-
-#mplt.figure(figsize=(1,2))
-
-#import matplotlib.pyplot as mplt
-#fig = mplt.figure()
-#ax = fig.add_subplot(1,1,1)
-#Wz, zbins = get_z_distribution()
-#mplt.xlabel('Redshift')
-#mplt.ylabel('Fraction of SN Ia')
-#mplt.axis([0.01,0.09,0,0.2])
 

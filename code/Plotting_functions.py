@@ -1,60 +1,39 @@
 from __future__ import division
 import numpy as sp
 import sys
+import matplotlib.pyplot as plt
 sys.path.insert(0,'/home/io/Dropbox/Projekter/Hubble/VelocityField/SNdata')
 
+plt.rc('font',family = 'serif')
 
 
 
 
-# This function makes the plots a bit prettier
-def prettify(ax):
-
-    for side in ['left','right','top','bottom']:
-        ax.spines[side].set_linewidth(3)
-
-#    ax.tick_params('both', length=10, width=1, which='major')
-#    ax.tick_params('both', length=5, width=0.5, which='minor')
 
 
 
 
-def make_hubbleplot(radial_distances,radial_velocities,mind,maxd,boxsize):
-
-#    from gplot import Plot 
-#    plt = Plot('latex_full_hubble','wojtak_half2')
-
+def plot_redshiftdistribution(histogram, alpha, color):
     
-    # Chosen plot options
-#    from gplot import Plot 
-#    plt = Plot('latex_full_hubble','wojtak_half')
-#    plt.rc('font',family = 'serif')
-    
+    Wz = histogram[0]
+    zbins = histogram[1]
+    width = zbins[1]-zbins[0]
+    center = (zbins[:-1]+zbins[1:])/2
+    plt.bar(center, Wz, align = 'center', width=width, alpha=alpha, color=color)
+
+    plt.xlabel('Redshift',fontsize=16)
+    plt.ylabel('Fraction of SN Ia',fontsize=16)
+    plt.axis([0,0.1,0,0.2])
+
+
+
+def plot_hubblediagram(radial_distances,radial_velocities):
+
     
     radial_distances = sp.array(radial_distances)
     radial_velocities = sp.array(radial_velocities)
 
-#    H = 100
     c = 3e5
-#    zhub = H/c*radial_distances
-    
-#    dL = radial_distances*(1+zhub)
-#    Mv = -19.3 # (wikipedia)
-#    m02 = 0.2*(5*sp.log10(dL)+Mv+25) # The apparent lumonisity is proportional to this quantity
-#    log_cz = sp.log10(radial_velocities)
-    
-#    m02_min = 0.2*(5*sp.log10(mind*(1+H/c*mind))+Mv+25)
-#    m02_max = 0.2*(5*sp.log10(maxd*(1+H/c*maxd))+Mv+25)
-    
-#    zo = sp.array(zo)
-#    theta = sp.arccos(zo/radial_distances)    
-    
-#    plt.plot(m02, log_cz,'ro')
-    
-    # I can't figure out how to make this plot okay with gplot, so I will just use matplotlib
-    import matplotlib.pyplot as plt
-    
-    plt.rc('font',family = 'serif')
     
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
@@ -64,12 +43,28 @@ def make_hubbleplot(radial_distances,radial_velocities,mind,maxd,boxsize):
     plt.axis([0,300,0,0.1])
     plt.xlabel('$r$ [Mpc/h]',fontsize=16)
     plt.ylabel('Redshift',fontsize=16)
+
+
+plot_redshiftdistribution_on=0
+plot_hubblediagram_on=1    
     
+if plot_redshiftdistribution_on:
     
-#    plt.xlabel('$0.2m_V$ (mag)')
-#    plt.ylabel('$\log cz$')
-#    plt.axis([2.6,4.0,3.3,4.7])
+    plot_redshiftdistribution(sp.load('histogram_table.npy'),0.7, 'green')
+    plot_redshiftdistribution(sp.load('histogram_mock.npy'),0.3, 'blue')
+
+#    plt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/redshiftdistribution.pdf')
+
     
+
+if plot_hubblediagram_on:
     
-#    plt.finalize(custom = True)
+    radial_distances = sp.load('radial_distances.npy')
+    radial_velocities = sp.load('radial_velocities.npy')
     
+    plot_hubblediagram(radial_distances,radial_velocities)
+    
+#    plt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/hubblediagram.pdf')
+
+
+

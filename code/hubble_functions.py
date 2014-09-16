@@ -1,5 +1,5 @@
 from __future__ import division
-import numpy as sp
+import scipy as sp
 import random
 
 
@@ -78,7 +78,7 @@ def calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, o
         observer.selected_halos = selected_halos
         observer.Hubbleconstants = Hubbleconstants
     
-    return radial_distances, radial_velocities
+    return sp.array(radial_distances), sp.array(radial_velocities)
         
 ##############################################################################
 

@@ -1,0 +1,18 @@
+#!/bin/sh
+#PBS -l  nodes=1:ppn=20 -q q20
+#PBS -l walltime=100:00:00
+#PBS -N hubvar
+export PATH=/com/openmpi-1.2.5/bin:$PATH
+export LD_LIBRARY_PATH=/com/intel/mkl/10.0.1.014/lib/em64t:/com/openmpi-1.2.5/lib:/com/intel/fce/10.1.017/lib:/com/gsl/1.15/lib
+
+
+opmpi=/com/openmpi-1.2.5/lib
+intel=/com/intel/fce/10.0.023/lib:/com/intel/cce/10.0.023/lib
+export LD_LIBRARY_PATH=${opmpi}:${intel}:$LD_LIBRARY_PATH
+cd $PBS_O_WORKDIR
+export OMP_NUM_THREADS=20
+
+
+python hubble.py ../cases/Planck512/Planck512.yaml
+
+echo "========= Job finished at `date` =========="
