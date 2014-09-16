@@ -1,5 +1,5 @@
 from __future__ import division
-import scipy as sp
+import numpy as sp
 # Chosen plot options
 #from gplot import Plot 
 #plt = Plot('latex_full_hubble')
@@ -22,7 +22,7 @@ def plot_SNdata(z,mB):
 
 def get_z_distribution():
 
-    table_folder = '/home/io/Dropbox/Projekter/Hubble/VelocityField/SNdata/'
+    table_folder = '../SNdata/'
     N_tot = 0
     z_tot = sp.array([])
 
