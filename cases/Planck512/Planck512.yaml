@@ -8,7 +8,7 @@ hubblefile: ../cases/Planck512/Hubbleconstants.txt
 observer_choice: from_file
 
 # Specify the number of observers you want to use
-number_of_observers: 2
+number_of_observers: 600
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt

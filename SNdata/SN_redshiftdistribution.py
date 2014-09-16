@@ -1,10 +1,7 @@
 from __future__ import division
 import numpy as sp
-# Chosen plot options
-#from gplot import Plot 
-#plt = Plot('latex_full_hubble')
-import matplotlib.pyplot as mplt
-mplt.rc('font',family = 'serif')
+#import matplotlib.pyplot as mplt
+#mplt.rc('font',family = 'serif')
 
 
 zmin = 0.023
@@ -15,8 +12,8 @@ Nbins = 20
 
 def plot_SNdata(z,mB):
     log_cz = sp.log10(3e5*z)
-    mplt.plot(0.2*mB,log_cz,'ro')
-    mplt.axis([2.6,4.0,3.3,4.7])
+    #mplt.plot(0.2*mB,log_cz,'ro')
+    #mplt.axis([2.6,4.0,3.3,4.7])
 
 
 
@@ -42,7 +39,7 @@ def get_z_distribution():
     print "The number of supernovae is", N_tot
 
     weights=sp.ones_like(z_tot)/len(z_tot)
-    z_distribution = mplt.hist(z_tot,sp.linspace(zmin,zmax,Nbins), alpha = 0.7, color='green', weights=weights)
+    z_distribution = sp.histogram(z_tot,sp.linspace(zmin,zmax,Nbins), weights=weights)
     Wz = z_distribution[0]
     zbins = z_distribution[1]
 
@@ -58,19 +55,19 @@ def make_histograms(radial_velocities):
     c = 3e5 # km/s
     z_mock = sp.array(radial_velocities)/c
     weights = sp.ones_like(z_mock)/len(z_mock)
-    z_dist = mplt.hist(z_mock,zbins_table, alpha = 0.3, color='blue', weights=weights)
+    z_dist = sp.histogram(z_mock,zbins_table, weights=weights)
     Wz_mock = z_dist[0]
     z_mock = z_dist[1]
-    mplt.xlabel('Redshift',fontsize=16)
-    mplt.ylabel('Fraction of SN Ia',fontsize=16)
-    mplt.axis([0,0.1,0,0.2])
+    #mplt.xlabel('Redshift',fontsize=16)
+    #mplt.ylabel('Fraction of SN Ia',fontsize=16)
+    #mplt.axis([0,0.1,0,0.2])
 
     return Wz_mock, z_mock, len(z_mock)
 
-get_z_distribution()
-mplt.xlabel('Redshift',fontsize=16)
-mplt.ylabel('Fraction of SN Ia',fontsize=16)
-mplt.axis([0,0.1,0,0.2])
+#get_z_distribution()
+#mplt.xlabel('Redshift',fontsize=16)
+#mplt.ylabel('Fraction of SN Ia',fontsize=16)
+#mplt.axis([0,0.1,0,0.2])
 #mplt.figure(figsize=(1,2))
 
 #import matplotlib.pyplot as mplt

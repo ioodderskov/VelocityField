@@ -9,8 +9,8 @@ import Plotting_functions as pf
 import MeanDeviation_functions as md
 #from gplot import Plot 
 #plt = Plot('latex_full_hubble')
-import matplotlib.pyplot as mplt
-mplt.rc('font',family = 'serif')
+#import matplotlib.pyplot as mplt
+#mplt.rc('font',family = 'serif')
 
 
 # There is one argument, namely the parameterfile
@@ -95,8 +95,8 @@ if calculate_redshiftdistribution:
     bindistances = hf.calculate_bindistances(mind, maxd, width)
     skip, radial_velocities = hf.calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
     Wz_mock, z_mock, N_tot = SN.make_histograms(radial_velocities)
-    mplt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/redshiftdistribution.pdf')
-    mplt.close('all')
+    #mplt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/redshiftdistribution.pdf')
+    #mplt.close('all')
 
 if calculate_std_of_deviation:
     print "Calculating the mean of the standard deviation over the survey-range specified in SN_redshiftdistribution.py"
@@ -125,8 +125,8 @@ if make_hubblediagram:
     radial_distances, radial_velocities = hf.calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
     
     pf.make_hubbleplot(radial_distances,radial_velocities,mind,maxd,boxsize)
-    mplt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/hubblediagram.pdf')
-    mplt.close('all')
+    #mplt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/hubblediagram.pdf')
+    #mplt.close('all')
 
     
 
