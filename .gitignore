@@ -1,2 +1,6 @@
 *.pyc
 *.pyc.orig
+# Halo files #
+parents_*
+# Grendel output-files #
+*.[oe][0123456789]
