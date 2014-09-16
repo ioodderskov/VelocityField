@@ -1,6 +1,7 @@
 from __future__ import division
 import scipy as sp
 import random
+import scipy.linalg as la
 
 
 
@@ -210,8 +211,8 @@ def select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cone
         [xo,yo,zo] = [halo.x - x, halo.y - y,  halo.z - z]
         [xo,yo,zo] = periodic_boundaries(xo,yo,zo,boxsize)
         
-            
-        r = sp.sqrt(xo*xo+yo*yo+zo*zo)
+        rvec = sp.array([xo,yo,zo])
+        r = la.norm(rvec)
         
         # The halo is only chosen if it is within the chosen distance range
         if r < mind or r > maxd:
@@ -281,6 +282,7 @@ def mass_weighted_selection_of_halos(halo_list, halo_candidates, observed_halos,
      
 # This function bins and calculates Hubble constants from an observer position and a
 # list of observed halos        
+@profile
 def Hubble(x,y,z,halo_list, selected_halos, bindistances,boxsize):
     hubble = 100 # Distances are in Mpc/h
     b = 1
@@ -300,7 +302,8 @@ def Hubble(x,y,z,halo_list, selected_halos, bindistances,boxsize):
         #Calculate the distance to the halo
         [xo,yo,zo] = [halo.x - x, halo.y - y,  halo.z - z]
         [xo,yo,zo] = periodic_boundaries(xo,yo,zo,boxsize)
-        r = sp.sqrt(xo*xo+yo*yo+zo*zo)
+        rvec = sp.array([xo,yo,zo])
+        r = la.norm(rvec)
         
         # We are using the CMB frame of reference for the velocities
         [vx,vy,vz] = [halo.vx, halo.vy, halo.vz]

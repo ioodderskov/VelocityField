@@ -3,11 +3,11 @@ import scipy as sp
 
 
 
-zmin = 0.01
-zmax = 0.1
-MV = -19.504
-Nbins = 20
-bins = sp.linspace(zmin,zmax,Nbins)
+#zmin = 0.023
+#zmax = 0.1
+#MV = -19.504
+#Nbins = 20
+#bins = sp.linspace(zmin,zmax,Nbins)
 
 
 def plot_SNdata(z,mB):
@@ -17,7 +17,7 @@ def plot_SNdata(z,mB):
 
 
 
-def get_table_distribution():
+def get_table_distribution(zmin,zmax,Nbins):
 
     table_folder = '../SNdata/'
     N_tot = 0
@@ -39,7 +39,7 @@ def get_table_distribution():
     print "The number of supernovae is", N_tot
 
     weights=sp.ones_like(z_tot)/len(z_tot)
-
+    bins = sp.linspace(zmin,zmax,Nbins)
     histogram_table = sp.histogram(z_tot,bins, weights=weights)
     sp.save('histogram_table.npy',histogram_table)
 
@@ -50,13 +50,14 @@ def get_table_distribution():
 
 
 
-def get_mock_distribution(radial_velocities):
+def get_mock_distribution(radial_velocities, zmin, zmax, Nbins):
 
     c = 3e5 # km/s
     z_mock = radial_velocities/c
     N_tot = len(z_mock)
-    weights = sp.ones_like(z_mock)/N_tot
 
+    weights = sp.ones_like(z_mock)/N_tot
+    bins = sp.linspace(zmin,zmax,Nbins)
     histogram_mock = sp.histogram(z_mock,bins, weights=weights)
     sp.save('histogram_mock.npy',histogram_mock)
 
