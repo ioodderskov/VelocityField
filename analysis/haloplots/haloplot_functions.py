@@ -8,35 +8,7 @@ Created on Mon May 19 17:37:40 2014
 from __future__ import division
 import scipy as sp
 import matplotlib.pyplot as plt
-import sys
 
-
-## Arguments:
-#print 'Number of arguments:', len(sys.argv), 'arguments.'
-#print 'Argument List:', str(sys.argv)
-#print 'fil=', sys.argv[1]
-#print 'outname=', sys.argv[2]
-#print 'Number of cones =', sys.argv[3]
-#print 'Lightcone? =', sys.argv[4]
-#print 'Box =', sys.argv[5]
-#print 'Name =', sys.argv[6]
-#print 'Title =', sys.argv[7]
-#
-#
-#
-#fil = sys.argv[1]
-#outname = sys.argv[2]
-#cones = int(sys.argv[3])
-#lightcone = int(sys.argv[4])
-#box = float(sys.argv[5])
-#name = sys.argv[6]
-#title = sys.argv[7]
-#
-##fil = '/home/io/Desktop/PHD/Hubble/halofinders/Rockstar/Planck512/parents_11'
-##outname = '/home/io/Dropbox/hubble2013/haloplot_Planck512.png'
-##cones = 0
-#	
-#plt.close('all')
 
 
 def haloplot(fil,cones,lightcone,box,name,title):
@@ -48,7 +20,7 @@ def haloplot(fil,cones,lightcone,box,name,title):
     data = sp.loadtxt(fil) 
     
     
-    masses = data[0:,2]
+    masses = data[0:10,2]
     #mmax = sp.amax(masses)
     mnorm = 2.5e15
     m = masses/mnorm
@@ -76,8 +48,8 @@ def haloplot(fil,cones,lightcone,box,name,title):
 #    plt.xlabel('$x / [Mpc/h]$', fontsize=15)
 #    plt.ylabel('$y / [Mpc/h]$', fontsize=15)
     plt.title(name+'\n'+title, fontsize=8)
-    plt.xlabel('$x / [Mpc/h]$')
-    plt.ylabel('$y / [Mpc/h]$')
+    plt.xlabel('$x$ [Mpc/h]')
+    plt.ylabel('$y$ [Mpc/h]')
 #    plt.title(name+'\n'+title)
     
     

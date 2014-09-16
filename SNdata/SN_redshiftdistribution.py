@@ -42,10 +42,14 @@ def get_z_distribution():
     print "The number of supernovae is", N_tot
 
     weights=sp.ones_like(z_tot)/len(z_tot)
+
+    z_distribution = sp.histogram(z_tot,sp.linspace(zmin,zmax,Nbins), weights=weights ) #, alpha = 0.7, color='green')
     z_distribution = mplt.hist(z_tot,sp.linspace(zmin,zmax,Nbins), alpha = 0.7, color='green', weights=weights)
     Wz = z_distribution[0]
     zbins = z_distribution[1]
-
+    print Wz
+    print zbins
+#    mplt.hist(z_distribution, alpha = 0.7, color='green', weights=weights)
 
     
     return Wz, zbins, N_tot
@@ -71,6 +75,9 @@ get_z_distribution()
 mplt.xlabel('Redshift',fontsize=16)
 mplt.ylabel('Fraction of SN Ia',fontsize=16)
 mplt.axis([0,0.1,0,0.2])
+
+
+
 #mplt.figure(figsize=(1,2))
 
 #import matplotlib.pyplot as mplt

@@ -57,7 +57,7 @@ print "The mean systematical error is", error*100, "%"
 
 # If activated, the result is compared with the results from the standard analysis
 if compare == 1:
-    comparisonfil = '/home/io/Desktop/PHD/Hubble/output/Planck512/Hubbleconstants.txt' 
+    comparisonfil = '../../cases/Planck512/Hubbleconstants.txt' 
     rmax_sml, H_sml= hf.load_Hubbleconstants(comparisonfil,1,N_observers)
     sigma68_sml, sigma95_sml, sigma99_sml = hf.calc_confidence_intervals(H_sml)
 
@@ -85,16 +85,16 @@ else:
 #    ymax = 2
     
 if xaxis == 'rmax':
-    plt.xlabel('$r_{max} [Mpc/h]$')
+    plt.xlabel('$r_{max}$ [Mpc/h]')
     plt.axis([xmin, xmax, ymin, ymax])
-#    plt.xticks(sp.arange(80, 260, 20))
+    plt.xticks(sp.arange(80, 260, 20))
 if xaxis == 'numSN':
     plt.xlabel('Number of observed halos')
     plt.axis([2, 200, ymin, ymax])
     plt.xticks(sp.arange(20,200,20))
 
 plt.ylabel('$H_{loc}/H_0$');
-#plt.yticks(sp.arange(ymin, ymax+0.001, 0.025))
+plt.yticks(sp.arange(ymin, ymax+0.001, 0.025))
 
 if compare == 1:
         hf.plot_lines(rmax_sml,H_sml,sigma68_sml,sigma95_sml,sigma99_sml)
@@ -115,7 +115,7 @@ if write_to_tabular == 1:
     mu150_pc, sigma150_pc = hf.mu_and_sigma(rmax,150,H);
     mu256_pc, sigma256_pc = hf.mu_and_sigma(rmax,256,H);
 
-    tabel = open('/home/io/Dropbox/PHD/Python/tabel.txt','a')
+    tabel = open('tabel.txt','a')
     print >> tabel, runname, '&', mu67_pc, '&', mu150_pc, '&', mu256_pc, '&', sigma67_pc, '&', sigma150_pc, '&', sigma256_pc, '\\\\'
     tabel.close()
 

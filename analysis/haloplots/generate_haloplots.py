@@ -5,11 +5,11 @@ from __future__ import division
 import haloplot_functions as hp
 from gplot import Plot # Import gplot
 #
-plt = Plot('latex_full_hubble','halo') # Specifies 'h2' substyle - a layout with two horizontal subplots
+plt = Plot('latex_full_hubble','halo') 
 plt.rc('font',family = 'serif')
 
 indir='/home/io/Dropbox/Projekter/Hubble/VelocityField/cases'
-outdir='/home/io/Dropbox/hubble2013'
+outdir='/home/io/Dropbox/SharedStuff/hubble2013'
 #outdir='/home/io/Dropbox/PHD/Python/tests'
 outname = outdir+'/haloplots.png'
 
@@ -58,7 +58,7 @@ print 'Done with plot 4'
 
 plt.finalize(custom = True)
 plt.savefig(outname, dpi=200)
-#plt.show()
+plt.show()
 
 
 

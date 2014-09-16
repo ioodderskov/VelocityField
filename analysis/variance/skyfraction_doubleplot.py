@@ -75,10 +75,11 @@ def get_data(inputdir):
 plt = Plot('latex_full_hubble','h2c')
 plt.rc('font',family = 'serif')
 
-inputdir = '/home/io/Dropbox/Projekter/Hubble/VelocityField/cases/Planck512_skyfraction'
-#output='/home/io/Dropbox/PHD/Python/tests/Planck512_skyfraction.pdf'
-output1 = '/home/io/Dropbox/SharedStuff/hubble2013/Planck512_skyfraction.pdf'
-output256 = '/home/io/Dropbox/SharedStuff/hubble2013/Planck512_skyfraction_256.pdf'
+inputdir = '../../cases/Planck512_skyfraction'
+#outputdir = '/home/io/Desktop/'
+outputdir = '/home/io/Dropbox/SharedStuff/hubble2013/'
+output1 = outputdir+'Planck512_skyfraction.pdf'
+output256 = outputdir+'Planck512_skyfraction_256.pdf'
 
 
 cdict = {
@@ -113,7 +114,7 @@ ax1 = plt.subplot(1,3,1)
 plt.contourf(x,y,sp.log10(z68_1cone),level,shading='flat',cmap=cm)
 #plt.contourf(x,y,sp.log10(z68_1cone),level,shading='flat')
 plt.xlabel('Fraction of sky observed')
-plt.ylabel('Distance [Mpc/h]')
+plt.ylabel('$r_{max}$ [Mpc/h]')
 
 ax2 = plt.subplot(1,3,2)
 #im = plt.contourf(x,y,sp.log10(z68_2cones),level,shading='flat')

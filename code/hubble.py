@@ -126,7 +126,7 @@ if make_hubblediagram:
     
     pf.make_hubbleplot(radial_distances,radial_velocities,mind,maxd,boxsize)
     mplt.savefig('/home/io/Dropbox/SharedStuff/hubble2013/hubblediagram.pdf')
-    mplt.close('all')
+    mplt.show()
 
     
 

@@ -7,8 +7,6 @@ Created on Fri May  2 11:58:18 2014
 
 from __future__ import division
 import scipy as sp
-import ios_constants as ic
-#import matplotlib.pyplot as plt
 import hubvar_functions as hf
 import sys
 from gplot import Plot
@@ -34,8 +32,8 @@ H = sp.array([])
 for i in range(0,600):
     if i in skip:
         continue;
-    fil = '/home/io/Desktop/PHD/Hubble/output/Planck512_lightcone/Hubbleconstants.'+str(i)+'.txt'
-    rmax, Hi, N=hf.load_Hubbleconstants(fil,1,1);
+    fil = '../../cases/Planck512_lightcone/Hubbleconstants.'+str(i)+'.txt'
+    rmax, Hi=hf.load_Hubbleconstants(fil,1,1);
     Hi = sp.reshape(Hi,len(rmax))
     H = sp.hstack((H,Hi))
 
@@ -48,8 +46,8 @@ sigma68, sigma95, sigma99 = hf.calc_confidence_intervals(H);
 
 # The result is compared with the results from the standard analysis
 
-comparisonfil = '/home/io/Desktop/PHD/Hubble/output/Planck512/Hubbleconstants.txt' 
-rmax_sml, H_sml, N = hf.load_Hubbleconstants(comparisonfil,1,Nobs)
+comparisonfil = '../../cases/Planck512/Hubbleconstants.txt' 
+rmax_sml, H_sml= hf.load_Hubbleconstants(comparisonfil,1,Nobs)
 sigma68_sml, sigma95_sml, sigma99_sml = hf.calc_confidence_intervals(H_sml)
 
 # Things are plotted and saved
@@ -62,7 +60,7 @@ plt.hold(True)
 #plt.rcParams['axes.labelsize'] = 20
 #
 
-plt.xlabel('$r_{max} [Mpc/h]$')
+plt.xlabel('$r_{max}$ [Mpc/h]')
 plt.axis([67.3, 256, 0.90, 1.10])
 plt.xticks(sp.arange(80, 260, 20))
 
@@ -80,7 +78,7 @@ mu67_pc, sigma67_pc = hf.mu_and_sigma(rmax,67,H)
 mu150_pc, sigma150_pc = hf.mu_and_sigma(rmax,150,H);
 mu256_pc, sigma256_pc = hf.mu_and_sigma(rmax,256,H);
 
-tabel = open('/home/io/Dropbox/PHD/Python/tabel.txt','a')
+tabel = open('tabel.txt','a')
 print >> tabel, 'Lightcone', '&', mu67_pc, '&', mu150_pc, '&', mu256_pc, '&', sigma67_pc, '&', sigma150_pc, '&', sigma256_pc, '\\\\'
 tabel.close()
 
