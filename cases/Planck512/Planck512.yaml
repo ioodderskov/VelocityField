@@ -5,7 +5,7 @@ hubblefile: ../cases/Planck512/Hubbleconstants.txt
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
 
-observer_choice: from_file
+observer_choice: subhalos
 
 # Specify the number of observers you want to use
 number_of_observers: 1
@@ -14,16 +14,16 @@ number_of_observers: 1
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
 
 # If subhalos, specify the mass-requirements here
-host_min_m: 1e12
-host_max_m: 1e13
-sub_min_m: 5e14
-sub_max_m: 5e15
+sub_min_m: 1e12
+sub_max_m: 1e13
+host_min_m: 5e14
+host_max_m: 5e15
 
 ##########################################################################
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 1
+calculate_hubble_constants: 5
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
