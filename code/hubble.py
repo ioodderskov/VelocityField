@@ -1,5 +1,5 @@
 from __future__ import division
-import scipy as sp
+import numpy as sp
 import sys
 sys.path.insert(0,'../SNdata')
 import yaml
