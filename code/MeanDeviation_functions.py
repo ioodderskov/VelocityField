@@ -81,7 +81,6 @@ def calculate_mean_deviation_over_surveyrange(observer_list,Wz, zbins,  halo_lis
     
     pool = multiprocessing.Pool()
     errors = pool.map(partial_error_for_observer,range(0,N_observers))
-    errors = map(partial_error_for_observer,range(0,N_observers))
     pool.close()
     pool.join()
 
