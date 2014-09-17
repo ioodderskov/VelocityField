@@ -5,7 +5,7 @@ hubblefile: ../cases/sim16/Hubbleconstants.txt
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
 #
-observer_choice: random_positions
+observer_choice: subhalos
 
 # Specify the number of observers you want to use
 number_of_observers: 10
@@ -14,10 +14,10 @@ number_of_observers: 10
 observerfile: ../cases/sim16/howdy16.txt
 
 # If subhalos, specify the mass-requirements here
-host_min_m: 1e9
-host_max_m: 1e15
-sub_min_m: 1e8
-sub_max_m: 1e10
+host_min_m: 1.1e13
+host_max_m: 2.3e13
+sub_min_m: 1.6e12
+sub_max_m: 2.8e12
 
 ##########################################################################
 

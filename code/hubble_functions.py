@@ -2,6 +2,8 @@ from __future__ import division
 import scipy as sp
 import random
 import scipy.linalg as la
+import multiprocessing
+from functools import partial
 
 
 
@@ -21,12 +23,12 @@ class Halos:
 
     
 class Observers:
-    def __init__(self,x,y,z,selected_halos,H):
+    def __init__(self,x,y,z,selected_halos,Hubbleconstants):
         self.x = x
         self.y = y
         self.z = z
         self.selected_halos = selected_halos
-        self.H = H
+        self.Hubbleconstants = Hubbleconstants
 
 
 # This function calculate the bin distances, so that every shell has the same volume
@@ -67,19 +69,48 @@ def read_halo_file(mass_sorted_data):
 
 
 
+
 ######## Calculating the Hubbleconstants for all observers ########################
+
+
+
+# This function calculates the Hubble constants for a given observer
+def find_hubble_constants_for_observer(observer_number,observer_list,halo_list,observed_halos,bindistances,boxsize,number_of_cones,skyfraction):
+
+    observer = observer_list[observer_number]
+    [x,y,z] = [observer.x, observer.y, observer.z]
+    mind = bindistances[0]
+    maxd = bindistances[-1]
+    selected_halos = select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cones,skyfraction)
+    Hubbleconstants, radial_distances, radial_velocities = Hubble(x,y,z,halo_list, selected_halos, bindistances, boxsize)
+
+    return Hubbleconstants, radial_distances, radial_velocities
+
+
+
 def calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, observed_halos, bindistances, boxsize, number_of_cones, skyfraction):
     if isinstance(obs,int):    
         obs = list([obs])
 
+    partial_find_hubble_constants_for_observer = partial(find_hubble_constants_for_observer,observer_list=observer_list,halo_list=halo_list,observed_halos=observed_halos,bindistances=bindistances,boxsize=boxsize,number_of_cones=number_of_cones,skyfraction=skyfraction)
+        
+    pool = multiprocessing.Pool()
+    out = pool.map(partial_find_hubble_constants_for_observer,obs)
+#    out = map(partial_find_hubble_constants_for_observer,obs)
+    pool.close()
+    pool.join()
+
+    # Writing the Hubbleconstants to the observer_list. For some reason, it does not work to do so
+    # using parallel processing :-/
     for observer_number in obs:
+#        observer.selected_halos = selected_halos
         observer = observer_list[observer_number]
-        [x,y,z] = [observer.x, observer.y, observer.z]
-        Hubbleconstants, radial_distances, radial_velocities, selected_halos  = find_hubble_constants_for_observer(x,y,z,halo_list,observed_halos,bindistances,boxsize,number_of_cones,skyfraction)
-        observer.selected_halos = selected_halos
+        Hubbleconstants = out[observer_number][0]
         observer.Hubbleconstants = Hubbleconstants
     
-    return sp.array(radial_distances), sp.array(radial_velocities)
+    radial_distances = sp.array(out[-1][1])
+    radial_velocities = sp.array(out[-1][2])
+    return radial_distances, radial_velocities
         
 ##############################################################################
 
@@ -126,6 +157,7 @@ def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo
         # Identifying halos with masses corresponding to the Virgo Supercluster or the Local Group
         localgroup_indices = (sub_min_m < masses) & (masses < sub_max_m)
         virgo_indices = (host_min_m < masses) & (masses < host_max_m)
+
         #
         ID_hosts = sp.array([halo.ID_host for halo in halo_list])
         IDs = sp.array([halo.ID for halo in halo_list])
@@ -151,6 +183,7 @@ def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo
             
    ###################### Choosing random positions as observers ################################         
     if observer_choice == 'random_positions':
+        sp.random.seed(0)
         observer_positions = boxsize*sp.rand(number_of_observers,3)
         observer_list = [None]*len(observer_positions)
         for observer_number in range(number_of_observers):
@@ -282,7 +315,6 @@ def mass_weighted_selection_of_halos(halo_list, halo_candidates, observed_halos,
      
 # This function bins and calculates Hubble constants from an observer position and a
 # list of observed halos        
-@profile
 def Hubble(x,y,z,halo_list, selected_halos, bindistances,boxsize):
     hubble = 100 # Distances are in Mpc/h
     b = 1
@@ -356,13 +388,6 @@ def calculate_H(rvsum,r2sum,halo_count):
 
 
 
-# This function calculates the Hubble constants for a given observer
-def find_hubble_constants_for_observer(x,y,z,halo_list,observed_halos,bindistances,boxsize,number_of_cones,sky_cover):
-    mind = bindistances[0]
-    maxd = bindistances[-1]
-    selected_halos = select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cones,sky_cover)
-    Hubbleconstants, radial_distances, radial_velocities = Hubble(x,y,z,halo_list, selected_halos, bindistances, boxsize)
-    return Hubbleconstants, radial_distances, radial_velocities, selected_halos 
 
 
 
