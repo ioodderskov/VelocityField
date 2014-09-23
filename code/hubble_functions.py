@@ -23,12 +23,17 @@ class Halos:
 
     
 class Observers:
-    def __init__(self,x,y,z,selected_halos,Hubbleconstants):
+    def __init__(self,x,y,z,selected_halos,Hubbleconstants,thetas,phis,rs,vrs):
         self.x = x
         self.y = y
         self.z = z
         self.selected_halos = selected_halos
         self.Hubbleconstants = Hubbleconstants
+        self.thetas = thetas
+        self.phis = phis
+        self.rs = rs
+        self.vrs = vrs
+        
 
 
 # This function calculate the bin distances, so that every shell has the same volume
@@ -128,8 +133,9 @@ def calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, o
 
 #This function finds the halos that are have the characteristics specified in the parameterfile
 #Or, if find_observers = 0, the positions are simple read from a file.
-def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo_list,sub_min_m,sub_max_m,host_min_m,host_max_m):
-  
+def find_observers(observer_choice,number_of_observers,number_of_SNe,boxsize,observerfile,halo_list,sub_min_m,sub_max_m,host_min_m,host_max_m):
+    
+    dummy = sp.zeros(number_of_SNe)
    
    ###################### Reading observers from file ################################
     if observer_choice == 'from_file':
@@ -141,7 +147,7 @@ def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo
         for observer_number in range(len(observer_list)):
             [x,y,z] = [observer_positions[observer_number,0],observer_positions[observer_number,1],observer_positions[observer_number,2]]
             [x,y,z] = sp.array([x,y,z])/1000
-            observer = Observers(x,y,z,[],[])
+            observer = Observers(x,y,z,dummy,dummy,dummy,dummy,dummy,dummy)
             observer_list[observer_number] = observer
    ########################################################################################                    
         
@@ -173,7 +179,7 @@ def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo
         for halo_index,observer_number in zip(observer_indices,range(len(observer_indices))):
             observer = halo_list[halo_index]
             [x,y,z] = [observer.x, observer.y, observer.z]
-            observer = Observers(x,y,z,[],[])
+            observer = Observers(x,y,z,dummy,dummy,dummy,dummy,dummy,dummy)
             observer_list[observer_number] = observer
    ########################################################################################            
             
@@ -188,7 +194,7 @@ def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo
         observer_list = [None]*len(observer_positions)
         for observer_number in range(number_of_observers):
             [x,y,z] = [observer_positions[observer_number,0],observer_positions[observer_number,1],observer_positions[observer_number,2]]
-            observer = Observers(x,y,z,[],[])
+            observer = Observers(x,y,z,dummy,dummy,dummy,dummy,dummy,dummy)
             observer_list[observer_number] = observer
    ########################################################################################            
 
@@ -206,7 +212,7 @@ def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo
         for halo_index,observer_number in zip(random_halo_indices,range(len(random_halo_indices))):
             observer = halo_list[halo_index]
             [x,y,z] = [observer.x,observer.y,observer.z]
-            observer = Observers(x,y,z,[],[])
+            observer = Observers(x,y,z,dummy,dummy,dummy,dummy,dummy,dummy)
             observer_list[observer_number] = observer
    ########################################################################################                    
         
@@ -217,15 +223,95 @@ def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo
     return observer_list
     
 
-   
+
+
+# This function select the halos observed by a given observer, and saves the observations
+def observations(observer_number,observer_list,halo_list,mind,maxd,number_of_SNe,boxsize,number_of_cones,skyfraction):
+    observer = observer_list[observer_number]
+    [x,y,z] = [observer.x, observer.y, observer.z]
+
+    total_mass = 0
+    halo_candidates = []
+    hubble = 100
     
+    for i in range(len(halo_list)):
+        
+        halo = halo_list[i]
+        #Putting the observer in origo
+        [xo,yo,zo] = [halo.x - x, halo.y - y,  halo.z - z]
+        [xo,yo,zo] = periodic_boundaries(xo,yo,zo,boxsize)
+        
+        rvec = sp.array([xo,yo,zo])
+        r = la.norm(rvec)
+        
+        # We are using the CMB frame of reference for the velocities
+        [vx,vy,vz] = [halo.vx, halo.vy, halo.vz]
+        vr = (xo*vx+yo*vy+zo*vz)/r+r*hubble
+        
+        # The halo is only chosen if it is within the chosen distance range
+        if r < mind or r > maxd:
+            continue
+        
+        theta = sp.arccos(zo/r)
+
+                
+        # The halo is only chosen if it is within the chosen patch
+        if number_of_cones == 1:
+            theta_max = sp.arccos(1-2*skyfraction)
+            if theta > theta_max:
+                continue
+            
+        if number_of_cones == 2:
+            theta_max = sp.arccos(1-skyfraction)
+            if theta > theta_max and sp.pi-theta > theta_max:
+                continue
+
+        halo_candidates.append(i) # Saving the index for the halo
+        total_mass = total_mass+halo.mass
+
+        
+    selected_halos = mass_weighted_selection_of_halos(halo_list, halo_candidates, number_of_SNe,total_mass)
+
+    thetas = sp.zeros(number_of_SNe) 
+    phis = sp.zeros(number_of_SNe)
+    rs = sp.zeros(number_of_SNe)
+    vprs = sp.zeros(number_of_SNe)
+    
+    for count, i in enumerate(selected_halos):
+        halo = halo_list[i]
+        
+        #Putting the observer in origo
+        [xo,yo,zo] = [halo.x - x, halo.y - y,  halo.z - z]
+        [xo,yo,zo] = periodic_boundaries(xo,yo,zo,boxsize)
+        
+        rvec = sp.array([xo,yo,zo])
+        r = la.norm(rvec)
+        
+        # We are using the CMB frame of reference for the velocities
+        [vx,vy,vz] = [halo.vx, halo.vy, halo.vz]
+        vpr = (xo*vx+yo*vy+zo*vz)/r
+        
+        theta = sp.arccos(zo/r)
+        if xo > 0:
+            phi = sp.arctan(yo/xo)
+        elif xo < 0:
+            phi = sp.arctan(yo/xo)+sp.pi
+        elif xo == 0:
+            phi = sp.sign(yo)*sp.pi/2
+        else:
+            print "Something must be wrong!"
+
+        thetas[count] = theta
+        phis[count] = phi
+        rs[count] = r
+        vprs[count] = vpr
+
+        
+    return thetas, phis,rs,vprs
+
+
 
    
-    
-
-
-    
-    
     
     
 #################################### selection of halos #############################    
@@ -270,7 +356,7 @@ def select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cone
 
         
     selected_halos = mass_weighted_selection_of_halos(halo_list, halo_candidates, observed_halos,total_mass)
- 
+    
         
     return selected_halos
 

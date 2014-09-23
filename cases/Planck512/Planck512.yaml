@@ -8,7 +8,7 @@ hubblefile: ../cases/Planck512/Hubbleconstants.txt
 observer_choice: subhalos
 
 # Specify the number of observers you want to use
-number_of_observers: 5
+number_of_observers: 1
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
@@ -23,7 +23,7 @@ host_max_m: 5e15
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 5
+calculate_hubble_constants: 0
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
@@ -33,6 +33,8 @@ calculate_std_of_deviation: 0
 calculate_redshiftdistribution: 0
 # Make Hubble diagram for one observer?
 make_hubblediagram: 0
+# Create a map of the velocityfield?
+map_velocityfield: 1
 
 # Choose whether we should vary the number of supernovae (in that case, the distance aren't varied)
 ##########################################################################
@@ -52,8 +54,8 @@ omegam: 0.306843
 
 number_of_cones: 1
 
-number_of_SNe: 240
-mind: 30
-maxd: 256
-width: 37.3
+number_of_SNe: 10000
+mind: 148
+maxd: 152
+width: 4
 

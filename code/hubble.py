@@ -49,6 +49,7 @@ calculate_std_of_deviation = int(param["calculate_std_of_deviation"])
 calculate_hubble_constants = int(param["calculate_hubble_constants"])
 calculate_redshiftdistribution = int(param["calculate_redshiftdistribution"])
 make_hubblediagram = int(param["make_hubblediagram"])
+map_velocityfield = int(param["map_velocityfield"])
 
 vary_number_of_SNe = int(param["vary_number_of_SNe"])
 min_number_of_SNe = int(param["min_number_of_SNe"])
@@ -62,7 +63,7 @@ step_number_of_SNe = int(param["step_number_of_SNe"])
 halo_list = hf.read_halo_file(mass_sorted_data)
     
 # The observer positions are read or found:
-observer_list = hf.find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo_list,sub_min_m,sub_max_m,host_min_m,host_max_m)
+observer_list = hf.find_observers(observer_choice,number_of_observers,number_of_SNe,boxsize,observerfile,halo_list,sub_min_m,sub_max_m,host_min_m,host_max_m)
 print "The total number of observers is", len(observer_list)
 
 #Selecting some of the observers
@@ -131,7 +132,16 @@ if make_hubblediagram:
     sp.save('radial_distances.npy', radial_distances)
     sp.save('radial_velocities.npy', radial_velocities)
     
-
+if map_velocityfield:
+    obs = 0    
+    
+    print "Making a map of the velocity field"
+    thetas, phis, rs, vprs = hf.observations(obs,observer_list,halo_list,mind,maxd,number_of_SNe,boxsize,number_of_cones,skyfraction)
+    
+  
+    sp.save('thetas',thetas)
+    sp.save('phis',phis)
+    sp.save('vprs',vprs)
     
 
 
