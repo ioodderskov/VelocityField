@@ -246,7 +246,7 @@ def observations(observer_number,observer_list,halo_list,mind,maxd,number_of_SNe
         
         # We are using the CMB frame of reference for the velocities
         [vx,vy,vz] = [halo.vx, halo.vy, halo.vz]
-        vr = (xo*vx+yo*vy+zo*vz)/r+r*hubble
+#        vr = (xo*vx+yo*vy+zo*vz)/r+r*hubble
         
         # The halo is only chosen if it is within the chosen distance range
         if r < mind or r > maxd:

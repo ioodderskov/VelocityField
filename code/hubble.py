@@ -51,6 +51,9 @@ calculate_redshiftdistribution = int(param["calculate_redshiftdistribution"])
 make_hubblediagram = int(param["make_hubblediagram"])
 map_velocityfield = int(param["map_velocityfield"])
 
+distances_from_perturbed_metric = int(param["distances_from_perturbed_metric"])
+potential_file = param["potential_file"]
+
 vary_number_of_SNe = int(param["vary_number_of_SNe"])
 min_number_of_SNe = int(param["min_number_of_SNe"])
 max_number_of_SNe = int(param["max_number_of_SNe"])
@@ -143,16 +146,18 @@ if map_velocityfield:
     sp.save('phis',phis)
     sp.save('vprs',vprs)
     
-
-
+    observer = observer_list[obs]
+    observer.thetas = thetas
+    observer.phis = phis
+    observer.rs = rs
+    observer.vprs = vprs
     
 
-
-
-
-
-
-
+#def dist_sphere(thetaP, phiP, thetaQ, phiQ):
+#    return sp.cos(thetaP)*sp.cos(thetaQ)+sp.sin(thetaP)*sp.sin(thetaQ)*sp.cos(phiP-phiQ)
+#
+#
+#print "Distance = ", dist_sphere(thetas[0], phis[0], thetas[1], phis[1])*150, "Mpc/h" 
 
 
 

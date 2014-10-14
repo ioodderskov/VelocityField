@@ -5,7 +5,7 @@ hubblefile: ../cases/sim16/Hubbleconstants.txt
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
 #
-observer_choice: subhalos
+observer_choice: from_file
 
 # Specify the number of observers you want to use
 number_of_observers: 10
@@ -34,7 +34,14 @@ calculate_std_of_deviation: 0
 calculate_redshiftdistribution: 0
 # Make Hubble diagram for one observer?
 make_hubblediagram: 0
+# Create a map of the velocityfield?
+map_velocityfield: 0
 
+##########################################################################
+# Should the distances be calculated using the perturbed metric?
+distances_from_perturbed_metric: 1
+# In that case, which file describes the potential?
+potential_file: ../cases/sim16/potential.txt
 
 
 
