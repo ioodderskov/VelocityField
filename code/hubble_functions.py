@@ -4,6 +4,8 @@ import random
 import scipy.linalg as la
 import multiprocessing
 from functools import partial
+import pdb
+import scipy.ndimage as ndi
 
 
 
@@ -80,25 +82,26 @@ def read_halo_file(mass_sorted_data):
 
 
 # This function calculates the Hubble constants for a given observer
-def find_hubble_constants_for_observer(observer_number,observer_list,halo_list,observed_halos,bindistances,boxsize,number_of_cones,skyfraction):
+def find_hubble_constants_for_observer(observer_number,observer_list,halo_list,observed_halos,bindistances,boxsize,number_of_cones,skyfraction,distances_from_perturbed_metric, potential_file):
 
     observer = observer_list[observer_number]
     [x,y,z] = [observer.x, observer.y, observer.z]
     mind = bindistances[0]
     maxd = bindistances[-1]
-    selected_halos = select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cones,skyfraction)
-    Hubbleconstants, radial_distances, radial_velocities = Hubble(x,y,z,halo_list, selected_halos, bindistances, boxsize)
+    selected_halos = select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cones,skyfraction, distances_from_perturbed_metric, potential_file)
+    Hubbleconstants, radial_distances, radial_velocities = Hubble(x,y,z,halo_list, selected_halos, bindistances, boxsize, distances_from_perturbed_metric, potential_file)
 
     return Hubbleconstants, radial_distances, radial_velocities
 
 
 
-def calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, observed_halos, bindistances, boxsize, number_of_cones, skyfraction):
+def calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, observed_halos, bindistances, boxsize, number_of_cones, skyfraction, distances_from_perturbed_metric, potential_file):
     if isinstance(obs,int):    
         obs = list([obs])
 
-    partial_find_hubble_constants_for_observer = partial(find_hubble_constants_for_observer,observer_list=observer_list,halo_list=halo_list,observed_halos=observed_halos,bindistances=bindistances,boxsize=boxsize,number_of_cones=number_of_cones,skyfraction=skyfraction)
-        
+
+    partial_find_hubble_constants_for_observer = partial(find_hubble_constants_for_observer,observer_list=observer_list,halo_list=halo_list,observed_halos=observed_halos,bindistances=bindistances,boxsize=boxsize,number_of_cones=number_of_cones,skyfraction=skyfraction, distances_from_perturbed_metric=distances_from_perturbed_metric, potential_file=potential_file)
+#    pdb.set_trace()    
     pool = multiprocessing.Pool()
     out = pool.map(partial_find_hubble_constants_for_observer,obs)
 #    out = map(partial_find_hubble_constants_for_observer,obs)
@@ -226,7 +229,7 @@ def find_observers(observer_choice,number_of_observers,number_of_SNe,boxsize,obs
 
 
 # This function select the halos observed by a given observer, and saves the observations
-def observations(observer_number,observer_list,halo_list,mind,maxd,number_of_SNe,boxsize,number_of_cones,skyfraction):
+def observations(observer_number,observer_list,halo_list,mind,maxd,number_of_SNe,boxsize,number_of_cones,skyfraction,distances_from_perturbed_metric, potential_file):
     observer = observer_list[observer_number]
     [x,y,z] = [observer.x, observer.y, observer.z]
 
@@ -285,13 +288,16 @@ def observations(observer_number,observer_list,halo_list,mind,maxd,number_of_SNe
         [xo,yo,zo] = periodic_boundaries(xo,yo,zo,boxsize)
         
         rvec = sp.array([xo,yo,zo])
-        r = la.norm(rvec)
-        
+        ro = la.norm(rvec)
+        if distances_from_perturbed_metric == 1:
+            r = calculate_distance_in_perturbed_metric(x,y,z,potential_file,xo,yo,zo,boxsize)
+        else:
+            r = ro        
         # We are using the CMB frame of reference for the velocities
         [vx,vy,vz] = [halo.vx, halo.vy, halo.vz]
-        vpr = (xo*vx+yo*vy+zo*vz)/r
+        vpr = (xo*vx+yo*vy+zo*vz)/ro
         
-        theta = sp.arccos(zo/r)
+        theta = sp.arccos(zo/ro)
         if xo > 0:
             phi = sp.arctan(yo/xo)
         elif xo < 0:
@@ -309,15 +315,76 @@ def observations(observer_number,observer_list,halo_list,mind,maxd,number_of_SNe
         
     return thetas, phis,rs,vprs
 
+def calculate_distance_in_perturbed_metric(x,y,z,potential_file,xo,yo,zo,boxsize):
+    # Load potential.
+    potential = sp.loadtxt(potential_file)
 
+    # Place the observer in origo
+    # This can be done by substracting the observer positions (x,y,z) from the 
+    # x,y and z coordinates of the potential
+    
+    # No, that won't work! I would need the potential in all the new positions
+    # But I only need to apply the periodicity to the d-vector
+    
+    # Create a set of equidistant point along the line of sight from the observer (0,0,0)
+    # to the observed halo    
+    res = 100
+    f = sp.linspace(0,1,res)
+    rvec = [xo,yo,zo]
+    ro = la.norm(rvec)
+    d = sp.array([f*xo+x,f*yo+y,f*zo+z])
+    d[d<0] = d[d<0]+boxsize
+#    pdb.set_trace()
+    
+#    print d    
+    # The loaded potential needs to be arranged in a 3D array.
+    # The indices could be given by the coordinates.
+    grid = int(sp.ceil(len(potential)**(1./3)))
+    pot_grid = sp.zeros((grid,grid,grid))
+    row = 0
+    for i in range(grid):
+        for j in range(grid):
+            for k in range(grid):
+                pot_grid[i][j][k] = potential[row][3]
+                row += 1
+#    print pot_grid  
+#    print "grid = ",grid              
+    # map_coordinates assumes that the indices along each dimension are 0:length(dim)
+    # dp can be scaled to fit this by
+    d = d/boxsize # Now each coordinate is between 0 and 1
+    d = d*(grid-1) # Now the coordinates are scaled to the grid dimensions
+    # The -1 in (grid-1) is because the indices ranges from 0 to 7
+    
+    # Calculate the quantity (1-2*psi) (maybe times Delta_r?) along the line of sight
+    
+    import scipy.ndimage as ndi
+    
+    psi = ndi.map_coordinates(pot_grid,d)
+#    print "d = ",d
+#    print "psi = ",psi
 
-   
+#    x = np.arange(0,2*np.pi+np.pi/4,2*np.pi/8)
+#    y = np.sin(x)
+    from scipy import interpolate
+#    pdb.set_trace()
+
+    tck = interpolate.splrep(f,1-2*psi,s=0)
+
+#    xnew = np.arange(0,2*np.pi,np.pi/50)
+#    phi_new = interpolate.splev(d,tck,der=0)
+    
+
+    psi_int = interpolate.splint(0,1,tck)
+#    print psi_int
+    
+    r = psi_int*ro
+    return r   
     
     
 #################################### selection of halos #############################    
     
 # This function select the halos observed by a given observer
-def select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cones,skyfraction):
+def select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cones,skyfraction, distances_from_perturbed_metric, potential_file):
     total_mass = 0
     halo_candidates = []
 
@@ -329,15 +396,22 @@ def select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cone
         #Putting the observer in origo
         [xo,yo,zo] = [halo.x - x, halo.y - y,  halo.z - z]
         [xo,yo,zo] = periodic_boundaries(xo,yo,zo,boxsize)
-        
+
         rvec = sp.array([xo,yo,zo])
-        r = la.norm(rvec)
+        ro = la.norm(rvec) # This is the distance without taking metric perturbations into account
+        if distances_from_perturbed_metric == 1:
+            r = calculate_distance_in_perturbed_metric(x,y,z,potential_file,xo,yo,zo,boxsize)
+        else:
+            r = ro
+        
+        
         
         # The halo is only chosen if it is within the chosen distance range
         if r < mind or r > maxd:
             continue
+
         
-        theta = sp.arccos(zo/r)
+        theta = sp.arccos(zo/ro)
 
                 
         # The halo is only chosen if it is within the chosen patch
@@ -401,7 +475,7 @@ def mass_weighted_selection_of_halos(halo_list, halo_candidates, observed_halos,
      
 # This function bins and calculates Hubble constants from an observer position and a
 # list of observed halos        
-def Hubble(x,y,z,halo_list, selected_halos, bindistances,boxsize):
+def Hubble(x,y,z,halo_list, selected_halos, bindistances,boxsize,distances_from_perturbed_metric,potential_file):
     hubble = 100 # Distances are in Mpc/h
     b = 1
 

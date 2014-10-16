@@ -83,7 +83,7 @@ if calculate_hubble_constants:
     bindistances = hf.calculate_bindistances(mind, maxd, width)
 #    
 #    # Calculate the Hubbleconstants for all observers and all distances (or number of SNe)
-    hf.calculate_hubble_constants_for_all_observers(range(len(observer_list)),observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
+    hf.calculate_hubble_constants_for_all_observers(range(len(observer_list)),observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction, distances_from_perturbed_metric, potential_file)
 #    
 #    # Print the results to a file
     hf.print_hubbleconstants(hubblefile, bindistances, observer_list)
