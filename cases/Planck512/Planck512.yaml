@@ -1,11 +1,11 @@
 ---
-halofile: ../cases/Planck512/parents_11
-hubblefile: ../cases/Planck512/Hubbleconstants.txt
+halocatalogue: ../cases/Planck512/parents_11
+hubblefile: ../cases/Planck512/Hubbleconstants_perturbed_metric.txt
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
 
-observer_choice: subhalos
+observer_choice: from_file
 
 # Specify the number of observers you want to use
 number_of_observers: 1
@@ -23,7 +23,7 @@ host_max_m: 5e15
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 0
+calculate_hubble_constants: 1
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
@@ -34,7 +34,13 @@ calculate_redshiftdistribution: 0
 # Make Hubble diagram for one observer?
 make_hubblediagram: 0
 # Create a map of the velocityfield?
-map_velocityfield: 1
+map_velocityfield: 0
+
+##########################################################################
+# Should the distances be calculated using the perturbed metric?
+distances_from_perturbed_metric: 1
+# In that case, which file describes the potential?
+potential_file: ../cases/Planck512/potential.txt
 
 # Choose whether we should vary the number of supernovae (in that case, the distance aren't varied)
 ##########################################################################
@@ -54,8 +60,8 @@ omegam: 0.306843
 
 number_of_cones: 1
 
-number_of_SNe: 10
-mind: 148
-maxd: 152
-width: 4
+number_of_SNe: 240
+mind: 30
+maxd: 256
+width: 37.3
 
