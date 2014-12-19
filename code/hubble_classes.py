@@ -1,5 +1,6 @@
 from __future__ import division
 import hubble_functions as hf
+import powerspectrum_functions as pf
 import scipy as sp
 import yaml
 import pdb
@@ -76,9 +77,10 @@ class Halo:
 
 
 class Observed_halo:
-    def __init__(self,r,theta,vr,ID):
+    def __init__(self,r,theta,phi,vr,ID):
         self.r = r
         self.theta = theta
+        self.phi = phi
         self.vr = vr
         self.ID = ID
 
@@ -99,6 +101,7 @@ class Observer:
         candidates = []
         rs = []
         thetas = []
+        phis = []
         vrs = []
         IDs = []
         xops = []
@@ -114,7 +117,7 @@ class Observer:
             [xop,yop,zop] = hf.periodic_boundaries(parameters,self.x,self.y,self.z,x,y,z)
 
              
-            r, theta = hf.spherical_coordinates(parameters,self.x, self.y, self.z,
+            r, theta, phi = hf.spherical_coordinates(parameters,self.x, self.y, self.z,
                                                 xop,yop,zop)
             
             if r < parameters.mind or r > parameters.maxd:
@@ -133,6 +136,7 @@ class Observer:
             candidates.append(h)
             rs.append(r)
             thetas.append(theta)
+            phis.append(phi)
 
             [vx,vy,vz] = h.velocity[[0,1,2]]
             vr = (xop*vx+yop*vy+zop*vz)/r+r*100
@@ -164,7 +168,7 @@ class Observer:
             vr = vrs[selected_candidate]
             ID = IDs[selected_candidate]
             
-            self.observed_halos.append(Observed_halo(r,theta,vr,ID))
+            self.observed_halos.append(Observed_halo(r,theta,phi,vr,ID))
             
             
     def do_hubble_analysis(self,parameters):

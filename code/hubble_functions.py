@@ -181,7 +181,8 @@ def spherical_coordinates(parameters,xobs,yobs,zobs,xop,yop,zop):
         r = 1e-15         
         
     theta = sp.arccos((zop-zobs)/r)
-    return r,theta
+    phi = sp.arctan2(yop-yobs,xop-xobs)+sp.pi
+    return r,theta, phi
     
 #    if parameters.distances_from_perturbed_metric:
 #
