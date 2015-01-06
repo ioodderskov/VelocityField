@@ -58,7 +58,6 @@ step_number_of_SNe = int(param["step_number_of_SNe"])
 
 
 
-
 # Read the halo data
 halo_list = hf.read_halo_file(mass_sorted_data)
     
@@ -89,13 +88,16 @@ if calculate_hubble_constants:
 if calculate_std_of_deviation:
     print "Calculating the mean of the standard deviation over the survey-range specified in SN_redshiftdistribution.py"
 
+    [zmin, zmax, Nbins] = [0.023, 0.1, 20]
+    
+
     if calculate_std_of_deviation == 1:
-        Wz_norm, zbins, N_tot = SN.get_table_distribution()
+        Wz_norm, zbins, N_tot = SN.get_table_distribution(zmin, zmax, Nbins)
         
     elif calculate_std_of_deviation == 2:
         bindistances = hf.calculate_bindistances(mind, maxd, width)
         skip, radial_velocities = hf.calculate_hubble_constants_for_all_observers(range(len(observer_list)),observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
-        Wz_norm, zbins, N_tot = SN.get_mock_distribution(radial_velocities)
+        Wz_norm, zbins, N_tot = SN.get_mock_distribution(radial_velocities, zmin, zmax, Nbins)
  
     Wz = Wz_norm*N_tot    
 
@@ -107,14 +109,15 @@ if calculate_std_of_deviation:
 
 if calculate_redshiftdistribution:
     print "Calculating the redshift distribution and comparing it to the one specified in SN_redshiftdistribution.py"
-    
+ 
+    [zmin, zmax, Nbins] = [0.01, 0.1, 20]   
     obs = 0
     
     bindistances = hf.calculate_bindistances(mind, maxd, width)
     skip, radial_velocities = hf.calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
 
-    SN.get_table_distribution()
-    SN.get_mock_distribution(radial_velocities)
+    SN.get_table_distribution(zmin, zmax, Nbins)
+    SN.get_mock_distribution(radial_velocities, zmin, zmax, Nbins)
 
 
     

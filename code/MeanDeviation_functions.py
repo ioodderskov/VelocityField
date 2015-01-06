@@ -24,8 +24,8 @@ def mean_sys_error(h,Wz):
 
 def error_for_observer(obs, observer_list, Wz, zbins, halo_list, boxsize, number_of_cones, skyfraction):   
 
-    radial_distances_tot = list([])
-    radial_velocities_tot = list([])
+    radial_distances_tot = sp.array([])
+    radial_velocities_tot = sp.array([])
     bindistances = sp.zeros(2)
     Hubbleconstants = sp.NaN*sp.ones(len(zbins))
     
@@ -45,8 +45,8 @@ def error_for_observer(obs, observer_list, Wz, zbins, halo_list, boxsize, number
     
          # Calculate the Hubbleconstants for all observers and all distances (or number of SNe)
         radial_distances, radial_velocities = hf.calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, number_of_SNe, bindistances, boxsize, number_of_cones, skyfraction)
-        radial_distances_tot = radial_distances_tot+radial_distances
-        radial_velocities_tot = radial_velocities_tot+radial_velocities
+        radial_distances_tot = sp.concatenate((radial_distances_tot,radial_distances))
+        radial_velocities_tot = sp.concatenate((radial_velocities_tot,radial_velocities))
         
 #        print "i=",i, ": H0 = ", observer_list[obs].Hubbleconstants[1], "zmin,zmax =", zmin,zmax,"dmin,dmax = ",bindistances[0],bindistances[1], "#SN = ",number_of_SNe
         Hubbleconstants[i+1] = observer_list[obs].Hubbleconstants[1]
@@ -83,7 +83,6 @@ def calculate_mean_deviation_over_surveyrange(observer_list,Wz, zbins,  halo_lis
     errors = pool.map(partial_error_for_observer,range(0,N_observers))
     pool.close()
     pool.join()
-#    for obs in range(0,N_observers):
-#        errors[obs] = 100*error_for_observer(obs, observer_list, Wz, zbins, halo_list, boxsize, number_of_cones, skyfraction) # %
+
     
     return sum(errors)*100/N_observers
