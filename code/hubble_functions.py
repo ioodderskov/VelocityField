@@ -182,6 +182,7 @@ def spherical_coordinates(parameters,xobs,yobs,zobs,xop,yop,zop):
         
     theta = sp.arccos((zop-zobs)/r)
     phi = sp.arctan2(yop-yobs,xop-xobs)+sp.pi
+
     return r,theta, phi
     
 #    if parameters.distances_from_perturbed_metric:
@@ -241,8 +242,32 @@ def distance_correction_from_perturbed_metric(parameters,xobs,yobs,zobs,xop,yop,
 
     
     return psi_int
-    
 
+def select_candidates(parameters,halos,candidates):
+
+    if parameters.observed_halos == 'all':
+        selected_candidates = range(len(candidates))    
+
+    if parameters.observed_halos == 'mass_weighted':
+        selected_candidates = mass_weighted_selection_of_halos(parameters,halos,candidates)
+
+    if parameters.observed_halos == 'random':
+        selected_candidates = random_selection_of_halos(parameters,halos,candidates)
+        
+    return selected_candidates
+
+   
+
+    
+def random_selection_of_halos(parameters,halos,candidates):
+    
+    selected_candidates = []
+    random.seed(0)
+    for n in range(parameters.number_of_SNe):
+        rnd_candidate_number = random.randint(0,len(candidates))
+        selected_candidates.append(rnd_candidate_number)
+        
+    return selected_candidates
 
 def mass_weighted_selection_of_halos(parameters,halos,candidates):
     
@@ -283,6 +308,8 @@ def print_hubbleconstants_to_file(parameters,observers):
            f.write("%s\t" % ob.Hubbleconstants[b])
            
        f.write("\n")
+       
+    f.close()
         
         
         

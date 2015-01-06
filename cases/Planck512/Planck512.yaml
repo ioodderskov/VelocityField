@@ -1,6 +1,7 @@
 ---
 halocatalogue: ../cases/Planck512/parents_11
 hubblefile: ../cases/Planck512/Hubbleconstants_perturbed_metric.txt
+powerspectrafile: ../cases/Planck512/powerspectra.txt
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
@@ -19,6 +20,10 @@ sub_max_m: 1e13
 host_min_m: 5e14
 host_max_m: 5e15
 
+# How should the observed halos be selected? mass_weighted, random or all
+##########################################################################
+observed_halos: all
+
 ##########################################################################
 # Choose what to do:
 
@@ -35,6 +40,8 @@ calculate_redshiftdistribution: 0
 make_hubblediagram: 0
 # Create a map of the velocityfield?
 map_velocityfield: 0
+# Calculate powerspectra for the observers?
+calculate_powerspectra: 0
 
 ##########################################################################
 # Should the distances be calculated using the perturbed metric?
@@ -50,6 +57,17 @@ min_number_of_SNe: 2
 max_number_of_SNe: 240
 step_number_of_SNe: 10
 ##########################################################################
+
+
+# For the powerspectra calculation
+##########################################################################
+nside: 16
+lmax: 32
+smooth_map: 0
+smooth_largest_hole: 0
+preset_smoothinglength: 0
+smoothing_fwhm: 2 # rad
+
 
 
 
