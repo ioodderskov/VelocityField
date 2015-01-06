@@ -73,7 +73,7 @@ smoothing_fwhm: 2 # rad
 
 # Choose the skyfraction 
 ##########################################################################
-number_of_cones: 1
+number_of_cones: 2
 fraction_start: 0.1
 fraction_stop: 1
 fraction_step: 0.1

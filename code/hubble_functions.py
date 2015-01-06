@@ -394,6 +394,7 @@ def calculate_Hs_for_varying_skyfractions(parameters,observed_halos):
             observed_halos_in_cone = [oh for oh in observed_halos if oh.theta < theta_max or sp.pi-oh.theta < theta_max]
         
         skyfraction_Hubbleconstants_array[row] = calculate_Hs_for_these_observed_halos(parameters,observed_halos_in_cone)
+
         
         
     return skyfraction_Hubbleconstants_array
