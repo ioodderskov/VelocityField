@@ -34,7 +34,7 @@ class Parameters:
         self.number_of_SNe = int(param["number_of_SNe"])
         self.boxsize = sp.double(param["boxsize"])
         self.number_of_cones = int(param["number_of_cones"])
-        self.skyfraction = sp.double(param["skyfraction"])
+#        self.skyfraction = sp.double(param["skyfraction"])
         
         self.calculate_std_of_deviation = int(param["calculate_std_of_deviation"])
         self.calculate_hubble_constants = int(param["calculate_hubble_constants"])
@@ -74,6 +74,12 @@ class Parameters:
             self.potential_max = self.potential.max()
             
         self.bindistances = hf.calculate_bindistances(self.mind,self.maxd,self.width)
+        
+        self.vary_skyfraction = int(param["vary_skyfraction"])
+        self.fraction_start = sp.double(param["fraction_start"])
+        self.fraction_stop = sp.double(param["fraction_stop"])
+        self.fraction_step = sp.double(param["fraction_step"])
+        self.skyfractions = sp.linspace(self.fraction_start,self.fraction_stop,1/self.fraction_step)
 
 
 
@@ -109,6 +115,7 @@ class Observer:
         self.Hubbleconstants = []
         self.ls = []
         self.cls = []
+        self.skyfraction = []
         
 
     
@@ -125,8 +132,6 @@ class Observer:
         zops = []
         
         for h in halos:
-#            [xo,yo,zo] = \
-#            [h.position[0]-self.x, h.position[1]-self.y, h.position[2]-self.z]
         
             x,y,z = h.position[0],h.position[1],h.position[2]
              
@@ -139,15 +144,6 @@ class Observer:
             if r < parameters.mind or r > parameters.maxd:
                 continue
             
-            if parameters.number_of_cones == 1:
-                theta_max = sp.arccos(1-2*parameters.skyfraction)
-                if theta > theta_max:
-                    continue
-                
-            if parameters.number_of_cones == 2:
-                theta_max = sp.arccos(1-parameters.skyfraction)
-                if theta > theta_max and sp.pi-theta > theta_max:
-                    continue
                 
             candidates.append(h)
             rs.append(r)
@@ -197,33 +193,13 @@ class Observer:
             
     def do_hubble_analysis(self,parameters):
         
-        rvsum = sp.zeros(len(parameters.bindistances))
-        r2sum = sp.zeros(len(parameters.bindistances))
-        halo_counts = sp.zeros(len(parameters.bindistances))
+        if parameters.vary_skyfraction:
+            self.Hubbleconstants = hf.calculate_Hs_for_varying_skyfractions(parameters,self.observed_halos)
+            
+        else:
+            self.Hubbleconstants = hf.calculate_Hs_for_these_observed_halos(parameters,self.observed_halos)
         
-        for observed_halo in self.observed_halos: 
-            r = observed_halo.r
-            vr = observed_halo.vr
-            b = len(parameters.bindistances)-1
-            rb = parameters.bindistances[b]
-            
-            while r < rb:
-                
-                rvsum[b] = rvsum[b]+r*vr
-                r2sum[b] = r2sum[b]+r**2
-                halo_counts[b] = halo_counts[b]+1
-                b = b-1
-                rb = parameters.bindistances[b]
-                
-        
-        self.Hubbleconstants = [None]*len(parameters.bindistances)
-        for b in range(len(parameters.bindistances)):
-            
-            if halo_counts[b] == 0:
-                continue
-            
-            else:
-                self.Hubbleconstants[b] = hf.calculate_H(rvsum[b],r2sum[b],halo_counts[b])
+    
                 
         
         
@@ -231,10 +207,7 @@ class Observer:
         
         thetas = [observed_halo.theta for observed_halo in self.observed_halos]
         phis = [observed_halo.phi for observed_halo in self.observed_halos]
-#        rs = [observed_halo.r for observed_halo in self.observed_halos]
         vrs_peculiar = [observed_halo.vr_peculiar for observed_halo in self.observed_halos]
-#        vrs_minus_hubbleflow = sp.array(vrs) - sp.array(rs)*100 # Subtracting the Hubbleflow for the powerspectrumanalysis        
-
         
         vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar)        
         

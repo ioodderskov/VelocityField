@@ -1,6 +1,6 @@
 ---
 halocatalogue: ../cases/Planck512/parents_11
-hubblefile: ../cases/Planck512/Hubbleconstants_perturbed_metric.txt
+hubblefile: ../cases/Planck512/Hubbleconstants
 powerspectrafile: ../cases/Planck512/powerspectra.txt
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
@@ -9,7 +9,7 @@ powerspectrafile: ../cases/Planck512/powerspectra.txt
 observer_choice: from_file
 
 # Specify the number of observers you want to use
-number_of_observers: 1
+number_of_observers: 3
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
@@ -42,10 +42,12 @@ make_hubblediagram: 0
 map_velocityfield: 0
 # Calculate powerspectra for the observers?
 calculate_powerspectra: 0
+# Vary skyfraction?
+vary_skyfraction: 1
 
 ##########################################################################
 # Should the distances be calculated using the perturbed metric?
-distances_from_perturbed_metric: 1
+distances_from_perturbed_metric: 0
 # In that case, which file describes the potential?
 potential_file: ../cases/Planck512/potential.txt
 
@@ -67,16 +69,21 @@ smooth_map: 0
 smooth_largest_hole: 0
 preset_smoothinglength: 0
 smoothing_fwhm: 2 # rad
+##########################################################################
+
+# Choose the skyfraction 
+##########################################################################
+number_of_cones: 1
+fraction_start: 0.1
+fraction_stop: 1
+fraction_step: 0.1
+##########################################################################
 
 
-
-
-
+#skyfraction: 1
 boxsize: 512
-skyfraction: 1
 omegam: 0.306843
 
-number_of_cones: 1
 
 number_of_SNe: 240
 mind: 30
