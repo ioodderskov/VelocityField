@@ -1,11 +1,12 @@
 ---
-halofile: ../cases/sim16/parents_11
+halocatalogue: ../cases/sim16/parents_11
 hubblefile: ../cases/sim16/Hubbleconstants.txt
+powerspectrafile: ../cases/sim16/powerspectra.txt
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
 #
-observer_choice: subhalos
+observer_choice: from_file
 
 # Specify the number of observers you want to use
 number_of_observers: 10
@@ -24,7 +25,7 @@ sub_max_m: 2.8e12
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 1
+calculate_hubble_constants: 0
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
@@ -34,9 +35,18 @@ calculate_std_of_deviation: 0
 calculate_redshiftdistribution: 0
 # Make Hubble diagram for one observer?
 make_hubblediagram: 0
+# Create a map of the velocityfield?
+map_velocityfield: 0
+# Calculate powerspectra?
+calculate_powerspectra: 1
 
-
-
+# Distances from perturbed metric?
+##########################################################################
+# Should the distances be calculated using the perturbed metric?
+distances_from_perturbed_metric: 0
+# In that case, which file describes the potential?
+potential_file: ../cases/sim16/potential.txt
+##########################################################################
 
 
 
@@ -49,8 +59,15 @@ max_number_of_SNe: 240
 step_number_of_SNe: 10
 ##########################################################################
 
-
-
+# For the powerspectra calculations
+##########################################################################
+nside: 4
+lmax: 8
+smooth_map: 0
+smooth_largest_hole: 0
+preset_smoothinglength: 0
+smoothing_fwhm: 0.2
+##########################################################################
 
 boxsize: 16
 skyfraction: 1
@@ -58,8 +75,9 @@ omegam: 0.306843
 
 number_of_cones: 1
 
-number_of_SNe: 240
+number_of_SNe: 10
 mind: 2
 maxd: 8
 width: 2
+
 

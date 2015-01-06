@@ -2,33 +2,20 @@ from __future__ import division
 import numpy as sp
 import random
 import scipy.linalg as la
-import multiprocessing
-from functools import partial
+#import multiprocessing
+#from functools import partial
+#import pdb
+import scipy.ndimage as ndi
+import hubble_classes as hc
+from scipy import interpolate
+import pdb
 
 
 
 
 
-class Halos:
-    def __init__(self,x,y,z,vx,vy,vz,mass,ID,ID_host):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.vx = vx
-        self.vy = vy
-        self.vz = vz
-        self.mass = mass
-        self.ID = ID
-        self.ID_host = ID_host
 
-    
-class Observers:
-    def __init__(self,x,y,z,selected_halos,Hubbleconstants):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.selected_halos = selected_halos
-        self.Hubbleconstants = Hubbleconstants
+        
 
 
 # This function calculate the bin distances, so that every shell has the same volume
@@ -45,404 +32,290 @@ def calculate_bindistances(mind, maxd, width):
     return bindistances
     
     
-    
-    
-    
-################## Read the halo data ##############################################
-def read_halo_file(mass_sorted_data):
-
-    n_halos = len(mass_sorted_data)
-    halo_list = [None]*n_halos
-    
-    for i in range(n_halos):
-        [x,y,z] = mass_sorted_data[i,[8,9,10]]
-        [vx,vy,vz] = mass_sorted_data[i,[11,12,13]]
-        mass = mass_sorted_data[i,2]
-        ID = int(mass_sorted_data[i,0])
-        ID_host = int(mass_sorted_data[i,33])
-        halo = Halos(x,y,z,vx,vy,vz,mass,ID,ID_host)
-        halo_list[i] = halo
-    
-    return halo_list
-
-######################################################################################
-
-
-
-
-######## Calculating the Hubbleconstants for all observers ########################
-
-
-
-# This function calculates the Hubble constants for a given observer
-def find_hubble_constants_for_observer(observer_number,observer_list,halo_list,observed_halos,bindistances,boxsize,number_of_cones,skyfraction):
-
-    observer = observer_list[observer_number]
-    [x,y,z] = [observer.x, observer.y, observer.z]
-    mind = bindistances[0]
-    maxd = bindistances[-1]
-    selected_halos = select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cones,skyfraction)
-    Hubbleconstants, radial_distances, radial_velocities = Hubble(x,y,z,halo_list, selected_halos, bindistances, boxsize)
-
-    return Hubbleconstants, radial_distances, radial_velocities
-
-
-
-def calculate_hubble_constants_for_all_observers(obs,observer_list, halo_list, observed_halos, bindistances, boxsize, number_of_cones, skyfraction):
-    if isinstance(obs,int):    
-        obs = list([obs])
-
-    partial_find_hubble_constants_for_observer = partial(find_hubble_constants_for_observer,observer_list=observer_list,halo_list=halo_list,observed_halos=observed_halos,bindistances=bindistances,boxsize=boxsize,number_of_cones=number_of_cones,skyfraction=skyfraction)
-        
-    pool = multiprocessing.Pool()
-    out = pool.map(partial_find_hubble_constants_for_observer,obs)
-#    out = map(partial_find_hubble_constants_for_observer,obs)
-    pool.close()
-    pool.join()
-
-    # Writing the Hubbleconstants to the observer_list. For some reason, it does not work to do so
-    # using parallel processing :-/
-    for observer_number in obs:
-#        observer.selected_halos = selected_halos
-        observer = observer_list[observer_number]
-        Hubbleconstants = out[observer_number][0]
-        observer.Hubbleconstants = Hubbleconstants
-    
-    radial_distances = sp.array(out[-1][1])
-    radial_velocities = sp.array(out[-1][2])
-    return radial_distances, radial_velocities
-        
-##############################################################################
-
-
-
-    
-    
-    
-    
-    
-
-
-######################### Identification of observers #########################
-
-
-#This function finds the halos that are have the characteristics specified in the parameterfile
-#Or, if find_observers = 0, the positions are simple read from a file.
-def find_observers(observer_choice,number_of_observers,boxsize,observerfile,halo_list,sub_min_m,sub_max_m,host_min_m,host_max_m):
-  
-   
-   ###################### Reading observers from file ################################
-    if observer_choice == 'from_file':
-        observer_positions = sp.loadtxt(observerfile)  
-
-        observer_list = [None]*len(observer_positions)
-    
-        # Reading coordinates of the observers, and saving them in an observer list    
-        for observer_number in range(len(observer_list)):
-            [x,y,z] = [observer_positions[observer_number,0],observer_positions[observer_number,1],observer_positions[observer_number,2]]
-            [x,y,z] = sp.array([x,y,z])/1000
-            observer = Observers(x,y,z,[],[])
-            observer_list[observer_number] = observer
-   ########################################################################################                    
-        
-
-
-
-    
-   ###################### Identifying subhalos as observers ################################
-    if observer_choice == 'subhalos':
-
-        masses = [halo.mass for halo in halo_list]
-        
-        # Identifying halos with masses corresponding to the Virgo Supercluster or the Local Group
-        localgroup_indices = (sub_min_m < masses) & (masses < sub_max_m)
-        virgo_indices = (host_min_m < masses) & (masses < host_max_m)
-
-        #
-        ID_hosts = sp.array([halo.ID_host for halo in halo_list])
-        IDs = sp.array([halo.ID for halo in halo_list])
-        virgo_IDs = IDs[virgo_indices]
-    
-        observers = [i for i, elem in enumerate(ID_hosts[localgroup_indices]) if elem in virgo_IDs]
-        all_indices = sp.array(range(len(halo_list)))
-        observer_indices = sp.array(all_indices[localgroup_indices])[observers]
-        
-        observer_list = [None]*len(observer_indices)
-   
-        # Reading coordinates of the observers, and saving them in an observer list    
-        for halo_index,observer_number in zip(observer_indices,range(len(observer_indices))):
-            observer = halo_list[halo_index]
-            [x,y,z] = [observer.x, observer.y, observer.z]
-            observer = Observers(x,y,z,[],[])
-            observer_list[observer_number] = observer
-   ########################################################################################            
-            
-            
-
-
-            
-   ###################### Choosing random positions as observers ################################         
-    if observer_choice == 'random_positions':
-        sp.random.seed(0)
-        observer_positions = boxsize*sp.rand(number_of_observers,3)
-        observer_list = [None]*len(observer_positions)
-        for observer_number in range(number_of_observers):
-            [x,y,z] = [observer_positions[observer_number,0],observer_positions[observer_number,1],observer_positions[observer_number,2]]
-            observer = Observers(x,y,z,[],[])
-            observer_list[observer_number] = observer
-   ########################################################################################            
-
-
-
-
-
-            
-            
-   ###################### Choosing random halos as observers ################################         
-    if observer_choice == 'random_halos':
-        random_halo_indices = sp.random.random_integers(0,len(halo_list)-1,number_of_observers)
-        observer_list = [None]*len(random_halo_indices)
-        
-        for halo_index,observer_number in zip(random_halo_indices,range(len(random_halo_indices))):
-            observer = halo_list[halo_index]
-            [x,y,z] = [observer.x,observer.y,observer.z]
-            observer = Observers(x,y,z,[],[])
-            observer_list[observer_number] = observer
-   ########################################################################################                    
-        
-
-
-
-
-    return observer_list
-    
-
-   
-    
-
-   
-    
-
-
-    
-    
-    
-    
-#################################### selection of halos #############################    
-    
-# This function select the halos observed by a given observer
-def select_halos(x,y,z,halo_list,mind,maxd,observed_halos,boxsize,number_of_cones,skyfraction):
-    total_mass = 0
-    halo_candidates = []
-
-
-    
-    for i in range(len(halo_list)):
-        
-        halo = halo_list[i]
-        #Putting the observer in origo
-        [xo,yo,zo] = [halo.x - x, halo.y - y,  halo.z - z]
-        [xo,yo,zo] = periodic_boundaries(xo,yo,zo,boxsize)
-        
-        rvec = sp.array([xo,yo,zo])
-        r = la.norm(rvec)
-        
-        # The halo is only chosen if it is within the chosen distance range
-        if r < mind or r > maxd:
-            continue
-        
-        theta = sp.arccos(zo/r)
-
-                
-        # The halo is only chosen if it is within the chosen patch
-        if number_of_cones == 1:
-            theta_max = sp.arccos(1-2*skyfraction)
-            if theta > theta_max:
-                continue
-            
-        if number_of_cones == 2:
-            theta_max = sp.arccos(1-skyfraction)
-            if theta > theta_max and sp.pi-theta > theta_max:
-                continue
-
-        halo_candidates.append(i) # Saving the index for the halo
-        total_mass = total_mass+halo.mass
-
-        
-    selected_halos = mass_weighted_selection_of_halos(halo_list, halo_candidates, observed_halos,total_mass)
- 
-        
-    return selected_halos
-
-
-
-
-
-
-
-# This function choses the wished number of observed halos from the candidates
-def mass_weighted_selection_of_halos(halo_list, halo_candidates, observed_halos, total_mass):
-    cum_mass = 0
-    halo_masses_cum = []
-
-    for i in halo_candidates:
-        halo = halo_list[i]
-        mass = halo.mass
-        cum_mass = cum_mass+mass
-        halo_masses_cum.append(cum_mass/total_mass)
-
-    # The halos are selected
-    selected_halos = []        
-    random.seed(0)
-    for i in range(observed_halos):
-        rnd = random.random()
-        for j, index in zip(range(len(halo_candidates)),halo_candidates):
-            if halo_masses_cum[j] >= rnd:
-                selected_halos.append(index)
-                break
-                
-    return selected_halos
-
-
-######################################################################################
-
-
-
-
-
-################################# Calculation of Hubble constants ######################
-
-     
-# This function bins and calculates Hubble constants from an observer position and a
-# list of observed halos        
-def Hubble(x,y,z,halo_list, selected_halos, bindistances,boxsize):
-    hubble = 100 # Distances are in Mpc/h
-    b = 1
-
-    [rvsum, r2sum] = [0,0]
-    radial_distances = []
-    radial_velocities = []
-
-    Hubbleconstants = sp.nan*sp.ones(len(bindistances))
-    rvsum = sp.zeros(len(bindistances))
-    r2sum = sp.zeros(len(bindistances))
-    halo_counts = sp.zeros(len(bindistances))
-
-    for i in selected_halos:
-        
-        halo = halo_list[i]
-        #Calculate the distance to the halo
-        [xo,yo,zo] = [halo.x - x, halo.y - y,  halo.z - z]
-        [xo,yo,zo] = periodic_boundaries(xo,yo,zo,boxsize)
-        rvec = sp.array([xo,yo,zo])
-        r = la.norm(rvec)
-        
-        # We are using the CMB frame of reference for the velocities
-        [vx,vy,vz] = [halo.vx, halo.vy, halo.vz]
-        vr = (xo*vx+yo*vy+zo*vz)/r+r*hubble
-                
-        # Returning some values for making plots
-        radial_distances.append(r)
-        radial_velocities.append(vr)
-
-        b = len(bindistances)-1
-        rb = bindistances[b]
-#        print "before while: b = ",b,"rb = ",rb, "and r = ",r
-
-        while r < rb:
-#            print "in while: b = ",b,"rb = ",rb, "and r = ",r
-            rvsum[b] = rvsum[b]+r*vr
-            r2sum[b] = r2sum[b]+r**2
-            halo_counts[b] = halo_counts[b]+1
-            b = b-1
-            rb = bindistances[b]
-
-
-    # Hubbleconstant for the innermost distance is -1, since there is no 
-    #observed halos within this distance
-    for b in range(len(bindistances)):
-#        print "b = ",b,"and halo_counts[b] = ",halo_counts[b]
-        
-        if halo_counts[b] == 0:
-            continue
-        else:
-            Hubbleconstants[b] = calculate_H(rvsum[b],r2sum[b],halo_counts[b])
-
-    return Hubbleconstants, radial_distances, radial_velocities
-
+# This function calculates the local Hubble parameters
 def calculate_H(rvsum,r2sum,halo_count):
+
+    rvmean = rvsum/halo_count
+    r2mean = r2sum/halo_count
+    Hloc = rvmean/r2mean
     
-        rvmean = rvsum/halo_count
-        r2mean = r2sum/halo_count
-        Hloc = rvmean/r2mean
+    return Hloc
+    
+    
+    
+# Load the halo catalogue
+def load_halocatalogue(parameters):
+
+    halocatalogue_unsorted = sp.loadtxt(parameters.halocatalogue)
+    halocatalogue = sp.array(sorted(halocatalogue_unsorted, 
+                                    key=lambda halocatalogue_unsorted: halocatalogue_unsorted[2]))
+                                    
+    return halocatalogue
+    
+    
+def initiate_halos(parameters, halocatalogue):
+    n_halos = len(halocatalogue)
+    halos = [None]*n_halos
+    
+    for h in range(n_halos):
+        position = halocatalogue[h,[8,9,10]]
+        velocity = halocatalogue[h,[11,12,13]]
+        mass = halocatalogue[h,2]
+        ID = int(halocatalogue[h,0])
+        ID_host = int(halocatalogue[h,33])
         
-        return Hloc
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#################################################################################    
+        halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
+        halos[h] = halo
+        
+    return halos
     
-# This function applies periodic boundaries
-def periodic_boundaries(x,y,z,boxsize):
-        if x > boxsize/2: 
-            x = x-boxsize
-        if x < -boxsize/2: 
-            x = x+boxsize            
+
+def initiate_observers(parameters,halos):
+    
+    if parameters.observer_choice == 'from_file':
+        observers = initiate_observers_from_file(parameters)
+
+    if parameters.observer_choice == 'subhalos':
+        observers = initiate_observers_subhalos(parameters,halos)
+
+    if parameters.observer_choice == 'random_halos':
+        observers = initiate_observers_random_halos(parameters,halos)
+
+    if parameters.observer_choice == 'random_positions':
+        observers = initiate_observers_random_positions(parameters)
+    
+    
+    return observers
+    
+    
+def initiate_observers_from_file(parameters):
+    observer_positions = sp.array(sp.loadtxt(parameters.observerfile))
+    observers = [None]*len(observer_positions)
+    
+    for ob in range(len(observer_positions)):
+        
+        position = observer_positions[ob,[0,1,2]]/1000
+        observers[ob] = hc.Observer(position)
+        
+    return observers[0:parameters.number_of_observers]
+    
+    
+def initiate_observers_random_halos(parameters,halos):
+    random_indices = sp.random.random_integers(0,len(halos)-1,parameters.number_of_observers)
+    observers = [None]*len(len(random_indices))
+    
+    for ob_index, ob_number in zip(random_indices,range(len(random_indices))):
+        halo = halos[ob_index]
+        position = halo.position
+        
+        observers[ob_number] = hc.Observer(position)
+        
+    return observers[0:parameters.number_of_observers]
+    
+def initiate_observers_subhalos(parameters,halos):
+    masses = [halo.mass for halo in halos]
+    
+    localgroup_indices = (parameters.sub_min_m < masses) & (masses < parameters.sub_max_m)
+    virgo_indices = (parameters.host_min_m < masses) & (masses < parameters.host_max_m)
+    
+    ID_hosts = sp.array([halo.ID_host for halo in halos])
+    IDs = sp.array([halo.ID for halo in halos])
+    virgo_IDs = IDs[virgo_indices]
+    
+    observer_indices = [localgroup_index for localgroup_index in localgroup_indices \
+                        if ID_hosts[localgroup_index] in virgo_IDs]
+                            
+    observers = [None]*len(observer_indices)
+    
+    for ob_index, ob_number in zip(observer_indices, range(len(observer_indices))):
+        halo = halos[ob_index]
+        position = halo.position
+        observers[ob_number] = hc.Observer(position)
+    
+    return observers[0:parameters.number_of_observers]
+
+def initiate_observers_random_positions(parameters):
+
+    sp.random.seed(0)
+    observer_positions = parameters.boxsize*sp.rand(parameters.number_of_observers,3)
+    
+    observers = [None]*len(observer_positions)
+        
+    for ob in range(len(observer_positions)):
+        position = [observer_positions[0,1,2]]
+        observers[ob] = hc.Observer(position)
+    
+    
+    return observers[0:parameters.number_of_observers]
+    
+    
+def periodic_boundaries(parameters,xobs,yobs,zobs,xop,yop,zop):
+    
+    x,y,z = xop-xobs,yop-yobs,zop-zobs
+    
+    def periodic_coordinate(coordinate,parameters):
+        
+        if coordinate > parameters.boxsize/2:
+            coordinate = coordinate-parameters.boxsize
+        if coordinate < -parameters.boxsize/2:
+            coordinate = coordinate+parameters.boxsize
+            
+        return coordinate
+            
+      
+    x = periodic_coordinate(x,parameters)+xobs
+    y = periodic_coordinate(y,parameters)+yobs    
+    z = periodic_coordinate(z,parameters)+zobs
+    
+    return [x,y,z]
+    
+    
+    
+def spherical_coordinates(parameters,xobs,yobs,zobs,xop,yop,zop):
+
+    rvec = sp.array([xop-xobs,yop-yobs,zop-zobs])
+    r = la.norm(rvec)
+
+    # Just to prevent problems if the observer is on top of the halo
+    if r == 0:
+        r = 1e-15         
+        
+    theta = sp.arccos((zop-zobs)/r)
+    phi = sp.arctan2(yop-yobs,xop-xobs)+sp.pi
+
+    return r,theta, phi
+    
+#    if parameters.distances_from_perturbed_metric:
+#
+#        # No reason to do a lengthy calculation of the perturbed distance, if 
+#        # the halo won't be used anyway
+#        max_distance_correction = sp.sqrt(1-2*parameters.potential_min)
+#        if (ro*max_distance_correction < parameters.mind) or (ro > parameters.maxd):
+#            return ro,theta
+#        
+#        rper = calculate_distance_in_perturbed_metric(parameters,xobs,yobs,zobs,xop,yop,zop,ro)
+#        return rper, theta
+#        
+#    else:
+     
+    
+    
+def distance_correction_from_perturbed_metric(parameters,xobs,yobs,zobs,xop,yop,zop):
+    
+    res = 10
+    f = sp.linspace(0,1,res)
+    
+    d = sp.array([f*(xop-xobs)+xobs, f*(yop-yobs)+yobs, f*(zop-zobs)+zobs])
+#    pdb.set_trace()
+
+#    d[d<0] = d[d<0]+parameters.boxsize
+    Ng = len(parameters.potential)    
+    d_grid = d*Ng/parameters.boxsize-1/2.
+    # For the sake of the periodic boundaries
+    d_grid[d_grid < 0] = d_grid[d_grid < 0]+Ng
+    d_grid[d_grid > Ng] = d_grid[d_grid > Ng]-Ng
+#    pdb.set_trace()
+ 
+    psi = ndi.map_coordinates(parameters.potential,d_grid,mode='nearest')
+#    pdb.set_trace()
+    tck = interpolate.splrep(f,sp.sqrt(1-2*psi),s=0)
+#    pdb.set_trace()
+    psi_int = interpolate.splint(0,1,tck)
+#    rper = psi_int*ro
+#    pdb.set_trace()
+    # This is only to check the interpolation of the potential onto the vector
+#    sp.save("../cases/sim16/line_of_sight_vector",d*parameters.boxsize)
+#    sp.save("../cases/sim16/psi_along_the_line_of_sight",psi)
+#    sp.save("../cases/sim16/potential_array",parameters.potential)
+#
+#    import matplotlib.pyplot as plt
+#    x = d[0,:]
+##    x = d[0,:]*parameters.boxsize    
+#    potential_along_x_axis = parameters.potential[:,0,0]
+#    x_pot = sp.linspace(1,15,8)
+#
+#    plt.plot(x_pot,potential_along_x_axis)
+#    plt.plot(x_pot-parameters.boxsize,potential_along_x_axis)
+#    plt.plot(x_pot+parameters.boxsize,potential_along_x_axis)
+#    plt.plot(x,psi)
+#    plt.show()
+
+    
+    return psi_int
+
+def select_candidates(parameters,halos,candidates):
+
+    if parameters.observed_halos == 'all':
+        selected_candidates = range(len(candidates))    
+
+    if parameters.observed_halos == 'mass_weighted':
+        selected_candidates = mass_weighted_selection_of_halos(parameters,halos,candidates)
+
+    if parameters.observed_halos == 'random':
+        selected_candidates = random_selection_of_halos(parameters,halos,candidates)
+        
+    return selected_candidates
+
    
-        if y > boxsize/2: 
-            y = y-boxsize
-        if y < -boxsize/2: 
-            y = y+boxsize       
-    
-        if z > boxsize/2: 
-            z = z-boxsize
-        if z < -boxsize/2: 
-            z = z+boxsize
-        
-        return [x,y,z]
-    
-#################################################################################
-    
-    
-    
-################## Write Hubbleconstants and bindistances/number of SNe to file ##############
-    
-#This function write the results to file    
-def print_hubbleconstants(hubblefile,bindistances,observer_list):
-    f = open(hubblefile,'w')
 
-    for bl in bindistances:
+    
+def random_selection_of_halos(parameters,halos,candidates):
+    
+    selected_candidates = []
+    random.seed(0)
+    for n in range(parameters.number_of_SNe):
+        rnd_candidate_number = random.randint(0,len(candidates))
+        selected_candidates.append(rnd_candidate_number)
+        
+    return selected_candidates
+
+def mass_weighted_selection_of_halos(parameters,halos,candidates):
+    
+    total_mass = sp.sum([c.mass for c in candidates])
+    
+    cum_mass = 0
+    cum_masses = []
+    
+    for candidate in candidates:
+        mass = candidate.mass
+        cum_mass = cum_mass+mass
+        cum_masses.append(cum_mass/total_mass)
+        
+    
+    selected_candidates = []
+    random.seed(0)
+    for n in range(parameters.number_of_SNe):
+        rnd = random.random()
+        for candidate_number in range(len(candidates)):
+            if cum_masses[candidate_number] >= rnd:
+                selected_candidates.append(candidate_number)
+                break
+            
+    return selected_candidates
+        
+        
+def print_hubbleconstants_to_file(parameters,observers):
+    
+    f = open(parameters.hubblefile,'w')
+    
+    for bl in parameters.bindistances:
         f.write("%s\t" % bl)
         
-    #The number of bins is one less than the number of bin-distances, since the 
-    # minimal distance does not count
-    number_of_bins = len(bindistances)
-    
-    for i in range(len(observer_list)):
-        observer = observer_list[i]
-        f.write("\n%s\t" % i)
-
-        for b in range(1,number_of_bins):
-            f.write("%s\t" % observer.Hubbleconstants[b])
-            
-        f.write("\n")
-#################################################################################
+    for ob_number, ob in enumerate(observers):
+       f.write("\n%s\t" % ob_number)
+       
+       for b in range(1,len(parameters.bindistances)):
+           f.write("%s\t" % ob.Hubbleconstants[b])
+           
+       f.write("\n")
+       
+    f.close()
+        
+        
         
 
+    
+    
+   
                     
       
