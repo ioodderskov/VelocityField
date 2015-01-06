@@ -301,6 +301,7 @@ def print_hubbleconstants_to_file(parameters,observers):
         for row, skyfraction in enumerate(parameters.skyfractions):
             
             f = open(parameters.hubblefile+str(skyfraction),'w')
+            f.write("085\t")
 
             for bl in parameters.bindistances:
                 f.write("%s\t" % bl)
@@ -314,12 +315,31 @@ def print_hubbleconstants_to_file(parameters,observers):
                f.write("\n")
                
             f.close()
+            
+    elif parameters.vary_number_of_SNe:
+
+        f = open(parameters.hubblefile,'w')
+        f.write("085\t")
+        
+        for number_of_SNe in parameters.numbers_of_SNe:
+            f.write("%s\t" % number_of_SNe)
+            
+        for ob_number, ob in enumerate(observers):
+            f.write("\n%s\t" % ob_number)
+            
+            for n in range(1,len(parameters.numbers_of_SNe)):
+                f.write("%s\t" % ob.Hubbleconstants[n][-1])
+                
+            f.write("\n")
+            
+        f.close()
 
 
         
     else:
     
         f = open(parameters.hubblefile,'w')
+        f.write("085\t")
         
         for bl in parameters.bindistances:
             f.write("%s\t" % bl)
@@ -398,6 +418,18 @@ def calculate_Hs_for_varying_skyfractions(parameters,observed_halos):
         
         
     return skyfraction_Hubbleconstants_array
+    
+def calculate_Hs_for_varying_number_of_SNe(parameters,observed_halos):
+    
+    number_of_SNe_Hubbleconstants_array = sp.zeros((len(parameters.numbers_of_SNe),len(parameters.bindistances)))
+
+    
+    for row, number_of_SNe in enumerate(parameters.numbers_of_SNe):
+        observed_sample_of_halos = random.sample(observed_halos,number_of_SNe)
+        
+        number_of_SNe_Hubbleconstants_array[row] = calculate_Hs_for_these_observed_halos(parameters,observed_sample_of_halos)
+        
+    return number_of_SNe_Hubbleconstants_array
 
     
     

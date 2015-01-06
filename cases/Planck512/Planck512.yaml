@@ -1,6 +1,6 @@
 ---
 halocatalogue: ../cases/Planck512/parents_11
-hubblefile: ../cases/Planck512/Hubbleconstants
+hubblefile: ../cases/Planck512/Hubbleconstants_varySN
 powerspectrafile: ../cases/Planck512/powerspectra.txt
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
@@ -22,7 +22,7 @@ host_max_m: 5e15
 
 # How should the observed halos be selected? mass_weighted, random or all
 ##########################################################################
-observed_halos: all
+observed_halos: mass_weighted
 
 ##########################################################################
 # Choose what to do:
@@ -42,8 +42,6 @@ make_hubblediagram: 0
 map_velocityfield: 0
 # Calculate powerspectra for the observers?
 calculate_powerspectra: 0
-# Vary skyfraction?
-vary_skyfraction: 1
 
 ##########################################################################
 # Should the distances be calculated using the perturbed metric?
@@ -53,7 +51,7 @@ potential_file: ../cases/Planck512/potential.txt
 
 # Choose whether we should vary the number of supernovae (in that case, the distance aren't varied)
 ##########################################################################
-vary_number_of_SNe: 0
+vary_number_of_SNe: 1
 # If the number of SNe is varied, specify the details below 
 min_number_of_SNe: 2
 max_number_of_SNe: 240
@@ -71,8 +69,9 @@ preset_smoothinglength: 0
 smoothing_fwhm: 2 # rad
 ##########################################################################
 
-# Choose the skyfraction 
+# Choose whether to vary the skyfraction 
 ##########################################################################
+vary_skyfraction: 0
 number_of_cones: 2
 fraction_start: 0.1
 fraction_stop: 1

@@ -50,6 +50,7 @@ class Parameters:
         self.min_number_of_SNe = int(param["min_number_of_SNe"])
         self.max_number_of_SNe = int(param["max_number_of_SNe"])
         self.step_number_of_SNe = int(param["step_number_of_SNe"])
+        self.numbers_of_SNe = range(self.min_number_of_SNe,self.max_number_of_SNe+1,self.step_number_of_SNe)
         
         self.nside = int(param["nside"])
         self.lmax = int(param["lmax"])
@@ -195,6 +196,10 @@ class Observer:
         
         if parameters.vary_skyfraction:
             self.Hubbleconstants = hf.calculate_Hs_for_varying_skyfractions(parameters,self.observed_halos)
+    
+        elif parameters.vary_number_of_SNe:
+            self.Hubbleconstants = hf.calculate_Hs_for_varying_number_of_SNe(parameters,self.observed_halos)
+
             
         else:
             self.Hubbleconstants = hf.calculate_Hs_for_these_observed_halos(parameters,self.observed_halos)
