@@ -3,7 +3,9 @@ import sys
 import hubble_functions as hf
 import hubble_classes as hc
 import powerspectrum_functions as pf
-
+import parallel_processing as pp
+import multiprocessing
+from functools import partial
 
 # There is one argument, namely the parameterfile
 if len(sys.argv) != 2:
@@ -17,14 +19,26 @@ halocatalogue = hf.load_halocatalogue(parameters)
 halos = hf.initiate_halos(parameters,halocatalogue)
 observers = hf.initiate_observers(parameters,halos)
 
-for ob in observers:
-    
-    ob.observe(parameters,halos)
-    if parameters.calculate_hubble_constants:
-        ob.do_hubble_analysis(parameters)
+partial_observe_and_analyse = partial(pp.observe_and_analyse,parameters=parameters,halos=halos)
 
-    if parameters.calculate_powerspectra:
-        ob.calculate_powerspectra(parameters)        
+if parameters.parallel_processing:
+    pool = multiprocessing.Pool()
+    observers = pool.map(partial_observe_and_analyse,observers)
+    pool.close()
+    pool.join()
+else:
+    observers = map(partial_observe_and_analyse,observers)
+
+#print "observers_out", observers_out
+
+#for ob in observers:
+#    
+#    ob.observe(parameters,halos)
+#    if parameters.calculate_hubble_constants:
+#        ob.do_hubble_analysis(parameters)
+#
+#    if parameters.calculate_powerspectra:
+#        ob.calculate_powerspectra(parameters)        
 
 if parameters.calculate_hubble_constants:
     hf.print_hubbleconstants_to_file(parameters,observers)

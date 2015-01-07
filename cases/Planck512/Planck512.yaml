@@ -1,7 +1,11 @@
 ---
 halocatalogue: ../cases/Planck512/parents_11
-hubblefile: ../cases/Planck512/Hubbleconstants_varySN
+hubblefile: ../cases/Planck512/Hubbleconstants
 powerspectrafile: ../cases/Planck512/powerspectra.txt
+
+# Use parallel processing?
+##########################################################################
+parallel_processing: 0
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
@@ -9,7 +13,7 @@ powerspectrafile: ../cases/Planck512/powerspectra.txt
 observer_choice: from_file
 
 # Specify the number of observers you want to use
-number_of_observers: 3
+number_of_observers: 4
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
@@ -51,7 +55,7 @@ potential_file: ../cases/Planck512/potential.txt
 
 # Choose whether we should vary the number of supernovae (in that case, the distance aren't varied)
 ##########################################################################
-vary_number_of_SNe: 1
+vary_number_of_SNe: 0
 # If the number of SNe is varied, specify the details below 
 min_number_of_SNe: 2
 max_number_of_SNe: 240
