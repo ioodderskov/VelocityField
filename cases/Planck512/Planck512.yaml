@@ -32,7 +32,7 @@ observed_halos: all
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 1
+calculate_hubble_constants: 0
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
@@ -45,7 +45,7 @@ make_hubblediagram: 0
 # Create a map of the velocityfield?
 map_velocityfield: 0
 # Calculate powerspectra for the observers?
-calculate_powerspectra: 0
+calculate_powerspectra: 1
 
 ##########################################################################
 # Should the distances be calculated using the perturbed metric?

@@ -29,16 +29,7 @@ if parameters.parallel_processing:
 else:
     observers = map(partial_observe_and_analyse,observers)
 
-#print "observers_out", observers_out
-
-#for ob in observers:
-#    
-#    ob.observe(parameters,halos)
-#    if parameters.calculate_hubble_constants:
-#        ob.do_hubble_analysis(parameters)
-#
-#    if parameters.calculate_powerspectra:
-#        ob.calculate_powerspectra(parameters)        
+ 
 
 if parameters.calculate_hubble_constants:
     hf.print_hubbleconstants_to_file(parameters,observers)
