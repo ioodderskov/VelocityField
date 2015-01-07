@@ -1,6 +1,6 @@
 from __future__ import division
 import hubble_functions as hf
-import powerspectrum_functions as pf
+#import powerspectrum_functions as pf
 import scipy as sp
 import yaml
 import pdb
@@ -227,21 +227,21 @@ class Observer:
                 
         
         
-    def calculate_powerspectra(self,parameters):
-        
-        thetas = [observed_halo.theta for observed_halo in self.observed_halos]
-        phis = [observed_halo.phi for observed_halo in self.observed_halos]
-#        rs = [observed_halo.r for observed_halo in self.observed_halos]
-        vrs_peculiar = [observed_halo.vr_peculiar for observed_halo in self.observed_halos]
-#        vrs_minus_hubbleflow = sp.array(vrs) - sp.array(rs)*100 # Subtracting the Hubbleflow for the powerspectrumanalysis        
-
-        
-        vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar)        
-        
-        if parameters.smooth_map:
-            vrmap = pf.smooth_map(parameters,vrmap)
-            
-        self.ls, self.cls = pf.do_harmonic_analysis(parameters,vrmap)
+#    def calculate_powerspectra(self,parameters):
+#        
+#        thetas = [observed_halo.theta for observed_halo in self.observed_halos]
+#        phis = [observed_halo.phi for observed_halo in self.observed_halos]
+##        rs = [observed_halo.r for observed_halo in self.observed_halos]
+#        vrs_peculiar = [observed_halo.vr_peculiar for observed_halo in self.observed_halos]
+##        vrs_minus_hubbleflow = sp.array(vrs) - sp.array(rs)*100 # Subtracting the Hubbleflow for the powerspectrumanalysis        
+#
+#        
+#        vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar)        
+#        
+#        if parameters.smooth_map:
+#            vrmap = pf.smooth_map(parameters,vrmap)
+#            
+#        self.ls, self.cls = pf.do_harmonic_analysis(parameters,vrmap)
 
 
 

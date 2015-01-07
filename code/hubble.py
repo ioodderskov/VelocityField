@@ -2,7 +2,7 @@ from __future__ import division
 import sys
 import hubble_functions as hf
 import hubble_classes as hc
-import powerspectrum_functions as pf
+#import powerspectrum_functions as pf
 
 
 # There is one argument, namely the parameterfile
@@ -29,5 +29,5 @@ for ob in observers:
 if parameters.calculate_hubble_constants:
     hf.print_hubbleconstants_to_file(parameters,observers)
     
-if parameters.calculate_powerspectra:
-    pf.print_powerspectra_to_file(parameters,observers)
+#if parameters.calculate_powerspectra:
+#    pf.print_powerspectra_to_file(parameters,observers)
