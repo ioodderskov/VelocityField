@@ -295,24 +295,141 @@ def mass_weighted_selection_of_halos(parameters,halos,candidates):
         
         
 def print_hubbleconstants_to_file(parameters,observers):
-    
-    f = open(parameters.hubblefile,'w')
-    
-    for bl in parameters.bindistances:
-        f.write("%s\t" % bl)
+
+    if parameters.vary_skyfraction:
         
-    for ob_number, ob in enumerate(observers):
-       f.write("\n%s\t" % ob_number)
-       
-       for b in range(1,len(parameters.bindistances)):
-           f.write("%s\t" % ob.Hubbleconstants[b])
+        for row, skyfraction in enumerate(parameters.skyfractions):
+            
+            f = open(parameters.hubblefile+str(skyfraction),'w')
+            f.write("085\t")
+
+            for bl in parameters.bindistances:
+                f.write("%s\t" % bl)
+                
+            for ob_number, ob in enumerate(observers):
+               f.write("\n%s\t" % ob_number)
+               
+               for b in range(1,len(parameters.bindistances)):
+                   f.write("%s\t" % ob.Hubbleconstants[row][b])
+                   
+               f.write("\n")
+               
+            f.close()
+            
+    elif parameters.vary_number_of_SNe:
+
+        f = open(parameters.hubblefile,'w')
+        f.write("085\t")
+        
+        for number_of_SNe in parameters.numbers_of_SNe:
+            f.write("%s\t" % number_of_SNe)
+            
+        for ob_number, ob in enumerate(observers):
+            f.write("\n%s\t" % ob_number)
+            
+            for n in range(1,len(parameters.numbers_of_SNe)):
+                f.write("%s\t" % ob.Hubbleconstants[n][-1])
+                
+            f.write("\n")
+            
+        f.close()
+
+
+        
+    else:
+    
+        f = open(parameters.hubblefile,'w')
+        f.write("085\t")
+        
+        for bl in parameters.bindistances:
+            f.write("%s\t" % bl)
+            
+        for ob_number, ob in enumerate(observers):
+           f.write("\n%s\t" % ob_number)
            
-       f.write("\n")
-       
-    f.close()
+           for b in range(1,len(parameters.bindistances)):
+               f.write("%s\t" % ob.Hubbleconstants[b])
+               
+           f.write("\n")
+           
+        f.close()
+    
+
+    
+    
+
         
         
         
+def calculate_Hs_for_these_observed_halos(parameters,list_of_halos):
+    
+    rvsum = sp.zeros(len(parameters.bindistances))
+    r2sum = sp.zeros(len(parameters.bindistances))
+    halo_counts = sp.zeros(len(parameters.bindistances))
+    
+    for observed_halo in list_of_halos: 
+        r = observed_halo.r
+        vr = observed_halo.vr
+        b = len(parameters.bindistances)-1
+        rb = parameters.bindistances[b]
+        
+        while r < rb:
+            
+            rvsum[b] = rvsum[b]+r*vr
+            r2sum[b] = r2sum[b]+r**2
+            halo_counts[b] = halo_counts[b]+1
+            b = b-1
+            rb = parameters.bindistances[b]
+            
+    
+    Hubbleconstants = [None]*len(parameters.bindistances)
+    for b in range(len(parameters.bindistances)):
+        
+        if halo_counts[b] == 0:
+            continue
+        
+        else:
+            Hubbleconstants[b] = calculate_H(rvsum[b],r2sum[b],halo_counts[b])
+        
+    return Hubbleconstants
+    
+
+def calculate_Hs_for_varying_skyfractions(parameters,observed_halos):
+    
+      
+    if parameters.number_of_cones == 1:
+        theta_max_values = sp.arccos(1-2*parameters.skyfractions)
+        
+    if parameters.number_of_cones == 2:
+        theta_max_values = sp.arccos(1-parameters.skyfractions)
+        
+    skyfraction_Hubbleconstants_array = sp.zeros((len(parameters.skyfractions),len(parameters.bindistances)))
+    
+    for row, theta_max in enumerate(theta_max_values):
+        
+        if parameters.number_of_cones == 1:
+            observed_halos_in_cone = [oh for oh in observed_halos if oh.theta < theta_max]
+            
+        if parameters.number_of_cones == 2:
+            observed_halos_in_cone = [oh for oh in observed_halos if oh.theta < theta_max or sp.pi-oh.theta < theta_max]
+        
+        skyfraction_Hubbleconstants_array[row] = calculate_Hs_for_these_observed_halos(parameters,observed_halos_in_cone)
+
+        
+        
+    return skyfraction_Hubbleconstants_array
+    
+def calculate_Hs_for_varying_number_of_SNe(parameters,observed_halos):
+    
+    number_of_SNe_Hubbleconstants_array = sp.zeros((len(parameters.numbers_of_SNe),len(parameters.bindistances)))
+
+    
+    for row, number_of_SNe in enumerate(parameters.numbers_of_SNe):
+        observed_sample_of_halos = random.sample(observed_halos,number_of_SNe)
+        
+        number_of_SNe_Hubbleconstants_array[row] = calculate_Hs_for_these_observed_halos(parameters,observed_sample_of_halos)
+        
+    return number_of_SNe_Hubbleconstants_array
 
     
     
