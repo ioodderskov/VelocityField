@@ -3,13 +3,17 @@ halocatalogue: ../cases/Planck512/parents_11
 hubblefile: ../cases/Planck512/Hubbleconstants
 powerspectrafile: ../cases/Planck512/powerspectra.txt
 
+# Use parallel processing?
+##########################################################################
+parallel_processing: 1
+
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
 
 observer_choice: from_file
 
 # Specify the number of observers you want to use
-number_of_observers: 3
+number_of_observers: 4
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
@@ -66,8 +70,8 @@ nside: 16
 lmax: 32
 smooth_map: 0
 smooth_largest_hole: 0
-preset_smoothinglength: 0
-smoothing_fwhm: 2 # rad
+preset_smoothinglength: 1
+smoothing_fwhm: 0.095 # rad
 ##########################################################################
 
 # Choose whether to vary the skyfraction 
@@ -80,7 +84,7 @@ fraction_step: 0.1
 ##########################################################################
 
 
-#skyfraction: 1
+skyfraction: 1
 boxsize: 512
 omegam: 0.306843
 

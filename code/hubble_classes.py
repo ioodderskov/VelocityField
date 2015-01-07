@@ -18,6 +18,8 @@ class Parameters:
         self.hubblefile = param["hubblefile"]
         self.powerspectrafile = param["powerspectrafile"]
         
+        self.parallel_processing = int(param["parallel_processing"])
+        
         self.observer_choice = param["observer_choice"]
         self.observerfile = param["observerfile"]
         self.number_of_observers = int(param["number_of_observers"])
@@ -34,7 +36,7 @@ class Parameters:
         self.number_of_SNe = int(param["number_of_SNe"])
         self.boxsize = sp.double(param["boxsize"])
         self.number_of_cones = int(param["number_of_cones"])
-#        self.skyfraction = sp.double(param["skyfraction"])
+        self.skyfraction = sp.double(param["skyfraction"])
         
         self.calculate_std_of_deviation = int(param["calculate_std_of_deviation"])
         self.calculate_hubble_constants = int(param["calculate_hubble_constants"])
@@ -131,6 +133,7 @@ class Observer:
         xops = []
         yops = []
         zops = []
+
         
         for h in halos:
         
@@ -145,6 +148,11 @@ class Observer:
             if r < parameters.mind or r > parameters.maxd:
                 continue
             
+            if parameters.vary_skyfraction == 0:
+                theta_max = sp.arccos(1-2*parameters.skyfraction)
+                if theta > theta_max:
+                    continue
+            
                 
             candidates.append(h)
             rs.append(r)
@@ -152,11 +160,13 @@ class Observer:
             phis.append(phi)
             
             [vx,vy,vz] = h.velocity[[0,1,2]]
+
             vr_peculiar = ((xop-self.x)*vx+(yop-self.y)*vy+(zop-self.z)*vz)/r
             vrs_peculiar.append(vr_peculiar)
             
             vr = vr_peculiar + r*100
             vrs.append(vr)
+
             ID = h.ID
             IDs.append(ID)
             
