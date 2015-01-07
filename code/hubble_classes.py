@@ -1,6 +1,6 @@
 from __future__ import division
 import hubble_functions as hf
-#import powerspectrum_functions as pf
+import powerspectrum_functions as pf
 import scipy as sp
 import yaml
 import pdb

@@ -2,7 +2,7 @@ from __future__ import division
 import sys
 import hubble_functions as hf
 import hubble_classes as hc
-#import powerspectrum_functions as pf
+import powerspectrum_functions as pf
 import parallel_processing as pp
 import multiprocessing
 from functools import partial
@@ -29,16 +29,6 @@ if parameters.parallel_processing:
 else:
     observers = map(partial_observe_and_analyse,observers)
 
-#print "observers_out", observers_out
-
-#for ob in observers:
-#    
-#    ob.observe(parameters,halos)
-#    if parameters.calculate_hubble_constants:
-#        ob.do_hubble_analysis(parameters)
-#
-#    if parameters.calculate_powerspectra:
-#        ob.calculate_powerspectra(parameters)        
 
 if parameters.calculate_hubble_constants:
     hf.print_hubbleconstants_to_file(parameters,observers)
