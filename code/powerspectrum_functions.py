@@ -2,16 +2,24 @@ from __future__ import division
 import healpy as hp
 import scipy as sp
 import pdb
+import copy
 
 def create_map(parameters,thetas,phis,vrs):
     pix = hp.ang2pix(parameters.nside,thetas,phis)
     number_of_pixels = hp.nside2npix(parameters.nside)
     vrmap = sp.ones(number_of_pixels)*1e15
-    vrmap[pix] = vrs
+    
+    vrs = sp.array(vrs)
+    vrs_mean_of_repeated_pixels = copy.copy(vrs)
+    for p in set(pix):
+        vrs_mean_of_repeated_pixels[pix == p] = sp.mean(vrs[pix == p])
+    
+    vrmap[pix] = vrs_mean_of_repeated_pixels
 
     mask = [vrmap == 1e15]
     masked_vrmap = hp.ma(vrmap)
     masked_vrmap.mask = mask
+
     
     return masked_vrmap
 
