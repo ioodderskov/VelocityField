@@ -18,6 +18,8 @@ class Parameters:
         self.hubblefile = param["hubblefile"]
         self.powerspectrafile = param["powerspectrafile"]
         
+        self.parallel_processing = int(param["parallel_processing"])
+        
         self.observer_choice = param["observer_choice"]
         self.observerfile = param["observerfile"]
         self.number_of_observers = int(param["number_of_observers"])
@@ -131,6 +133,7 @@ class Observer:
         xops = []
         yops = []
         zops = []
+
         
         for h in halos:
         

@@ -1,7 +1,11 @@
 ---
 halocatalogue: ../cases/Planck512/parents_11
-hubblefile: ../cases/Planck512/Hubbleconstants_varySN
+hubblefile: ../cases/Planck512/Hubbleconstants
 powerspectrafile: ../cases/Planck512/powerspectra.txt
+
+# Use parallel processing?
+##########################################################################
+parallel_processing: 0
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
@@ -9,7 +13,7 @@ powerspectrafile: ../cases/Planck512/powerspectra.txt
 observer_choice: from_file
 
 # Specify the number of observers you want to use
-number_of_observers: 50
+number_of_observers: 4
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
@@ -61,9 +65,9 @@ step_number_of_SNe: 10
 
 # For the powerspectra calculation
 ##########################################################################
-nside: 32
-lmax: 64
-smooth_map: 1
+nside: 16
+lmax: 32
+smooth_map: 0
 smooth_largest_hole: 0
 preset_smoothinglength: 1
 smoothing_fwhm: 0.095 # rad
@@ -85,7 +89,7 @@ omegam: 0.306843
 
 
 number_of_SNe: 240
-mind: 140
-maxd: 160
+mind: 30
+maxd: 256
 width: 37.3
 
