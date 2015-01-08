@@ -5,7 +5,7 @@ powerspectrafile: ../cases/Planck512/powerspectra.txt
 
 # Use parallel processing?
 ##########################################################################
-parallel_processing: 1
+parallel_processing: 0
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
@@ -67,10 +67,10 @@ step_number_of_SNe: 10
 ##########################################################################
 nside: 16
 lmax: 32
-smooth_map: 0
+smooth_map: 1
 smooth_largest_hole: 0
 preset_smoothinglength: 1
-smoothing_fwhm: 0.095 # rad
+smoothing_fwhm: 0.1 # rad
 ##########################################################################
 
 # Choose whether to vary the skyfraction 
@@ -88,8 +88,8 @@ boxsize: 512
 omegam: 0.306843
 
 
-number_of_SNe: 2000
-mind: 140 
-maxd: 160
+number_of_SNe: 7125
+mind: 147.24
+maxd: 152.76
 width: 37.3
 
