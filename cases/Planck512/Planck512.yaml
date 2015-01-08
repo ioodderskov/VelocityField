@@ -13,7 +13,7 @@ parallel_processing: 1
 observer_choice: from_file
 
 # Specify the number of observers you want to use
-number_of_observers: 4
+number_of_observers: 50
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
@@ -26,7 +26,7 @@ host_max_m: 5e15
 
 # How should the observed halos be selected? mass_weighted, random or all
 ##########################################################################
-observed_halos: mass_weighted
+observed_halos: random
 
 ##########################################################################
 # Choose what to do:
@@ -88,7 +88,7 @@ boxsize: 512
 omegam: 0.306843
 
 
-number_of_SNe: 240
+number_of_SNe: 2000
 mind: 140 
 maxd: 160
 width: 37.3
