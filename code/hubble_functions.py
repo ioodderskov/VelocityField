@@ -264,9 +264,11 @@ def random_selection_of_halos(parameters,halos,candidates):
     selected_candidates = []
     random.seed(0)
     for n in range(parameters.number_of_SNe):
-        rnd_candidate_number = random.randint(0,len(candidates))
+        rnd_candidate_number = random.randint(0,len(candidates)-1) # For some reason, the endpoint is included in the interval.
+#        rnd_candidate_number = candidates[rnd_int]
         selected_candidates.append(rnd_candidate_number)
         
+ 
     return selected_candidates
 
 def mass_weighted_selection_of_halos(parameters,halos,candidates):
