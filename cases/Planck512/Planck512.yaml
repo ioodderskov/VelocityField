@@ -89,7 +89,7 @@ omegam: 0.306843
 
 
 number_of_SNe: 240
-mind: 30
-maxd: 256
+mind: 140
+maxd: 160
 width: 37.3
 
