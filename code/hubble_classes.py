@@ -60,6 +60,9 @@ class Parameters:
         self.smooth_largest_hole = int(param["smooth_largest_hole"])
         self.preset_smoothinglength = int(param["preset_smoothinglength"])
         self.smoothing_fwhm = sp.double(param["smoothing_fwhm"])
+
+        self.badval = 1e15
+        self.unseen = 0
                 
         
         if self.distances_from_perturbed_metric:
@@ -118,6 +121,7 @@ class Observer:
         self.Hubbleconstants = []
         self.ls = []
         self.cls = []
+        self.vrmap = []
         self.skyfraction = []
         
 
@@ -144,7 +148,8 @@ class Observer:
              
             r, theta, phi = hf.spherical_coordinates(parameters,self.x, self.y, self.z,
                                                 xop,yop,zop)
-            
+     
+     
             if r < parameters.mind or r > parameters.maxd:
                 continue
             
@@ -230,6 +235,7 @@ class Observer:
             vrmap = pf.smooth_map(parameters,vrmap)
             
         self.ls, self.cls = pf.do_harmonic_analysis(parameters,vrmap)
+        self.vrmap = vrmap
 
 
 

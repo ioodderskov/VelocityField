@@ -4,10 +4,39 @@ import scipy as sp
 import pdb
 import copy
 
+def fill_empty_entries(parameters,ar):
+    
+    while parameters.badval in ar:
+    
+        ar_new = copy.copy(ar)
+     
+        for index, x in enumerate(ar):
+            if x != parameters.badval:
+                continue
+            
+            theta,phi = hp.pix2ang(parameters.nside,index)
+            neighbours = hp.get_all_neighbours(parameters.nside,theta, phi=phi)
+            neighbours = neighbours[ar[neighbours] != parameters.badval]
+            neighbours = neighbours[ar[neighbours] != parameters.unseen]
+            
+            if len(neighbours) == 0:
+#                print "Found a pixel with no usable neighbours"
+                continue
+    
+                
+            x_new = sp.mean(ar[neighbours])
+            ar_new[index] = x_new 
+            
+        ar = ar_new
+           
+    return ar
+
 def create_map(parameters,thetas,phis,vrs):
+    
+    
     pix = hp.ang2pix(parameters.nside,thetas,phis)
     number_of_pixels = hp.nside2npix(parameters.nside)
-    vrmap = sp.ones(number_of_pixels)*1e15
+    vrmap = sp.ones(number_of_pixels)*parameters.badval
     
     vrs = sp.array(vrs)
     vrs_mean_of_repeated_pixels = copy.copy(vrs)
@@ -15,13 +44,17 @@ def create_map(parameters,thetas,phis,vrs):
         vrs_mean_of_repeated_pixels[pix == p] = sp.mean(vrs[pix == p])
     
     vrmap[pix] = vrs_mean_of_repeated_pixels
-
-    mask = [vrmap == 1e15]
-    masked_vrmap = hp.ma(vrmap)
-    masked_vrmap.mask = mask
-
     
-    return masked_vrmap
+    theta_max = sp.arccos(1-2*parameters.skyfraction)
+    pix_all = sp.array(range(number_of_pixels))
+#    pdb.set_trace()
+    pix_unseen = pix_all[hp.pix2ang(parameters.nside,pix_all)[0]>theta_max]
+#    pdb.set_trace()
+    vrmap[pix_unseen] = parameters.unseen
+
+    filled_vrmap = fill_empty_entries(parameters,vrmap)
+    
+    return filled_vrmap
 
 
 def smooth_map(parameters,vrmap):
@@ -40,7 +73,12 @@ def smooth_map(parameters,vrmap):
         
 
 def do_harmonic_analysis(parameters,vrmap):
-    cls = hp.anafast(vrmap,lmax=parameters.lmax)
+
+    mask = [vrmap == parameters.unseen]
+    masked_vrmap = hp.ma(vrmap)
+    masked_vrmap.mask = mask
+
+    cls = hp.anafast(masked_vrmap,lmax=parameters.lmax)
     ls = sp.arange(parameters.lmax+1)
         
     return ls,cls
@@ -67,3 +105,4 @@ def print_powerspectra_to_file(parameters,observers):
         f.write("\n")
         
     f.close()
+    

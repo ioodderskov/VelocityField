@@ -1,9 +1,11 @@
 from __future__ import division
 import scipy as sp
 import matplotlib.pyplot as plt
+import scipy.special
+
 
 #Stuff to read in from the parameterfile
-camb_transfer_function = '../cases/Planck512/TF_Planck_BAO_matterpower_z0.dat'
+camb_transfer_function = '../../cases/Planck512/TF_Planck_BAO_matterpower_z0.dat'
 omega_m = 0.3
 lmax = 100
 x = 150
@@ -50,3 +52,4 @@ scaled_Cl = sp.sqrt(ls*(ls+1)*C)
 plt.plot(ls,scaled_Cl)
 plt.xscale('log')
 plt.yscale('log')
+#plt.xlim([1,100])
