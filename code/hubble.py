@@ -14,10 +14,15 @@ if len(sys.argv) != 2:
 parameterfile = sys.argv[1]
 parameters = hc.Parameters(parameterfile)
 
-halocatalogue = hf.load_halocatalogue(parameters)
 
-halos = hf.initiate_halos(parameters,halocatalogue)
-observers = hf.initiate_observers(parameters,halos)
+if parameters.use_lightcone:
+    halos = [] # the halos are loaded when observing
+    observers = hf.initiate_observers(parameters,halos)
+    
+else:
+    halocatalogue = hf.load_halocatalogue(parameters.halocatalogue_file)
+    halos = hf.initiate_halos(parameters,halocatalogue)
+    observers = hf.initiate_observers(parameters,halos)
 
 partial_observe_and_analyse = partial(pp.observe_and_analyse,parameters=parameters,halos=halos)
 

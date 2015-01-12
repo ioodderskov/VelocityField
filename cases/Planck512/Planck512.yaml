@@ -1,5 +1,5 @@
 ---
-halocatalogue: ../cases/Planck512/parents_11
+halocatalogue_file: ../cases/Planck512/parents_11
 hubblefile: ../cases/Planck512/Hubbleconstants
 powerspectrafile: ../cases/Planck512/powerspectra.txt
 
@@ -13,7 +13,7 @@ parallel_processing: 0
 observer_choice: from_file
 
 # Specify the number of observers you want to use
-number_of_observers: 50
+number_of_observers: 1
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
@@ -81,6 +81,14 @@ fraction_start: 0.1
 fraction_stop: 1
 fraction_step: 0.1
 ##########################################################################
+
+# Choose whether to use lightcone snapshots
+##########################################################################
+use_lightcone: 1
+halocatalogue_filebase: ../cases/Planck512_lightcone/parents
+##########################################################################
+
+
 
 
 skyfraction: 1

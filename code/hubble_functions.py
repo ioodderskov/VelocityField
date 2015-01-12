@@ -44,9 +44,9 @@ def calculate_H(rvsum,r2sum,halo_count):
     
     
 # Load the halo catalogue
-def load_halocatalogue(parameters):
-
-    halocatalogue_unsorted = sp.loadtxt(parameters.halocatalogue)
+def load_halocatalogue(halocatalogue_file):
+    
+    halocatalogue_unsorted = sp.loadtxt(halocatalogue_file)
     halocatalogue = sp.array(sorted(halocatalogue_unsorted, 
                                     key=lambda halocatalogue_unsorted: halocatalogue_unsorted[2]))
                                     
@@ -72,17 +72,22 @@ def initiate_halos(parameters, halocatalogue):
 
 def initiate_observers(parameters,halos):
     
-    if parameters.observer_choice == 'from_file':
+    if parameters.use_lightcone:
         observers = initiate_observers_from_file(parameters)
-
-    if parameters.observer_choice == 'subhalos':
-        observers = initiate_observers_subhalos(parameters,halos)
-
-    if parameters.observer_choice == 'random_halos':
-        observers = initiate_observers_random_halos(parameters,halos)
-
-    if parameters.observer_choice == 'random_positions':
-        observers = initiate_observers_random_positions(parameters)
+        
+    else:
+    
+        if parameters.observer_choice == 'from_file':
+            observers = initiate_observers_from_file(parameters)
+    
+        if parameters.observer_choice == 'subhalos':
+            observers = initiate_observers_subhalos(parameters,halos)
+    
+        if parameters.observer_choice == 'random_halos':
+            observers = initiate_observers_random_halos(parameters,halos)
+    
+        if parameters.observer_choice == 'random_positions':
+            observers = initiate_observers_random_positions(parameters)
     
     
     return observers
@@ -95,7 +100,7 @@ def initiate_observers_from_file(parameters):
     for ob in range(len(observer_positions)):
         
         position = observer_positions[ob,[0,1,2]]/1000
-        observers[ob] = hc.Observer(position)
+        observers[ob] = hc.Observer(ob,position)
         
     return observers[0:parameters.number_of_observers]
     
