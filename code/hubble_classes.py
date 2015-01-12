@@ -136,8 +136,6 @@ class Observer:
             halocatalogue = hf.load_halocatalogue(halocatalogue_file)
             halos = hf.initiate_halos(parameters,halocatalogue)
             
-        pdb.set_trace()
-
         candidates = []
         rs = []
         thetas = []

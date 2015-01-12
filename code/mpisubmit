@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -l  nodes=1:ppn=48 -q qmult
+#PBS -l  nodes=1:ppn=8 -q qmult
 #PBS -l walltime=100:00:00
 #PBS -N hubvar
 export PATH=/com/openmpi-1.2.5/bin:$PATH
@@ -10,12 +10,21 @@ opmpi=/com/openmpi-1.2.5/lib
 intel=/com/intel/fce/10.0.023/lib:/com/intel/cce/10.0.023/lib
 export LD_LIBRARY_PATH=${opmpi}:${intel}:$LD_LIBRARY_PATH
 cd $PBS_O_WORKDIR
-export OMP_NUM_THREADS=48
+export OMP_NUM_THREADS=8
 
 
 #python hubble.py ../cases/Planck512/Planck512.yaml
+
+#python hubble.py ../cases/Planck512/Planck512_smoothing0.01rad.yaml
+#python hubble.py ../cases/Planck512/Planck512_smoothing0.1rad.yaml
+#python hubble.py ../cases/Planck512/Planck512_smoothing0.2rad.yaml
+#python hubble.py ../cases/Planck512/Planck512_smoothing0.3rad.yaml
+#python hubble.py ../cases/Planck512/Planck512_smoothing0.4rad.yaml
+python hubble.py ../cases/Planck512/Planck512_smoothing0.5rad.yaml
+
+#python hubble.py ../cases/Planck512_seed/Planck512_seed.yaml
 #python hubble.py ../cases/Planck1024/Planck1024.yaml
-python hubble.py ../cases/Planck1024_box1024/Planck1024_box1024.yaml
+#python hubble.py ../cases/Planck1024_box1024/Planck1024_box1024.yaml
 
 #python hubble.py ../cases/Planck512/Planck512_nside16_lmax16_number_of_SNe7125.yaml
 #python hubble.py ../cases/Planck512/Planck512_nside16_lmax20_number_of_SNe7125.yaml

@@ -1,7 +1,7 @@
 ---
 halocatalogue_file: ../cases/Planck512/parents_11
 hubblefile: ../cases/Planck512/Hubbleconstants
-powerspectrafile: ../cases/Planck512/powerspectra.txt
+powerspectrafile: ../cases/Planck512/powerspectra_lightcone.txt
 
 # Use parallel processing?
 ##########################################################################
@@ -13,10 +13,10 @@ parallel_processing: 1
 observer_choice: from_file
 
 # Specify the number of observers you want to use
-number_of_observers: 1
+number_of_observers: 50
 
 # If from_file, specify the file here
-observerfile: ../cases/Planck512/observer_positions_Planck512.txt
+observerfile: ../cases/Planck512/observer_positions_Planck512_all_lightcone.txt
 
 # If subhalos, specify the mass-requirements here
 sub_min_m: 1e12
@@ -84,8 +84,8 @@ fraction_step: 0.1
 
 # Choose whether to use lightcone snapshots
 ##########################################################################
-use_lightcone: 1
-halocatalogue_filebase: ../cases/Planck512_lightcone/parents
+use_lightcone: 0
+halocatalogue_filebase: /home/isho07/Rockstar/Planck512_lightcone_output/parents
 ##########################################################################
 
 
