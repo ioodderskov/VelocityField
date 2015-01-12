@@ -14,7 +14,7 @@ class Parameters:
         with open(parameterfile, 'r') as f:
             param = yaml.load(f)
         
-        self.halocatalogue = param["halocatalogue"]
+        self.halocatalogue_file = param["halocatalogue_file"]
         self.hubblefile = param["hubblefile"]
         self.powerspectrafile = param["powerspectrafile"]
         
@@ -87,6 +87,8 @@ class Parameters:
         self.fraction_step = sp.double(param["fraction_step"])
         self.skyfractions = sp.linspace(self.fraction_start,self.fraction_stop,1/self.fraction_step)
 
+        self.use_lightcone = int(param["use_lightcone"])
+        self.halocatalogue_filebase = param["halocatalogue_filebase"]
 
 
 class Halo:
@@ -113,7 +115,8 @@ class Observed_halo:
 
 
 class Observer:
-    def __init__(self,position):
+    def __init__(self,observer_number,position):
+        self.observer_number = observer_number
         self.x = position[0]
         self.y = position[1]
         self.z = position[2]
@@ -127,6 +130,14 @@ class Observer:
 
     
     def observe(self, parameters, halos):
+
+        if parameters.use_lightcone:
+            halocatalogue_file = parameters.halocatalogue_filebase + '_' + str(self.observer_number)
+            halocatalogue = hf.load_halocatalogue(halocatalogue_file)
+            halos = hf.initiate_halos(parameters,halocatalogue)
+            
+        pdb.set_trace()
+
         candidates = []
         rs = []
         thetas = []

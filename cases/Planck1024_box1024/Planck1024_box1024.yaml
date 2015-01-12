@@ -1,5 +1,5 @@
 ---
-halocatalogue: ../cases/Planck1024_box1024/parents_11
+halocatalogue_file: ../cases/Planck1024_box1024/parents_11
 hubblefile: ../cases/Planck1024_box1024/Hubbleconstants
 powerspectrafile: ../cases/Planck1024_box1024/powerspectra.txt
 
@@ -82,6 +82,11 @@ fraction_stop: 1
 fraction_step: 0.1
 ##########################################################################
 
+# Choose whether to use lightcone snapshots
+##########################################################################
+use_lightcone: 0
+halocatalogue_filebase:
+##########################################################################
 
 skyfraction: 1
 boxsize: 1024
