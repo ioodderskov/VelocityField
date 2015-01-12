@@ -129,14 +129,18 @@ class Observer:
         
 
     
-    def observe(self, parameters, halos):
+    def observe(self, parameters):
 
         if parameters.use_lightcone:
             halocatalogue_file = parameters.halocatalogue_filebase + '_' + str(self.observer_number)
             halocatalogue = hf.load_halocatalogue(halocatalogue_file)
             halos = hf.initiate_halos(parameters,halocatalogue)
+        else:
+            halocatalogue_file = parameters.halocatalogue_file
+            halocatalogue = hf.load_halocatalogue(halocatalogue_file)
+            halos = hf.initiate_halos(parameters,halocatalogue)
             
-        pdb.set_trace()
+
 
         candidates = []
         rs = []

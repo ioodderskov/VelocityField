@@ -4,9 +4,9 @@ def observe_and_analyse(observer,parameters,halos):
 
 
     if parameters.use_lightcone:
-        observer.observe(parameters,[])
+        observer.observe(parameters)
     else:
-        observer.observe(parameters,halos)
+        observer.observe(parameters)
     
     if parameters.calculate_hubble_constants:
         observer.do_hubble_analysis(parameters)
