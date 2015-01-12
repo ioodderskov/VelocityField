@@ -14,17 +14,19 @@ export OMP_NUM_THREADS=48
 
 
 #python hubble.py ../cases/Planck512/Planck512.yaml
+#python hubble.py ../cases/Planck1024/Planck1024.yaml
+python hubble.py ../cases/Planck1024_box1024/Planck1024_box1024.yaml
 
-python hubble.py ../cases/Planck512/Planck512_nside16_lmax16_number_of_SNe7125.yaml
-python hubble.py ../cases/Planck512/Planck512_nside16_lmax20_number_of_SNe7125.yaml
-python hubble.py ../cases/Planck512/Planck512_nside16_lmax32_number_of_SNe2000.yaml
-python hubble.py ../cases/Planck512/Planck512_nside16_lmax32_number_of_SNe200.yaml
-python hubble.py ../cases/Planck512/Planck512_nside16_lmax32_number_of_SNe7125.yaml
-python hubble.py ../cases/Planck512/Planck512_nside16_lmax32_number_of_SNeall.yaml
-python hubble.py ../cases/Planck512/Planck512_nside16_lmax64_number_of_SNe7125.yaml
-python hubble.py ../cases/Planck512/Planck512_nside32_lmax64_number_of_SNe7125.yaml
-python hubble.py ../cases/Planck512/Planck512_nside64_lmax128_number_of_SNe7125.yaml
-python hubble.py ../cases/Planck512/Planck512_nside8_lmax16_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax16_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax20_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax32_number_of_SNe2000.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax32_number_of_SNe200.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax32_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax32_number_of_SNeall.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax64_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside32_lmax64_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside64_lmax128_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside8_lmax16_number_of_SNe7125.yaml
 
 
 echo "========= Job finished at `date` =========="

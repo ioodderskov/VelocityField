@@ -1,11 +1,11 @@
 ---
-halocatalogue: ../cases/Planck512/parents_11
-hubblefile: ../cases/Planck512/Hubbleconstants
-powerspectrafile: ../cases/Planck512/powerspectra.txt
+halocatalogue: ../cases/Planck1024_box1024/parents_11
+hubblefile: ../cases/Planck1024_box1024/Hubbleconstants
+powerspectrafile: ../cases/Planck1024_box1024/powerspectra.txt
 
 # Use parallel processing?
 ##########################################################################
-parallel_processing: 1
+parallel_processing: 0
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
@@ -13,10 +13,10 @@ parallel_processing: 1
 observer_choice: from_file
 
 # Specify the number of observers you want to use
-number_of_observers: 50
+number_of_observers: 1
 
 # If from_file, specify the file here
-observerfile: ../cases/Planck512/observer_positions_Planck512.txt
+observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
 
 # If subhalos, specify the mass-requirements here
 sub_min_m: 1e12
@@ -51,7 +51,7 @@ calculate_powerspectra: 1
 # Should the distances be calculated using the perturbed metric?
 distances_from_perturbed_metric: 0
 # In that case, which file describes the potential?
-potential_file: ../cases/Planck512/potential.txt
+potential_file: ../cases/Planck1024_box1024/potential.txt
 
 # Choose whether we should vary the number of supernovae (in that case, the distance aren't varied)
 ##########################################################################
@@ -84,7 +84,7 @@ fraction_step: 0.1
 
 
 skyfraction: 1
-boxsize: 512
+boxsize: 1024
 omegam: 0.306843
 
 
