@@ -65,8 +65,8 @@ step_number_of_SNe: 10
 
 # For the powerspectra calculation
 ##########################################################################
-nside: 32
-lmax: 64
+nside: 16
+lmax: 32
 smooth_map: 1
 smooth_largest_hole: 0
 preset_smoothinglength: 1
