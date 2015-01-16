@@ -5,20 +5,22 @@ import scipy.special
 
 
 #Stuff to read in from the parameterfile
-camb_transfer_function = '../../cases/Planck512/TF_Planck_BAO_matterpower_z0.dat'
-omega_m = 0.3
+#camb_transfer_function = '../../cases/Planck512/TF_Planck_BAO_matterpower_z0.dat'
+camb_matterpowerspectrum = '../../cases/Planck512/TF_Planck_BAO_matterpower_z0.dat'
+omega_m = 0.258
 lmax = 100
 x = 150
+R = 2
+
+data = sp.loadtxt(camb_matterpowerspectrum)
+ks, Pmk = data[:,0], data[:,1]
+#norm = TF[0]
+#TF = TF/norm
 
 
-data = sp.loadtxt(camb_transfer_function)
-ks, TF = data[:,0]*0.678, data[:,1]
-norm = TF[0]
-TF = TF/norm
+#Pmk = ks*TF**2
 
-Pmk = ks*TF**2
-
-Wk2 = 1 # for testing
+Wk2 = 1/(1+ks*R) # for testing
 
 H = 100
 f = omega_m**0.6
@@ -53,3 +55,4 @@ plt.plot(ls,scaled_Cl)
 plt.xscale('log')
 plt.yscale('log')
 #plt.xlim([1,100])
+

@@ -118,9 +118,9 @@ def plot_patch(ls,H,sigma68,sigma95,sigma99):
 
 
 
+case = 'Planck512'
 
-
-data = sp.loadtxt('../../cases/Planck512/powerspectra.txt')
+data = sp.loadtxt('../../cases/' + case + '/powerspectra_lightcone.txt')
 ls = data[0,2:]
 Cls = data[1:,2:]
 
@@ -139,3 +139,4 @@ plt.ylim([0,800])
 
 #scaled_sigma68 = sp.array(sp.sqrt(sigma68[:,0]*ls*(ls+1)))],[sp.array(sp.sqrt(sigma68[:,1]*ls*(ls+1)))]
 plot_patch(ls,Cls,sigma68,sigma95,sigma99)
+plt.savefig('../../cases/' + case + '/powerspectrum_lightcone.pdf')
