@@ -12,7 +12,7 @@ data0 = sp.loadtxt('../../cases/Planck512/powerspectra.txt')
 #data5 = sp.loadtxt('../../cases/Planck512/powerspectra_nside16_lmax32_number_of_SNe2000.txt')
 #data6 = sp.loadtxt('../../cases/Planck512/powerspectra_nside16_lmax32_number_of_SNeall.txt')
 #
-data7 = sp.loadtxt('../../cases/Planck512/powerspectra_nside8_lmax16_number_of_SNe7125.txt')
+#data7 = sp.loadtxt('../../cases/Planck512/powerspectra_nside8_lmax16_number_of_SNe7125.txt')
 #data8 = sp.loadtxt('../../cases/Planck512/powerspectra_nside16_lmax64_number_of_SNe7125.txt')
 #data9 = sp.loadtxt('../../cases/Planck512/powerspectra_nside32_lmax64_number_of_SNe7125.txt')
 #data10 = sp.loadtxt('../../cases/Planck512/powerspectra_nside64_lmax128_number_of_SNe7125.txt')

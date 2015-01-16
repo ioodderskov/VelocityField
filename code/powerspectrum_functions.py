@@ -57,6 +57,41 @@ def create_map(parameters,thetas,phis,vrs):
     return filled_vrmap
 
 
+
+def Gaussian_kernel(angular_distance,b):
+    K = sp.exp(-(angular_distance)**2/(2*b**2))
+    return K
+    
+
+def Ios_smoothing(parameters,ar,b):
+    
+    ar_new = sp.zeros_like(ar)
+    
+    for index, x in enumerate(ar):
+        numerator = 0
+        denominator = 0
+        
+        theta, phi = hp.pix2ang(parameters.nside,index)
+        
+        
+        for index_i, xi in enumerate(ar):
+            
+            if xi == parameters.badval:
+                continue
+            
+            theta_i, phi_i = hp.pix2ang(parameters.nside,index_i)
+            angular_distance = hp.rotator.angdist([theta, phi],[theta_i, phi_i])
+            kernel = Gaussian_kernel(angular_distance,b)
+            numerator = numerator + kernel*xi
+            denominator = denominator + kernel
+        
+        x_new = numerator/denominator            
+        ar_new[index] = x_new
+        
+    
+    return ar_new
+
+
 def smooth_map(parameters,vrmap):
     if not (parameters.preset_smoothinglength | parameters.smooth_largest_hole):
         print "If you want to smooth the map, you need to make a choice for the smoothinglength"
@@ -67,7 +102,7 @@ def smooth_map(parameters,vrmap):
     if parameters.smooth_largest_hole:
         smoothing_fwhm = find_largest_hole(parameters,vrmap)
         
-    vrmap = hp.smoothing(vrmap,fwhm=smoothing_fwhm)
+    vrmap = Ios_smoothing(parameters,vrmap,smoothing_fwhm)
 
     return vrmap
         
