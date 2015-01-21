@@ -20,6 +20,9 @@ class Parameters:
         
         self.parallel_processing = int(param["parallel_processing"])
         
+        self.snapshot = int(param["snapshot"])
+        self.snapshot_file = param["snapshot_file"]
+        
         self.observer_choice = param["observer_choice"]
         self.observerfile = param["observerfile"]
         self.number_of_observers = int(param["number_of_observers"])

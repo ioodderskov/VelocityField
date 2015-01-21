@@ -2,6 +2,11 @@
 halocatalogue_file: ../cases/Planck512/parents_11
 hubblefile: ../cases/Planck512/Hubbleconstants
 powerspectrafile: ../cases/Planck512/powerspectra.txt
+snapshot_file: ../cases/Planck512/snapshot/snapshot_011
+
+# ROCKSTAR halocatalogue (default) or snapshot?
+##########################################################################
+snapshot: 1
 
 # Use parallel processing?
 ##########################################################################
@@ -45,7 +50,7 @@ make_hubblediagram: 0
 # Create a map of the velocityfield?
 map_velocityfield: 0
 # Calculate powerspectra for the observers?
-calculate_powerspectra: 1
+calculate_powerspectra: 0
 
 ##########################################################################
 # Should the distances be calculated using the perturbed metric?
@@ -65,8 +70,8 @@ step_number_of_SNe: 10
 
 # For the powerspectra calculation
 ##########################################################################
-nside: 32
-lmax: 64
+nside: 4
+lmax: 16
 smooth_map: 0
 smooth_largest_hole: 0
 preset_smoothinglength: 1

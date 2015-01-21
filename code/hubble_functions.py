@@ -438,6 +438,77 @@ def calculate_Hs_for_varying_number_of_SNe(parameters,observed_halos):
         
     return number_of_SNe_Hubbleconstants_array
 
+
+
+
+def read_snapshot(parameters):
+    
+    size_unit = 4
+    f = open(parameters.snapshot_file,'r')
+    print "reading file:", parameters.snapshot_file
+    size_header = 5*size_unit
+    f.seek(size_header)
+
+    Npart = sp.fromfile(f,sp.uint32,count=6)
+    Massarr = sp.fromfile(f,sp.double,count=6)
+    Time = sp.fromfile(f,sp.double,count=1)
+    Redshift = sp.fromfile(f,sp.double,count=1)
+    FlagSfr = sp.fromfile(f,sp.int32,count=1)
+    FlagFeedback = sp.fromfile(f,sp.int32,count=1)
+    Nall = sp.fromfile(f,sp.int32,count=6)
+    Flagcooling = sp.fromfile(f,sp.int32,count=1)
+    NumFiles = sp.fromfile(f,sp.int32,count=1)
+    BoxSize = sp.fromfile(f,sp.double,count=1)
+    Omega0 = sp.fromfile(f,sp.double,count=1)
+    OmegaLambda = sp.fromfile(f,sp.double,count=1)
+    HubbleParam = sp.fromfile(f,sp.double,count=1)
+    FlagAge = sp.fromfile(f,sp.int32,count=1)
+    FlagMetals = sp.fromfile(f,sp.int32,count=1)
+    NallHW = sp.fromfile(f,sp.int32,count=6)
+    flag_entr_ics = sp.fromfile(f,sp.int32,count=1)
+
+    size_fortranstuff = 6*size_unit
+    f.seek(size_header+256+size_fortranstuff)
+
+    N = int(Npart[Npart != 0])
+    M = sp.double(Massarr[Massarr != 0])
+    
+    pos = sp.fromfile(f,sp.single,count=N*3)
+
+    size_more_fortran_stuff = 6*size_unit
+    f.seek(size_more_fortran_stuff,1)
+
+    vel = sp.fromfile(f,sp.single,count=N*3)
+
+
+    xindices = sp.mod(range(N*3),3) == 0
+    yindices = sp.mod(range(N*3),3) == 1
+    zindices = sp.mod(range(N*3),3) == 2
+    
+    xs = pos[xindices]/1000.
+    ys = pos[yindices]/1000.
+    zs = pos[zindices]/1000.
+
+    vxs = vel[xindices]    
+    vys = vel[yindices]
+    vzs = vel[zindices]    
+
+    pdb.set_trace()
+
+
+    halos = [None]*N
+    
+    for p in range(N):
+        position = [xs[p],ys[p],zs[p]]
+        velocity = [vxs[p],vys[p],vzs[p]]
+        ID = p
+        ID_host = -1
+        
+        halo = hc.Halo(position,velocity,M,ID,ID_host,p)
+        halos[p] = halo
+        
+    return halos
+
     
     
    

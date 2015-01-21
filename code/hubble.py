@@ -15,9 +15,12 @@ parameterfile = sys.argv[1]
 parameters = hc.Parameters(parameterfile)
 
 
-if parameters.use_lightcone:
-    halos = [] # the halos are loaded when observing
-    observers = hf.initiate_observers(parameters,halos)
+if parameters.snapshot:
+    halos = hf.read_snapshot(parameters) # technically, its particles, not halos, in this case. But never mind.
+    observers = hf.initiate_observers(parameters,[])
+
+elif parameters.use_lightcone:
+    observers = hf.initiate_observers(parameters,[])
     
 else:
     halocatalogue = hf.load_halocatalogue(parameters.halocatalogue_file)
