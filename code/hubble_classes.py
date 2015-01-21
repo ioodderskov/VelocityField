@@ -126,19 +126,20 @@ class Observer:
         self.cls = []
         self.vrmap = []
         self.skyfraction = []
+        self.radius_of_greatest_hole = []
         
 
     
-    def observe(self, parameters):
+    def observe(self, parameters,halos):
 
         if parameters.use_lightcone:
             halocatalogue_file = parameters.halocatalogue_filebase + '_' + str(self.observer_number)
             halocatalogue = hf.load_halocatalogue(halocatalogue_file)
             halos = hf.initiate_halos(parameters,halocatalogue)
-        else:
-            halocatalogue_file = parameters.halocatalogue_file
-            halocatalogue = hf.load_halocatalogue(halocatalogue_file)
-            halos = hf.initiate_halos(parameters,halocatalogue)
+#        else:
+#            halocatalogue_file = parameters.halocatalogue_file
+#            halocatalogue = hf.load_halocatalogue(halocatalogue_file)
+#            halos = hf.initiate_halos(parameters,halocatalogue)
             
 
 
@@ -243,12 +244,16 @@ class Observer:
         thetas = [observed_halo.theta for observed_halo in self.observed_halos]
         phis = [observed_halo.phi for observed_halo in self.observed_halos]
         vrs_peculiar = [observed_halo.vr_peculiar for observed_halo in self.observed_halos]
+#        pdb.set_trace()
         
-        vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar)        
+        vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar) 
+#        pdb.set_trace()
+        self.radius_of_largest_hole = pf.find_largest_hole(parameters,vrmap)
+        vrmap = pf.fill_empty_entries(parameters,vrmap)
         
         if parameters.smooth_map:
             vrmap = pf.smooth_map(parameters,vrmap)
-            
+        
         self.ls, self.cls = pf.do_harmonic_analysis(parameters,vrmap)
         self.vrmap = vrmap
 

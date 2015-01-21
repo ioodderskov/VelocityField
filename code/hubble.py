@@ -16,8 +16,8 @@ parameters = hc.Parameters(parameterfile)
 
 
 if parameters.use_lightcone:
-    halos = []
-    observers = hf.initiate_observers(parameters,[])
+    halos = [] # the halos are loaded when observing
+    observers = hf.initiate_observers(parameters,halos)
     
 else:
     halocatalogue = hf.load_halocatalogue(parameters.halocatalogue_file)
