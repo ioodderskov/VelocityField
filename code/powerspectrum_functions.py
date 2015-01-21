@@ -103,6 +103,7 @@ def smooth_map(parameters,vrmap):
         smoothing_fwhm = find_largest_hole(parameters,vrmap)
         
     vrmap = Ios_smoothing(parameters,vrmap,smoothing_fwhm)
+	#vrmap = hp.smoothing(vrmap,fwhm=smoothing_fwhm)
 
     return vrmap
         

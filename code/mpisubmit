@@ -13,14 +13,14 @@ cd $PBS_O_WORKDIR
 export OMP_NUM_THREADS=8
 
 
-#python hubble.py ../cases/Planck512/Planck512.yaml
+python hubble.py ../cases/Planck512/Planck512.yaml
 
 #python hubble.py ../cases/Planck512/Planck512_smoothing0.01rad.yaml
 #python hubble.py ../cases/Planck512/Planck512_smoothing0.1rad.yaml
 #python hubble.py ../cases/Planck512/Planck512_smoothing0.2rad.yaml
 #python hubble.py ../cases/Planck512/Planck512_smoothing0.3rad.yaml
 #python hubble.py ../cases/Planck512/Planck512_smoothing0.4rad.yaml
-python hubble.py ../cases/Planck512/Planck512_smoothing0.5rad.yaml
+#python hubble.py ../cases/Planck512/Planck512_smoothing0.5rad.yaml
 
 #python hubble.py ../cases/Planck512_seed/Planck512_seed.yaml
 #python hubble.py ../cases/Planck1024/Planck1024.yaml
