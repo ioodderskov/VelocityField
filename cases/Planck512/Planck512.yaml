@@ -1,7 +1,12 @@
 ---
 halocatalogue_file: ../cases/Planck512/parents_11
 hubblefile: ../cases/Planck512/Hubbleconstants
-powerspectrafile: ../cases/Planck512/powerspectra_IosSmoothing_0.1rad_8_16.txt
+powerspectrafile: ../cases/Planck512/powerspectra.txt
+snapshot_file: /home/isho07/makeIC/output/Planck512/snapshot_011 
+
+# ROCKSTAR halocatalogue (default) or snapshot?
+##########################################################################
+snapshot: 1
 
 # Use parallel processing?
 ##########################################################################
@@ -13,7 +18,7 @@ parallel_processing: 0
 observer_choice: from_file
 
 # Specify the number of observers you want to use
-number_of_observers: 50
+number_of_observers: 1
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512_all_lightcone.txt
@@ -26,7 +31,7 @@ host_max_m: 5e15
 
 # How should the observed halos be selected? mass_weighted, random or all
 ##########################################################################
-observed_halos: mass_weighted
+observed_halos: all
 
 ##########################################################################
 # Choose what to do:
@@ -65,9 +70,9 @@ step_number_of_SNe: 10
 
 # For the powerspectra calculation
 ##########################################################################
-nside: 8
+nside: 4
 lmax: 16
-smooth_map: 1
+smooth_map: 0
 smooth_largest_hole: 0
 preset_smoothinglength: 1
 smoothing_fwhm: 0.1 # rad

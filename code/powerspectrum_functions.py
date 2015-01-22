@@ -3,8 +3,40 @@ import healpy as hp
 import scipy as sp
 import pdb
 import copy
+from collections import Counter
+
+def find_largest_hole(parameters,ar):
+    
+    minimal_distances = []
+    all_pixels = sp.array(range(len(ar)))
+    nonempty_pixels = all_pixels[(ar[all_pixels] != parameters.badval) & (ar[all_pixels] != parameters.unseen)]
+
+        
+    for p in nonempty_pixels:
+
+        minimal_distance = 3.14
+        theta,phi = hp.pix2ang(parameters.nside,p)
+        
+        for p_i in nonempty_pixels:
+
+            if p_i == p:
+                continue
+            
+            theta_i, phi_i = hp.pix2ang(parameters.nside,p_i)
+            angular_distance = hp.rotator.angdist([theta,phi],[theta_i,phi_i])
+            minimal_distance = sp.minimum(minimal_distance,angular_distance)
+            
+        minimal_distances.append(minimal_distance)
+        
+    radius_of_largest_hole = max(minimal_distances)
+#    pdb.set_trace()    
+    return radius_of_largest_hole
+            
+
 
 def fill_empty_entries(parameters,ar):
+    
+#    pixels_without_neighbours = []
     
     while parameters.badval in ar:
     
@@ -19,15 +51,23 @@ def fill_empty_entries(parameters,ar):
             neighbours = neighbours[ar[neighbours] != parameters.badval]
             neighbours = neighbours[ar[neighbours] != parameters.unseen]
             
-            if len(neighbours) == 0:
-#                print "Found a pixel with no usable neighbours"
-                continue
+#            if len(neighbours) == 0:
+#                pixels_without_neighbours.append(index)
+#                continue
     
                 
             x_new = sp.mean(ar[neighbours])
-            ar_new[index] = x_new 
+            ar_new[index] = x_new
             
         ar = ar_new
+        
+#    if len(pixels_without_neighbours) != 0:
+#        print "There are some pixels with no neighbours"
+#        pixel_most_common = Counter(pixels_without_neighbours).most_common(1)[0][0]
+#        ar[pixel_most_common] = 1000
+##        pdb.set_trace()
+#        recurrence_most_common = Counter(pixels_without_neighbours).most_common(1)[0][1]
+#        print "recurrence_most_common = ", recurrence_most_common
            
     return ar
 
@@ -38,23 +78,21 @@ def create_map(parameters,thetas,phis,vrs):
     number_of_pixels = hp.nside2npix(parameters.nside)
     vrmap = sp.ones(number_of_pixels)*parameters.badval
     
+#    pdb.set_trace()
     vrs = sp.array(vrs)
     vrs_mean_of_repeated_pixels = copy.copy(vrs)
     for p in set(pix):
         vrs_mean_of_repeated_pixels[pix == p] = sp.mean(vrs[pix == p])
     
     vrmap[pix] = vrs_mean_of_repeated_pixels
-    
+
+#    pdb.set_trace()    
     theta_max = sp.arccos(1-2*parameters.skyfraction)
     pix_all = sp.array(range(number_of_pixels))
-#    pdb.set_trace()
     pix_unseen = pix_all[hp.pix2ang(parameters.nside,pix_all)[0]>theta_max]
-#    pdb.set_trace()
     vrmap[pix_unseen] = parameters.unseen
-
-    filled_vrmap = fill_empty_entries(parameters,vrmap)
-    
-    return filled_vrmap
+#    pdb.set_trace()
+    return vrmap
 
 
 
@@ -102,8 +140,9 @@ def smooth_map(parameters,vrmap):
     if parameters.smooth_largest_hole:
         smoothing_fwhm = find_largest_hole(parameters,vrmap)
         
-    vrmap = Ios_smoothing(parameters,vrmap,smoothing_fwhm)
-	#vrmap = hp.smoothing(vrmap,fwhm=smoothing_fwhm)
+    #vrmap = Ios_smoothing(parameters,vrmap,smoothing_fwhm)
+    vrmap = hp.smoothing(vrmap,fwhm=smoothing_fwhm)
+        
 
     return vrmap
         
@@ -119,9 +158,8 @@ def do_harmonic_analysis(parameters,vrmap):
         
     return ls,cls
     
-def find_largest_hole(parameters,vrmap):
-    # Maybe one could use the healpy-function "Get_all_neighbours" to find the largest hole?
-    print "This functions is still empty"
+
+    
     
     
 def print_powerspectra_to_file(parameters,observers):

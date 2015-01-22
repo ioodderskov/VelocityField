@@ -1,7 +1,7 @@
 import scipy as sp
 import matplotlib.pyplot as plt
 
-data0 = sp.loadtxt('../../cases/Planck512/powerspectra.txt')
+data0 = sp.loadtxt('../../cases/Planck512/powerspectra_ns.txt')
 
 #data1 = sp.loadtxt('../../cases/Planck512/powerspectra_nside16_lmax16_number_of_SNe7125.txt')
 #data2 = sp.loadtxt('../../cases/Planck512/powerspectra_nside16_lmax20_number_of_SNe7125.txt')

@@ -15,8 +15,11 @@ parameterfile = sys.argv[1]
 parameters = hc.Parameters(parameterfile)
 
 
-if parameters.use_lightcone:
-    halos = []
+if parameters.snapshot:
+    halos = hf.read_snapshot(parameters) # technically, its particles, not halos, in this case. But never mind.
+    observers = hf.initiate_observers(parameters,[])
+
+elif parameters.use_lightcone:
     observers = hf.initiate_observers(parameters,[])
     
 else:
