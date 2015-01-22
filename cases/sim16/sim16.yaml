@@ -1,7 +1,16 @@
 ---
-halocatalogue: ../cases/sim16/parents_11
+halocatalogue_file: ../cases/sim16/parents_11
 hubblefile: ../cases/sim16/Hubbleconstants.txt
 powerspectrafile: ../cases/sim16/powerspectra.txt
+snapshot_file: ../cases/sim16/snapshot_sim16
+
+# ROCKSTAR halocatalogue (default) or snapshot?
+##########################################################################
+snapshot: 1
+
+# Use parallel processing?
+##########################################################################
+parallel_processing: 0
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
@@ -9,7 +18,7 @@ powerspectrafile: ../cases/sim16/powerspectra.txt
 observer_choice: from_file
 
 # Specify the number of observers you want to use
-number_of_observers: 10
+number_of_observers: 1
 
 # If from_file, specify the file here
 observerfile: ../cases/sim16/howdy16.txt
@@ -19,6 +28,11 @@ host_min_m: 1.1e13
 host_max_m: 2.3e13
 sub_min_m: 1.6e12
 sub_max_m: 2.8e12
+
+# How should the observed halos be selected? mass_weighted, random or all
+observed_halos: all
+##########################################################################
+
 
 ##########################################################################
 
@@ -48,6 +62,20 @@ distances_from_perturbed_metric: 0
 potential_file: ../cases/sim16/potential.txt
 ##########################################################################
 
+# Choose whether to vary the skyfraction 
+##########################################################################
+vary_skyfraction: 0
+number_of_cones: 2
+fraction_start: 0.1
+fraction_stop: 1
+fraction_step: 0.1
+##########################################################################
+
+# Choose whether to use lightcone snapshots
+##########################################################################
+use_lightcone: 0
+halocatalogue_filebase: 
+##########################################################################
 
 
 # Choose whether we should vary the number of supernovae (in that case, the distance aren't varied)
@@ -72,8 +100,6 @@ smoothing_fwhm: 0.2
 boxsize: 16
 skyfraction: 1
 omegam: 0.306843
-
-number_of_cones: 1
 
 number_of_SNe: 10
 mind: 2

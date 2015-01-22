@@ -183,6 +183,7 @@ class Observer:
             thetas.append(theta)
             phis.append(phi)
             
+            
             [vx,vy,vz] = h.velocity[[0,1,2]]
 
             vr_peculiar = ((xop-self.x)*vx+(yop-self.y)*vy+(zop-self.z)*vz)/r
