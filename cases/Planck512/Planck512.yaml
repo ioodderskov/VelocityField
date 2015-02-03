@@ -6,7 +6,7 @@ snapshot_file: /home/isho07/makeIC/output/Planck512/snapshot_011
 
 # ROCKSTAR halocatalogue (default) or snapshot?
 ##########################################################################
-snapshot: 1
+snapshot: 0
 
 # Use parallel processing?
 ##########################################################################
@@ -70,8 +70,8 @@ step_number_of_SNe: 10
 
 # For the powerspectra calculation
 ##########################################################################
-nside: 4
-lmax: 16
+nside: 32
+lmax: 64
 smooth_map: 0
 smooth_largest_hole: 0
 preset_smoothinglength: 1

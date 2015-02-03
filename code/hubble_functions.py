@@ -496,8 +496,8 @@ def read_snapshot(parameters):
     halos = [None]*N
     
     for p in range(N):
-        position = [xs[p],ys[p],zs[p]]
-        velocity = [vxs[p],vys[p],vzs[p]]
+        position = sp.array([xs[p],ys[p],zs[p]])
+        velocity = sp.array([vxs[p],vys[p],vzs[p]])
         ID = p
         ID_host = -1
         
