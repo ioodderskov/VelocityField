@@ -67,7 +67,7 @@ step_number_of_SNe: 10
 ##########################################################################
 nside: 32
 lmax: 64
-smooth_map: 0
+smooth_map: 1
 smooth_largest_hole: 0
 preset_smoothinglength: 1
 smoothing_fwhm: 0.1 # rad

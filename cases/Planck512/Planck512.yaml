@@ -2,7 +2,7 @@
 halocatalogue_file: ../cases/Planck512/parents_11
 hubblefile: ../cases/Planck512/Hubbleconstants
 powerspectrafile: ../cases/Planck512/powerspectra.txt
-snapshot_file: ../cases/Planck512/snapshot/snapshot_sim16
+snapshot_file: /home/isho07/makeIC/output/Planck512/snapshot_011 
 
 # ROCKSTAR halocatalogue (default) or snapshot?
 ##########################################################################
@@ -21,7 +21,7 @@ observer_choice: from_file
 number_of_observers: 1
 
 # If from_file, specify the file here
-observerfile: ../cases/Planck512/observer_positions_Planck512.txt
+observerfile: ../cases/Planck512/observer_positions_Planck512_all_lightcone.txt
 
 # If subhalos, specify the mass-requirements here
 sub_min_m: 1e12
@@ -70,8 +70,8 @@ step_number_of_SNe: 10
 
 # For the powerspectra calculation
 ##########################################################################
-nside: 4
-lmax: 16
+nside: 32
+lmax: 64
 smooth_map: 0
 smooth_largest_hole: 0
 preset_smoothinglength: 1
@@ -90,7 +90,7 @@ fraction_step: 0.1
 # Choose whether to use lightcone snapshots
 ##########################################################################
 use_lightcone: 0
-halocatalogue_filebase: ../cases/Planck512_lightcone/parents
+halocatalogue_filebase: /home/isho07/Rockstar/Planck512_lightcone_output/parents
 ##########################################################################
 
 

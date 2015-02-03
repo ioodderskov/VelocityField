@@ -248,11 +248,13 @@ class Observer:
         thetas = [observed_halo.theta for observed_halo in self.observed_halos]
         phis = [observed_halo.phi for observed_halo in self.observed_halos]
         vrs_peculiar = [observed_halo.vr_peculiar for observed_halo in self.observed_halos]
-#        pdb.set_trace()
         
         vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar) 
-#        pdb.set_trace()
         self.radius_of_largest_hole = pf.find_largest_hole(parameters,vrmap)
+		outputfile = 'outputfile.txt'
+		f = open(outputfile,'w')
+		f.write("radius of largest hole = %s" % self.radius_of_largest_hole)
+		f.close()
         vrmap = pf.fill_empty_entries(parameters,vrmap)
         
         if parameters.smooth_map:

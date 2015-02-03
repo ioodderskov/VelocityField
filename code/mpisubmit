@@ -1,6 +1,6 @@
 #!/bin/sh
-#PBS -l  nodes=1:ppn=20 -q q20
-#PBS -l walltime=100:00:00
+#PBS -l  nodes=1:ppn=32 -q qcap
+#PBS -l walltime=1000:00:00
 #PBS -N hubvar
 export PATH=/com/openmpi-1.2.5/bin:$PATH
 export LD_LIBRARY_PATH=/com/intel/mkl/10.0.1.014/lib/em64t:/com/openmpi-1.2.5/lib:/com/intel/fce/10.1.017/lib:/com/gsl/1.15/lib
@@ -10,9 +10,32 @@ opmpi=/com/openmpi-1.2.5/lib
 intel=/com/intel/fce/10.0.023/lib:/com/intel/cce/10.0.023/lib
 export LD_LIBRARY_PATH=${opmpi}:${intel}:$LD_LIBRARY_PATH
 cd $PBS_O_WORKDIR
-export OMP_NUM_THREADS=20
+export OMP_NUM_THREADS=32
 
 
 python hubble.py ../cases/Planck512/Planck512.yaml
+
+#python hubble.py ../cases/Planck512/Planck512_smoothing0.01rad.yaml
+#python hubble.py ../cases/Planck512/Planck512_smoothing0.1rad.yaml
+#python hubble.py ../cases/Planck512/Planck512_smoothing0.2rad.yaml
+#python hubble.py ../cases/Planck512/Planck512_smoothing0.3rad.yaml
+#python hubble.py ../cases/Planck512/Planck512_smoothing0.4rad.yaml
+#python hubble.py ../cases/Planck512/Planck512_smoothing0.5rad.yaml
+
+#python hubble.py ../cases/Planck512_seed/Planck512_seed.yaml
+#python hubble.py ../cases/Planck1024/Planck1024.yaml
+#python hubble.py ../cases/Planck1024_box1024/Planck1024_box1024.yaml
+
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax16_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax20_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax32_number_of_SNe2000.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax32_number_of_SNe200.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax32_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax32_number_of_SNeall.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside16_lmax64_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside32_lmax64_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside64_lmax128_number_of_SNe7125.yaml
+#python hubble.py ../cases/Planck512/Planck512_nside8_lmax16_number_of_SNe7125.yaml
+
 
 echo "========= Job finished at `date` =========="

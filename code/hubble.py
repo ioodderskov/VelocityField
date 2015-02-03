@@ -37,7 +37,6 @@ if parameters.parallel_processing:
 else:
     observers = map(partial_observe_and_analyse,observers)
 
- 
 
 if parameters.calculate_hubble_constants:
     hf.print_hubbleconstants_to_file(parameters,observers)

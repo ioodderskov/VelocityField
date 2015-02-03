@@ -1,5 +1,5 @@
 from __future__ import division
-import scipy as sp
+import numpy as sp
 import sys
 sys.path.insert(0,'/home/io/Dropbox/Projekter/Hubble/VelocityField/SNdata')
 #import SN_redshiftdistribution as SN
