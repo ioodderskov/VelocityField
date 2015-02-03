@@ -251,10 +251,10 @@ class Observer:
         
         vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar) 
         self.radius_of_largest_hole = pf.find_largest_hole(parameters,vrmap)
-		outputfile = 'outputfile.txt'
-		f = open(outputfile,'w')
-		f.write("radius of largest hole = %s" % self.radius_of_largest_hole)
-		f.close()
+        outputfile = 'outputfile.txt'
+        f = open(outputfile,'w')
+        f.write("radius of largest hole = %s" % self.radius_of_largest_hole)
+        f.close()
         vrmap = pf.fill_empty_entries(parameters,vrmap)
         
         if parameters.smooth_map:
