@@ -29,7 +29,8 @@ def find_largest_hole(parameters,ar):
         minimal_distances.append(minimal_distance)
         
     radius_of_largest_hole = max(minimal_distances)
-#    pdb.set_trace()    
+
+    print "radius of largest hole = ", radius_of_largest_hole  
     return radius_of_largest_hole
             
 

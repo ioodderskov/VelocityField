@@ -6,7 +6,7 @@ snapshot_file: ../cases/Planck512/snapshot/snapshot_sim16
 
 # ROCKSTAR halocatalogue (default) or snapshot?
 ##########################################################################
-snapshot: 1
+snapshot: 0
 
 # Use parallel processing?
 ##########################################################################
@@ -50,7 +50,7 @@ make_hubblediagram: 0
 # Create a map of the velocityfield?
 map_velocityfield: 0
 # Calculate powerspectra for the observers?
-calculate_powerspectra: 0
+calculate_powerspectra: 1
 
 ##########################################################################
 # Should the distances be calculated using the perturbed metric?
