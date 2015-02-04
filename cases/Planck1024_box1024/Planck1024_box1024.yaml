@@ -2,6 +2,11 @@
 halocatalogue_file: ../cases/Planck1024_box1024/parents_11
 hubblefile: ../cases/Planck1024_box1024/Hubbleconstants
 powerspectrafile: ../cases/Planck1024_box1024/powerspectra.txt
+snapshot_file:  
+
+# ROCKSTAR halocatalogue (default) or snapshot?
+##########################################################################
+snapshot: 0
 
 # Use parallel processing?
 ##########################################################################
@@ -32,7 +37,7 @@ observed_halos: mass_weighted
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 0
+calculate_hubble_constants: 1
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
@@ -45,7 +50,7 @@ make_hubblediagram: 0
 # Create a map of the velocityfield?
 map_velocityfield: 0
 # Calculate powerspectra for the observers?
-calculate_powerspectra: 1
+calculate_powerspectra: 0
 
 ##########################################################################
 # Should the distances be calculated using the perturbed metric?
@@ -93,8 +98,8 @@ boxsize: 1024
 omegam: 0.306843
 
 
-number_of_SNe: 7125
-mind: 147.42
-maxd: 152.76
+number_of_SNe: 240
+mind: 80
+maxd: 256
 width: 37.3
 
