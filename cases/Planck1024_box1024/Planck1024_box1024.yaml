@@ -4,9 +4,10 @@ hubblefile: ../cases/Planck1024_box1024/Hubbleconstants
 powerspectrafile: ../cases/Planck1024_box1024/powerspectra.txt
 snapshot_file:  
 
-# ROCKSTAR halocatalogue (default) or snapshot?
+# ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
 ##########################################################################
 snapshot: 0
+CoDECS: 1
 
 # Use parallel processing?
 ##########################################################################

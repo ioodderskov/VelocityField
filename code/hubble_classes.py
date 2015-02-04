@@ -92,6 +92,8 @@ class Parameters:
 
         self.use_lightcone = int(param["use_lightcone"])
         self.halocatalogue_filebase = param["halocatalogue_filebase"]
+        
+        self.CoDECS = int(param["CoDECS"])
 
 
 class Halo:
@@ -137,7 +139,7 @@ class Observer:
 
         if parameters.use_lightcone:
             halocatalogue_file = parameters.halocatalogue_filebase + '_' + str(self.observer_number)
-            halocatalogue = hf.load_halocatalogue(halocatalogue_file)
+            halocatalogue = hf.load_halocatalogue(parameters,halocatalogue_file)
             halos = hf.initiate_halos(parameters,halocatalogue)
 #        else:
 #            halocatalogue_file = parameters.halocatalogue_file
@@ -156,8 +158,8 @@ class Observer:
         xops = []
         yops = []
         zops = []
-
         
+          
         for h in halos:
         
             x,y,z = h.position[0],h.position[1],h.position[2]
@@ -198,6 +200,8 @@ class Observer:
             xops.append(xop)
             yops.append(yop)
             zops.append(zop)  
+            
+
             
         
 

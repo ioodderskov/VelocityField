@@ -9,6 +9,7 @@ import scipy.ndimage as ndi
 import hubble_classes as hc
 from scipy import interpolate
 import pdb
+import tarfile
 
 
 
@@ -40,15 +41,36 @@ def calculate_H(rvsum,r2sum,halo_count):
     Hloc = rvmean/r2mean
     
     return Hloc
+
+
+def load_CoDECS_catalogue(halocatalogue_file):
+    tar = tarfile.open(halocatalogue_file,mode='r')
+
+    for i,catalogue in enumerate(tar.getmembers()):
+        f=tar.extractfile(catalogue)
+        content = sp.loadtxt(f)
+        if not 'halocatalogue' in locals():
+            halocatalogue = content
+        else:
+            sp.vstack((halocatalogue,content))
+    
+    tar.close()
+    
+    return halocatalogue
     
     
     
 # Load the halo catalogue
-def load_halocatalogue(halocatalogue_file):
+def load_halocatalogue(parameters,halocatalogue_file):
     
-    halocatalogue_unsorted = sp.loadtxt(halocatalogue_file)
-    halocatalogue = sp.array(sorted(halocatalogue_unsorted, 
-                                    key=lambda halocatalogue_unsorted: halocatalogue_unsorted[2]))
+    if parameters.CoDECS:
+        halocatalogue_unsorted = load_CoDECS_catalogue(halocatalogue_file)
+        halocatalogue = sp.array(sorted(halocatalogue_unsorted,
+                                        key=lambda halocatalogue_unsorted: halocatalogue_unsorted[3]))
+    else:
+        halocatalogue_unsorted = sp.loadtxt(halocatalogue_file)
+        halocatalogue = sp.array(sorted(halocatalogue_unsorted, 
+                                        key=lambda halocatalogue_unsorted: halocatalogue_unsorted[2]))
                                     
     return halocatalogue
     
@@ -56,16 +78,29 @@ def load_halocatalogue(halocatalogue_file):
 def initiate_halos(parameters, halocatalogue):
     n_halos = len(halocatalogue)
     halos = [None]*n_halos
-    
-    for h in range(n_halos):
-        position = halocatalogue[h,[8,9,10]]
-        velocity = halocatalogue[h,[11,12,13]]
-        mass = halocatalogue[h,2]
-        ID = int(halocatalogue[h,0])
-        ID_host = int(halocatalogue[h,33])
-        
-        halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
-        halos[h] = halo
+
+    if parameters.CoDECS:
+        for h in range(n_halos):
+            position = halocatalogue[h,[9,10,11]]/1000.
+            velocity = halocatalogue[h,[12,13,14]]
+            mass = halocatalogue[h,3]
+            ID = int(halocatalogue[h,1])
+            ID_host = int(halocatalogue[h,0])
+            
+            halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
+            halos[h] = halo
+            
+
+    else:    
+        for h in range(n_halos):
+            position = halocatalogue[h,[8,9,10]]
+            velocity = halocatalogue[h,[11,12,13]]
+            mass = halocatalogue[h,2]
+            ID = int(halocatalogue[h,0])
+            ID_host = int(halocatalogue[h,33])
+            
+            halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
+            halos[h] = halo
         
     return halos
     

@@ -23,7 +23,7 @@ elif parameters.use_lightcone:
     observers = hf.initiate_observers(parameters,[])
     
 else:
-    halocatalogue = hf.load_halocatalogue(parameters.halocatalogue_file)
+    halocatalogue = hf.load_halocatalogue(parameters,parameters.halocatalogue_file)
     halos = hf.initiate_halos(parameters,halocatalogue)
     observers = hf.initiate_observers(parameters,halos)
 
