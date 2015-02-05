@@ -59,6 +59,35 @@ def load_CoDECS_catalogue(halocatalogue_file):
     return halocatalogue
     
     
+def initiate_observers_CoDECSsubhalos(parameters,halos):
+    groups = load_CoDECS_catalogue(parameters.CoDECShosts_file)
+
+    massunit = 1e10 # Msun/h
+
+    groupmasses = sp.array(groups[:,2])*massunit
+    group_IDs = groups[:,0]    
+    
+    submasses = sp.array([halo.mass for halo in halos])*massunit
+    ID_hosts = sp.array([halo.ID_host for halo in halos])
+    
+    localgroup_indices = sp.array(range(len(halos)))[(parameters.sub_min_m < submasses) & (submasses < parameters.sub_max_m)]    
+    virgo_indices = (parameters.host_min_m < groupmasses) & (groupmasses < parameters.host_max_m)
+
+    virgo_IDs = group_IDs[virgo_indices]
+    
+    observer_indices = [localgroup_index for localgroup_index in localgroup_indices if ID_hosts[localgroup_index] in virgo_IDs]
+
+
+    observers = [None]*len(observer_indices)
+    for ob_number, ob_index in enumerate(observer_indices):
+        halo = halos[ob_index]
+        position = halo.position
+        observers[ob_number] = hc.Observer(ob_number,position)
+        
+    pdb.set_trace()
+        
+    return observers[0:parameters.number_of_observers]
+    
     
 # Load the halo catalogue
 def load_halocatalogue(parameters,halocatalogue_file):
@@ -116,7 +145,12 @@ def initiate_observers(parameters,halos):
             observers = initiate_observers_from_file(parameters)
     
         if parameters.observer_choice == 'subhalos':
-            observers = initiate_observers_subhalos(parameters,halos)
+            
+            if parameters.CoDECS:
+                observers = initiate_observers_CoDECSsubhalos(parameters,halos)
+                
+            else:
+                observers = initiate_observers_subhalos(parameters,halos)
     
         if parameters.observer_choice == 'random_halos':
             observers = initiate_observers_random_halos(parameters,halos)
@@ -153,6 +187,7 @@ def initiate_observers_random_halos(parameters,halos):
     return observers[0:parameters.number_of_observers]
     
 def initiate_observers_subhalos(parameters,halos):
+    print "WARNING! This function needs to be tested before use. Se evt. den tilsvarende fkt for CoDECS."
     masses = [halo.mass for halo in halos]
     
     localgroup_indices = (parameters.sub_min_m < masses) & (masses < parameters.sub_max_m)
