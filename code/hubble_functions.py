@@ -1,5 +1,5 @@
 from __future__ import division
-import numpy as sp
+import scipy as sp
 import random
 import scipy.linalg as la
 #import multiprocessing
@@ -148,7 +148,7 @@ def initiate_observers_random_halos(parameters,halos):
         halo = halos[ob_index]
         position = halo.position
         
-        observers[ob_number] = hc.Observer(position)
+        observers[ob_number] = hc.Observer(ob_number,position)
         
     return observers[0:parameters.number_of_observers]
     
@@ -170,7 +170,7 @@ def initiate_observers_subhalos(parameters,halos):
     for ob_index, ob_number in zip(observer_indices, range(len(observer_indices))):
         halo = halos[ob_index]
         position = halo.position
-        observers[ob_number] = hc.Observer(position)
+        observers[ob_number] = hc.Observer(ob_number,position)
     
     return observers[0:parameters.number_of_observers]
 
@@ -178,12 +178,13 @@ def initiate_observers_random_positions(parameters):
 
     sp.random.seed(0)
     observer_positions = parameters.boxsize*sp.rand(parameters.number_of_observers,3)
+    print "shape(observer_positions)", observer_positions
     
     observers = [None]*len(observer_positions)
         
     for ob in range(len(observer_positions)):
-        position = [observer_positions[0,1,2]]
-        observers[ob] = hc.Observer(position)
+        position = observer_positions[ob]
+        observers[ob] = hc.Observer(ob,position)
     
     
     return observers[0:parameters.number_of_observers]
@@ -391,8 +392,6 @@ def print_hubbleconstants_to_file(parameters,observers):
            
            for b in range(1,len(parameters.bindistances)):
                f.write("%s\t" % ob.Hubbleconstants[b])
-               
-           f.write("\n")
            
         f.close()
     

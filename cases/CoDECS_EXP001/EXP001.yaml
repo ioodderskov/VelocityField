@@ -1,7 +1,7 @@
 ---
-halocatalogue_file: ../cases/Planck1024_box1024/LCDM_CoDECS_SubGroups_092.tar
-hubblefile: ../cases/Planck1024_box1024/Hubbleconstants
-powerspectrafile: ../cases/Planck1024_box1024/powerspectra.txt
+halocatalogue_file: ../cases/CoDECS_EXP001/EXP001_CoDECS_SubGroups_092.tar
+hubblefile: ../cases/CoDECS_EXP001/Hubbleconstants.txt
+powerspectrafile:
 snapshot_file:  
 
 # ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
@@ -11,15 +11,15 @@ CoDECS: 1
 
 # Use parallel processing?
 ##########################################################################
-parallel_processing: 0
+parallel_processing: 1
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
 
-observer_choice: from_file
+observer_choice: random_positions
 
 # Specify the number of observers you want to use
-number_of_observers: 1
+number_of_observers: 600
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
@@ -100,7 +100,7 @@ omegam: 0.306843
 
 
 number_of_SNe: 240
-mind: 80
+mind: 30
 maxd: 256
 width: 37.3
 

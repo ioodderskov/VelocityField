@@ -1,13 +1,13 @@
 ---
-halocatalogue_file: ../cases/Planck1024_box1024/parents_11
-hubblefile: ../cases/Planck1024_box1024/Hubbleconstants.txt
+halocatalogue_file: ../cases/Planck1024_box1024/LCDM_CoDECS_SubGroups_092.tar
+hubblefile: ../cases/Planck1024_box1024/Hubbleconstants_CoDECS
 powerspectrafile: ../cases/Planck1024_box1024/powerspectra.txt
 snapshot_file:  
 
 # ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
 ##########################################################################
 snapshot: 0
-CoDECS: 0
+CoDECS: 1
 
 # Use parallel processing?
 ##########################################################################
@@ -95,12 +95,12 @@ halocatalogue_filebase:
 ##########################################################################
 
 skyfraction: 1
-boxsize: 1024
+boxsize: 1000
 omegam: 0.306843
 
 
 number_of_SNe: 240
-mind: 80
+mind: 30
 maxd: 256
 width: 37.3
 

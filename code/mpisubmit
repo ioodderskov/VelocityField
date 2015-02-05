@@ -13,7 +13,8 @@ cd $PBS_O_WORKDIR
 export OMP_NUM_THREADS=32
 
 
-python hubble.py ../cases/Planck1024_box1024/Planck1024_box1024.yaml
+#python hubble.py ../cases/Planck1024_box1024/Planck1024_box1024.yaml
+python hubble.py ../cases/CoDECS_EXP001/EXP001.yaml
 
 
 
