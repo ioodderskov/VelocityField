@@ -1,6 +1,6 @@
 ---
 halocatalogue_file: ../cases/Planck1024_box1024/LCDM_CoDECS_SubGroups_092.tar
-hubblefile: ../cases/Planck1024_box1024/Hubbleconstants_CoDECS
+hubblefile: ../cases/CoDECS_LCDM/Hubbleconstants.txt
 powerspectrafile: ../cases/Planck1024_box1024/powerspectra.txt
 snapshot_file:  
 
@@ -16,7 +16,7 @@ parallel_processing: 1
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
 
-observer_choice: random_positions
+observer_choice: random_halos
 
 # Specify the number of observers you want to use
 number_of_observers: 600

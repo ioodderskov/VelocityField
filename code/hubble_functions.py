@@ -142,7 +142,7 @@ def initiate_observers_from_file(parameters):
     
 def initiate_observers_random_halos(parameters,halos):
     random_indices = sp.random.random_integers(0,len(halos)-1,parameters.number_of_observers)
-    observers = [None]*len(len(random_indices))
+    observers = [None]*len(random_indices)
     
     for ob_index, ob_number in zip(random_indices,range(len(random_indices))):
         halo = halos[ob_index]
@@ -344,7 +344,6 @@ def print_hubbleconstants_to_file(parameters,observers):
         for row, skyfraction in enumerate(parameters.skyfractions):
             
             f = open(parameters.hubblefile+str(skyfraction),'w')
-            f.write("085\t")
 
             for bl in parameters.bindistances:
                 f.write("%s\t" % bl)
@@ -382,7 +381,6 @@ def print_hubbleconstants_to_file(parameters,observers):
     else:
     
         f = open(parameters.hubblefile,'w')
-        f.write("085\t")
         
         for bl in parameters.bindistances:
             f.write("%s\t" % bl)

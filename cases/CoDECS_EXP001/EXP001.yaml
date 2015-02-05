@@ -16,7 +16,7 @@ parallel_processing: 1
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
 
-observer_choice: random_positions
+observer_choice: random_halos
 
 # Specify the number of observers you want to use
 number_of_observers: 600
