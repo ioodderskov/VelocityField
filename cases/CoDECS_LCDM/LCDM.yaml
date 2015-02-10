@@ -1,7 +1,7 @@
 ---
 halocatalogue_file: ../cases/CoDECS_LCDM/LCDM_CoDECS_SubGroups_092.tar
 CoDECShosts_file: ../cases/CoDECS_LCDM/LCDM_CoDECS_Groups_092.tar
-hubblefile: ../cases/Planck1024_box1024/Hubbleconstants_CoDECS
+hubblefile: ../cases/CoDECS_LCDM/Hubbleconstants_isotropy
 powerspectrafile: ../cases/Planck1024_box1024/powerspectra.txt
 snapshot_file:  
 
@@ -12,7 +12,7 @@ CoDECS: 1
 
 # Use parallel processing?
 ##########################################################################
-parallel_processing: 1
+parallel_processing: 0
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
@@ -95,13 +95,19 @@ use_lightcone: 0
 halocatalogue_filebase:
 ##########################################################################
 
-skyfraction: 1
+
+
+skyfraction: 0.3
 boxsize: 1000
 omegam: 0.306843
 
+##########################################################################
+# Should the direction of the cone be varied?
+test_isotropy: 1
+##########################################################################
 
 number_of_SNe: 240
 mind: 30
-maxd: 256
-width: 37.3
+maxd: 120.
+width: 90.
 

@@ -10,6 +10,8 @@ import hubble_classes as hc
 from scipy import interpolate
 import pdb
 import tarfile
+import healpy as hp
+import hubble_classes as hc
 
 
 
@@ -318,23 +320,23 @@ def distance_correction_from_perturbed_metric(parameters,xobs,yobs,zobs,xop,yop,
     
     return psi_int
 
-def select_candidates(parameters,halos,candidates):
+def select_candidates(parameters,candidates):
 
     if parameters.observed_halos == 'all':
         selected_candidates = range(len(candidates))    
 
     if parameters.observed_halos == 'mass_weighted':
-        selected_candidates = mass_weighted_selection_of_halos(parameters,halos,candidates)
+        selected_candidates = mass_weighted_selection_of_halos(parameters,candidates)
 
     if parameters.observed_halos == 'random':
-        selected_candidates = random_selection_of_halos(parameters,halos,candidates)
+        selected_candidates = random_selection_of_halos(parameters,candidates)
         
     return selected_candidates
 
    
 
     
-def random_selection_of_halos(parameters,halos,candidates):
+def random_selection_of_halos(parameters,candidates):
     
     selected_candidates = []
     random.seed(0)
@@ -346,7 +348,7 @@ def random_selection_of_halos(parameters,halos,candidates):
  
     return selected_candidates
 
-def mass_weighted_selection_of_halos(parameters,halos,candidates):
+def mass_weighted_selection_of_halos(parameters,candidates):
     
     total_mass = sp.sum([c.mass for c in candidates])
     
@@ -372,8 +374,26 @@ def mass_weighted_selection_of_halos(parameters,halos,candidates):
         
         
 def print_hubbleconstants_to_file(parameters,observers):
+    
+    if parameters.test_isotropy:
+        
+        f = open(parameters.hubblefile,'w')
+        f.write("085\t")
+        
+        
+        for theta, phi in zip(parameters.directions[0],parameters.directions[1]):
+            f.write("(%s,%s)\t" % (theta,phi))
+            
+        for ob_number, ob in enumerate(observers):
+            f.write("\n%s\t" % ob_number)
+            
+            for direction in range(parameters.number_of_directions):
+                f.write("%s\t" % ob.Hubbleconstants[direction])
+                
+        f.close()
+            
 
-    if parameters.vary_skyfraction:
+    elif parameters.vary_skyfraction:
         
         for row, skyfraction in enumerate(parameters.skyfractions):
             
@@ -494,6 +514,25 @@ def calculate_Hs_for_varying_skyfractions(parameters,observed_halos):
         
     return skyfraction_Hubbleconstants_array
     
+    
+def calculate_Hs_for_varying_directions(parameters,observed_halos):
+    
+    max_angular_distance = sp.arccos(1-2*parameters.skyfraction)
+
+    direction_Hubbleconstants_array = sp.zeros(parameters.number_of_directions)
+    cones = []
+    for direction, theta, phi in zip(range(parameters.number_of_directions),parameters.directions[0],parameters.directions[1]):
+        halos_in_cone = [oh for oh in observed_halos if hp.rotator.angdist([theta,phi],[oh.theta,oh.phi])< max_angular_distance]
+        selected_halos_in_cone_numbers = select_candidates(parameters,halos_in_cone)
+        selected_halos_in_cone = [halos_in_cone[i] for i in selected_halos_in_cone_numbers]
+        cone = hc.Cone(theta,phi,selected_halos_in_cone)
+        cones.append(cone)
+
+        direction_Hubbleconstants_array[direction] = calculate_Hs_for_these_observed_halos(parameters,selected_halos_in_cone)[1]
+     
+        
+    return direction_Hubbleconstants_array, cones
+        
 def calculate_Hs_for_varying_number_of_SNe(parameters,observed_halos):
     
     number_of_SNe_Hubbleconstants_array = sp.zeros((len(parameters.numbers_of_SNe),len(parameters.bindistances)))
