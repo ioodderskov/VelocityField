@@ -20,7 +20,7 @@ parallel_processing: 0
 observer_choice: subhalos
 
 # Specify the number of observers you want to use
-number_of_observers: 600
+number_of_observers: 2
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt

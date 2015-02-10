@@ -84,8 +84,7 @@ def initiate_observers_CoDECSsubhalos(parameters,halos):
         position = halo.position
         observers[ob_number] = hc.Observer(ob_number,position)
         
-    pdb.set_trace()
-        
+
     return observers[0:parameters.number_of_observers]
     
     
