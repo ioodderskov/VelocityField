@@ -1,8 +1,9 @@
 ---
-halocatalogue_file: ../cases/CoDECS_LCDM/LCDM_CoDECS_SubGroups_092.tar
-CoDECShosts_file: ../cases/CoDECS_LCDM/LCDM_CoDECS_Groups_092.tar
-hubblefile: ../cases/CoDECS_LCDM/Hubbleconstants_isotropy
-powerspectrafile: ../cases/Planck1024_box1024/powerspectra.txt
+path: ../cases/CoDECS_LCDM/
+halocatalogue_file: LCDM_CoDECS_SubGroups_092.tar
+CoDECShosts_file: LCDM_CoDECS_Groups_092.tar
+hubblefile: Hubbleconstants_isotropy
+powerspectrafile: powerspectra.txt
 snapshot_file:  
 
 # ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
@@ -14,16 +15,18 @@ CoDECS: 1
 ##########################################################################
 parallel_processing: 0
 
-# Observer selection: from_file, subhalos, random_positions or random_halos
+# Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
 ##########################################################################
 
-observer_choice: random_positions
+observer_choice: indices_from_file
 
 # Specify the number of observers you want to use
 number_of_observers: 1
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
+# If indices_from_file, specify the file here
+observer_indices_file: observer_indices.txt
 
 # If subhalos, specify the mass-requirements here
 sub_min_m: 1e12
@@ -97,7 +100,7 @@ halocatalogue_filebase:
 
 
 
-skyfraction: 0.3
+skyfraction: 0.2
 boxsize: 1000
 omegam: 0.306843
 
@@ -108,6 +111,6 @@ test_isotropy: 1
 
 number_of_SNe: 240
 mind: 30
-maxd: 120.
-width: 90.
+maxd: 120
+width: 37.3
 

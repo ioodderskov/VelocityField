@@ -4,28 +4,32 @@ import powerspectrum_functions as pf
 import scipy as sp
 import yaml
 import pdb
-import healpy as hp
+import healpy as hp 
 
 
 
 class Parameters:
     def __init__(self,parameterfile):
+        self.parameterfile = parameterfile
 
         # Loads parameters
         with open(parameterfile, 'r') as f:
             param = yaml.load(f)
         
-        self.halocatalogue_file = param["halocatalogue_file"]
-        self.hubblefile = param["hubblefile"]
-        self.powerspectrafile = param["powerspectrafile"]
+        self.path = param["path"]
+        self.halocatalogue_file = self.path+param["halocatalogue_file"]
+        self.hubblefile = self.path+param["hubblefile"]
+        self.CoDECShosts_file = self.path+param["CoDECShosts_file"]
         
         self.parallel_processing = int(param["parallel_processing"])
         
         self.snapshot = int(param["snapshot"])
-        self.snapshot_file = param["snapshot_file"]
+        if self.snapshot:
+            self.snapshot_file = self.path+param["snapshot_file"]
         
         self.observer_choice = param["observer_choice"]
         self.observerfile = param["observerfile"]
+        self.observer_indices_file = self.path+param["observer_indices_file"]
         self.number_of_observers = int(param["number_of_observers"])
         self.host_min_m = sp.double(param["host_min_m"])
         self.host_max_m = sp.double(param["host_max_m"])
@@ -41,6 +45,7 @@ class Parameters:
         self.boxsize = sp.double(param["boxsize"])
         self.number_of_cones = int(param["number_of_cones"])
         self.skyfraction = sp.double(param["skyfraction"])
+        self.max_angular_distance = sp.arccos(1-2*self.skyfraction)
         
         self.calculate_std_of_deviation = int(param["calculate_std_of_deviation"])
         self.calculate_hubble_constants = int(param["calculate_hubble_constants"])
@@ -48,9 +53,13 @@ class Parameters:
         self.make_hubblediagram = int(param["make_hubblediagram"])
         self.map_velocityfield = int(param["map_velocityfield"])
         self.calculate_powerspectra = int(param["calculate_powerspectra"])
+        if self.calculate_powerspectra:
+            self.powerspectrafile = self.path+param["powerspectrafile"]
+
         
         self.distances_from_perturbed_metric = int(param["distances_from_perturbed_metric"])
-        self.potential_file = param["potential_file"]
+        if self.distances_from_perturbed_metric:
+            self.potential_file = self.path+param["potential_file"]
         
         self.vary_number_of_SNe = int(param["vary_number_of_SNe"])
         self.min_number_of_SNe = int(param["min_number_of_SNe"])
@@ -95,12 +104,13 @@ class Parameters:
         self.halocatalogue_filebase = param["halocatalogue_filebase"]
         
         self.CoDECS = int(param["CoDECS"])
-        self.CoDECShosts_file = param["CoDECShosts_file"]
 
         self.test_isotropy = int(param["test_isotropy"])
-        nside = 1
+        nside = 2
         self.number_of_directions = hp.nside2npix(nside)
         self.directions = hp.pix2ang(nside,range(self.number_of_directions))
+        
+
 
 class Halo:
     def __init__(self,position,velocity,mass,ID,ID_host,index):
@@ -114,7 +124,10 @@ class Halo:
 
 
 class Observed_halo:
-    def __init__(self,r,theta,phi,vr_peculiar,vr,ID,mass):
+    def __init__(self,xop,yop,zop,r,theta,phi,vr_peculiar,vr,ID,mass):
+        self.xop = xop
+        self.yop = yop
+        self.zop = zop
         self.r = r
         self.theta = theta
         self.phi = phi
@@ -246,8 +259,9 @@ class Observer:
             vr = vrs[halo_to_store]
             ID = IDs[halo_to_store]
             mass = masses[halo_to_store]
+            xop,yop,zop = xops[halo_to_store],yops[halo_to_store],zops[halo_to_store] 
             
-            self.observed_halos.append(Observed_halo(r,theta,phi,vr_peculiar,vr,ID,mass))
+            self.observed_halos.append(Observed_halo(xop,yop,zop,r,theta,phi,vr_peculiar,vr,ID,mass))
 
             
             

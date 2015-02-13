@@ -158,6 +158,9 @@ def initiate_observers(parameters,halos):
     
         if parameters.observer_choice == 'random_positions':
             observers = initiate_observers_random_positions(parameters)
+            
+        if parameters.observer_choice == 'indices_from_file':
+            observers = initiate_observers_indices_from_file(parameters,halos)
     
     
     return observers
@@ -165,9 +168,9 @@ def initiate_observers(parameters,halos):
     
 def initiate_observers_from_file(parameters):
     observer_positions = sp.array(sp.loadtxt(parameters.observerfile))
-    observers = [None]*len(observer_positions)
+    observers = [None]*len([observer_positions])
     
-    for ob in range(len(observer_positions)):
+    for ob in range(len([observer_positions])):
         
         position = observer_positions[ob,[0,1,2]]/1000
         observers[ob] = hc.Observer(ob,position)
@@ -223,6 +226,20 @@ def initiate_observers_random_positions(parameters):
         observers[ob] = hc.Observer(ob,position)
     
     
+    return observers[0:parameters.number_of_observers]
+    
+def initiate_observers_indices_from_file(parameters,halos):
+
+    observer_indices = sp.array(sp.loadtxt(parameters.observer_indices_file))
+    observers = [None]*len([observer_indices])
+    
+    for ob_index, ob_number in zip([observer_indices],range(len([observer_indices]))):
+        ob_index = int(ob_index)
+        halo = halos[ob_index]
+        position = halo.position
+        
+        observers[ob_number] = (hc.Observer(ob_number,position))
+        
     return observers[0:parameters.number_of_observers]
     
     
@@ -377,20 +394,23 @@ def print_hubbleconstants_to_file(parameters,observers):
     
     if parameters.test_isotropy:
         
-        f = open(parameters.hubblefile,'w')
-        f.write("085\t")
-        
-        
-        for theta, phi in zip(parameters.directions[0],parameters.directions[1]):
-            f.write("(%s,%s)\t" % (theta,phi))
-            
-        for ob_number, ob in enumerate(observers):
-            f.write("\n%s\t" % ob_number)
-            
-            for direction in range(parameters.number_of_directions):
-                f.write("%s\t" % ob.Hubbleconstants[direction])
-                
-        f.close()
+        print "I am not printing these Hubbleconstants to a file.\nInstead, I will save the observers and their observations in an array"
+        sp.save(parameters.path+'observers_isotropy',observers)
+#        sp.save(parameters.path+'parameters',parameters)
+#        f = open(parameters.hubblefile,'w')
+#        f.write("085\t")
+#        
+#        
+#        for theta, phi in zip(parameters.directions[0],parameters.directions[1]):
+#            f.write("(%s,%s)\t" % (theta,phi))
+#            
+#        for ob_number, ob in enumerate(observers):
+#            f.write("\n%s\t" % ob_number)
+#            
+#            for direction in range(parameters.number_of_directions):
+#                f.write("%s\t" % ob.Hubbleconstants[direction])
+#                
+#        f.close()
             
 
     elif parameters.vary_skyfraction:
@@ -517,18 +537,16 @@ def calculate_Hs_for_varying_skyfractions(parameters,observed_halos):
     
 def calculate_Hs_for_varying_directions(parameters,observed_halos):
     
-    max_angular_distance = sp.arccos(1-2*parameters.skyfraction)
-
-    direction_Hubbleconstants_array = sp.zeros(parameters.number_of_directions)
+    direction_Hubbleconstants_array = sp.zeros((parameters.number_of_directions,len(parameters.bindistances)))
     cones = []
-    for direction, theta, phi in zip(range(parameters.number_of_directions),parameters.directions[0],parameters.directions[1]):
-        halos_in_cone = [oh for oh in observed_halos if hp.rotator.angdist([theta,phi],[oh.theta,oh.phi])< max_angular_distance]
+    for direction_row, theta, phi in zip(range(parameters.number_of_directions),parameters.directions[0],parameters.directions[1]):
+        halos_in_cone = [oh for oh in observed_halos if hp.rotator.angdist([theta,phi],[oh.theta,oh.phi])< parameters.max_angular_distance]
         selected_halos_in_cone_numbers = select_candidates(parameters,halos_in_cone)
         selected_halos_in_cone = [halos_in_cone[i] for i in selected_halos_in_cone_numbers]
         cone = hc.Cone(theta,phi,selected_halos_in_cone)
         cones.append(cone)
 
-        direction_Hubbleconstants_array[direction] = calculate_Hs_for_these_observed_halos(parameters,selected_halos_in_cone)[1]
+        direction_Hubbleconstants_array[direction_row] = calculate_Hs_for_these_observed_halos(parameters,selected_halos_in_cone)
      
         
     return direction_Hubbleconstants_array, cones
