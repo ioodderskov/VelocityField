@@ -1,6 +1,7 @@
 ---
 halocatalogue_file: ../cases/CoDECS_EXP003/EXP003_CoDECS_SubGroups_092.tar
-hubblefile: ../cases/CoDECS_EXP003/Hubbleconstants.txt
+CoDECShosts_file: ../cases/CoDECS_EXP003/EXP003_CoDECS_Groups_092.tar
+hubblefile: ../cases/CoDECS_EXP003/Hubbleconstants
 powerspectrafile:
 snapshot_file:  
 

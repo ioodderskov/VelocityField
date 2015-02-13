@@ -12,6 +12,7 @@ from gplot import Plot
 import hubvar_functions as hf
 import sys
 
+comparisonfil = '../../cases/CoDECS_LCDM/Hubbleconstants.txt'
 
 
 # Arguments:
@@ -56,8 +57,7 @@ error = hf.mean_sys_error(H,rmax)
 print "The mean systematical error is", error*100, "%" 
 
 # If activated, the result is compared with the results from the standard analysis
-if compare == 1:
-    comparisonfil = '../../cases/Planck512/Hubbleconstants.txt' 
+if compare == 1: 
     rmax_sml, H_sml= hf.load_Hubbleconstants(comparisonfil,1,N_observers)
     sigma68_sml, sigma95_sml, sigma99_sml = hf.calc_confidence_intervals(H_sml)
 

@@ -26,8 +26,8 @@ class Parameters:
         self.observer_choice = param["observer_choice"]
         self.observerfile = param["observerfile"]
         self.number_of_observers = int(param["number_of_observers"])
-        self.host_min_m = sp.double(param["host_max_m"])
-        self.host_max_m = sp.double(param["host_min_m"])
+        self.host_min_m = sp.double(param["host_min_m"])
+        self.host_max_m = sp.double(param["host_max_m"])
         self.sub_min_m = sp.double(param["sub_min_m"])
         self.sub_max_m = sp.double(param["sub_max_m"])
         
@@ -94,6 +94,7 @@ class Parameters:
         self.halocatalogue_filebase = param["halocatalogue_filebase"]
         
         self.CoDECS = int(param["CoDECS"])
+        self.CoDECShosts_file = param["CoDECShosts_file"]
 
 
 class Halo:

@@ -1,6 +1,7 @@
 ---
 halocatalogue_file: ../cases/Planck1024_box1024/parents_11
-hubblefile: ../cases/Planck1024_box1024/Hubbleconstants.txt
+CoDECShosts_file:
+hubblefile: ../cases/Planck1024_box1024/Hubbleconstants
 powerspectrafile: ../cases/Planck1024_box1024/powerspectra.txt
 snapshot_file:  
 

@@ -1,5 +1,6 @@
 ---
 halocatalogue_file: ../cases/Planck512/parents_11
+CoDECShosts_file: 
 hubblefile: ../cases/Planck512/Hubbleconstants
 powerspectrafile: ../cases/Planck512/powerspectra.txt
 snapshot_file: /home/isho07/makeIC/output/Planck512/snapshot_011 
@@ -7,6 +8,7 @@ snapshot_file: /home/isho07/makeIC/output/Planck512/snapshot_011
 # ROCKSTAR halocatalogue (default) or snapshot?
 ##########################################################################
 snapshot: 0
+CoDECS: 0
 
 # Use parallel processing?
 ##########################################################################
