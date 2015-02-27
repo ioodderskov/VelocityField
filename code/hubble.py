@@ -6,6 +6,8 @@ import powerspectrum_functions as pf
 import parallel_processing as pp
 import multiprocessing
 from functools import partial
+import scipy as sp
+import cPickle
 
 # There is one argument, namely the parameterfile
 if len(sys.argv) != 2:
@@ -43,3 +45,10 @@ if parameters.calculate_hubble_constants:
     
 if parameters.calculate_powerspectra:
     pf.print_powerspectra_to_file(parameters,observers)
+    
+f = file(parameters.path+'parameters.save', 'wb')
+cPickle.dump(parameters, f, protocol=cPickle.HIGHEST_PROTOCOL)
+f.close()
+
+#sp.save(parameters.path+'halos',halos)
+

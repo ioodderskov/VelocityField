@@ -12,7 +12,10 @@ from gplot import Plot
 import hubvar_functions as hf
 import sys
 
-comparisonfil = '../../cases/CoDECS_LCDM/Hubbleconstants.txt'
+#observertype = 'random_positions'
+#observertype = 'random_halos'
+observertype = 'subhalos'
+comparisonfil = '../../cases/CoDECS_LCDM/Hubbleconstants_'+observertype+'.txt'
 
 
 # Arguments:
@@ -33,7 +36,8 @@ runname = sys.argv[1]
 a = float(sys.argv[2])
 N_observers = int(sys.argv[3])
 xaxis = sys.argv[4]
-output = sys.argv[5]+ '/'+runname+'.pdf'
+#output = sys.argv[5]+ '/'+runname+observertype+'.pdf'
+output = sys.argv[5]+ '/'+runname+observertype+'.pdf'
 compare = int(sys.argv[6])
 write_to_tabular = int(sys.argv[7])
 planck_band = int(sys.argv[8])
@@ -44,7 +48,7 @@ plt.rc('font',family = 'serif')
 
 
 # Inputfile:
-fil = '../../cases/'+runname+'/Hubbleconstants.txt'
+fil = '../../cases/'+runname+'/Hubbleconstants_'+observertype+'.txt'
 
 # Load distances and Hubbleconstants, and count the maximal number of observers
 lightcone = 0;
@@ -95,6 +99,7 @@ if xaxis == 'numSN':
 
 plt.ylabel('$H_{loc}/H_0$');
 plt.yticks(sp.arange(ymin, ymax+0.001, 0.025))
+plt.title('%s, %s' % (runname,observertype))
 
 if compare == 1:
         hf.plot_lines(rmax_sml,H_sml,sigma68_sml,sigma95_sml,sigma99_sml)
