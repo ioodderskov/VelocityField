@@ -9,6 +9,7 @@ import scipy as sp
 import matplotlib.pyplot as plt
 #from gplot import Plot
 from matplotlib.patches import Polygon
+import pdb
 
 #plt = Plot('latex_full_wojtak')
 
@@ -41,7 +42,7 @@ def load_Hubbleconstants(fil,a,N_observers):
 
     # Frasorterer nan-results
     Htot_nonan = Htot[~sp.isnan(Htot).any(axis=1)]
-#    print "The total number of nan-results was", len(Htot)-len(Htot_nonan)
+    print "The total number of nan-results was", len(Htot)-len(Htot_nonan)
 
     H = Htot_nonan[0:N_observers,:]/hubble; # Indeholer H/H0 for alle observatører 
 
