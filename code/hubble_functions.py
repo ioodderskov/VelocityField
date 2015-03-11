@@ -86,7 +86,7 @@ def initiate_observers_CoDECSsubhalos(parameters,halos):
         position = halo.position
         observers[ob_number] = hc.Observer(ob_number,position)
         
-
+#    pdb.set_trace()
     return observers[0:parameters.number_of_observers]
     
     
@@ -219,7 +219,7 @@ def initiate_observers_random_positions(parameters):
 
     sp.random.seed(0)
     observer_positions = parameters.boxsize*sp.rand(parameters.number_of_observers,3)
-    print "shape(observer_positions)", observer_positions
+#    print "shape(observer_positions)", observer_positions
     
     observers = [None]*len(observer_positions)
         
@@ -370,7 +370,7 @@ def specified_mass_selection_of_halos(parameters,candidates):
             rnd_number = random.randint(0,len(indices_of_candidates_of_specified_mass)-1)
             candidate_number = indices_of_candidates_of_specified_mass[rnd_number]
             selected_candidates.append(candidate_number)
-            print candidates[candidate_number].mass
+#            print candidates[candidate_number].mass
             
     return selected_candidates
             

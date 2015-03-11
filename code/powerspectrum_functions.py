@@ -92,6 +92,11 @@ def create_map(parameters,thetas,phis,vrs):
     pix_all = sp.array(range(number_of_pixels))
     pix_unseen = pix_all[hp.pix2ang(parameters.nside,pix_all)[0]>theta_max]
     vrmap[pix_unseen] = parameters.unseen
+
+    empty_pixels = number_of_pixels-len(pix)
+    print "The number of empty pixels inside the survey is", empty_pixels
+    print "The corresponds to a fraction of", empty_pixels/number_of_pixels
+    print "The number of pixels outside survey is", len(pix_unseen)
 #    pdb.set_trace()
     return vrmap
 

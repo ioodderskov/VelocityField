@@ -46,9 +46,9 @@ if parameters.calculate_hubble_constants:
 if parameters.calculate_powerspectra:
     pf.print_powerspectra_to_file(parameters,observers)
     
-f = file(parameters.path+'parameters.save', 'wb')
-cPickle.dump(parameters, f, protocol=cPickle.HIGHEST_PROTOCOL)
-f.close()
-
-sp.save(parameters.path+'halos',halos)
+#f = file(parameters.path+'parameters.save', 'wb')
+#cPickle.dump(parameters, f, protocol=cPickle.HIGHEST_PROTOCOL)
+#f.close()
+#
+#sp.save(parameters.path+'halos',halos)
 

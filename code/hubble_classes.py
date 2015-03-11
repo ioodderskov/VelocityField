@@ -19,7 +19,9 @@ class Parameters:
         self.path = param["path"]
         self.halocatalogue_file = self.path+param["halocatalogue_file"]
         self.hubblefile = self.path+param["hubblefile"]
-        self.CoDECShosts_file = self.path+param["CoDECShosts_file"]
+        self.CoDECS = int(param["CoDECS"])
+        if self.CoDECS:
+            self.CoDECShosts_file = self.path+param["CoDECShosts_file"]
         
         self.parallel_processing = int(param["parallel_processing"])
         
@@ -104,8 +106,7 @@ class Parameters:
 
         self.use_lightcone = int(param["use_lightcone"])
         self.halocatalogue_filebase = param["halocatalogue_filebase"]
-        
-        self.CoDECS = int(param["CoDECS"])
+    
 
         self.test_isotropy = int(param["test_isotropy"])
         nside = 2

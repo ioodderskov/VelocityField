@@ -119,7 +119,7 @@ def plot_patch(ls,H,sigma68,sigma95,sigma99):
 
 
 case = 'Planck512'
-spec = 'powerspectra_smoothing0.5rad'
+spec = 'powerspectra_smoothing0.01rad'
 
 data = sp.loadtxt('../../cases/' + case + '/' + spec + '.txt')
 ls = data[0,2:]
