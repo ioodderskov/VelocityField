@@ -17,7 +17,6 @@ parallel_processing: 0
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
 ##########################################################################
-
 observer_choice: subhalos               
 
 # Specify the number of observers you want to use

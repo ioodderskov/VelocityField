@@ -162,8 +162,13 @@ class Observer:
         self.vrmap = []
         self.skyfraction = []
         self.radius_of_greatest_hole = []
+        self.rho = []
         
 
+    def redshiftsurvey(self,parameters,halos):
+        print "So far this function is empty"
+        
+     
     
     def observe(self, parameters,halos):
 
@@ -285,9 +290,7 @@ class Observer:
             self.Hubbleconstants = hf.calculate_Hs_for_these_observed_halos(parameters,self.observed_halos)
         
     
-                
-        
-        
+                    
     def calculate_powerspectra(self,parameters):
         
         thetas = [observed_halo.theta for observed_halo in self.observed_halos]
@@ -295,11 +298,11 @@ class Observer:
         vrs_peculiar = [observed_halo.vr_peculiar for observed_halo in self.observed_halos]
         
         vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar) 
-        self.radius_of_largest_hole = pf.find_largest_hole(parameters,vrmap)
-        outputfile = 'outputfile.txt'
-        f = open(outputfile,'w')
-        f.write("radius of largest hole = %s" % self.radius_of_largest_hole)
-        f.close()
+#        self.radius_of_largest_hole = pf.find_largest_hole(parameters,vrmap)
+#        outputfile = 'outputfile.txt'
+#        f = open(outputfile,'w')
+#        f.write("radius of largest hole = %s" % self.radius_of_largest_hole)
+#        f.close()
         vrmap = pf.fill_empty_entries(parameters,vrmap)
         
         if parameters.smooth_map:
