@@ -22,12 +22,15 @@ class Parameters:
         self.CoDECS = int(param["CoDECS"])
         if self.CoDECS:
             self.CoDECShosts_file = self.path+param["CoDECShosts_file"]
+        self.gridfile = self.path+param["gridfile"]
         
         self.parallel_processing = int(param["parallel_processing"])
         
         self.snapshot = int(param["snapshot"])
         if self.snapshot:
             self.snapshot_file = self.path+param["snapshot_file"]
+
+        self.use_grid = int(param["use_grid"])        
         
         self.observer_choice = param["observer_choice"]
         self.observerfile = param["observerfile"]
@@ -112,7 +115,10 @@ class Parameters:
         nside = 2
         self.number_of_directions = hp.nside2npix(nside)
         self.directions = hp.pix2ang(nside,range(self.number_of_directions))
-        
+
+        self.assign_to_grid = int(param["assign_to_grid"])
+        self.Ng = int(param["Ng"])
+        self.smoothing = int(param["smoothing"])        
 
 
 class Halo:
@@ -165,10 +171,7 @@ class Observer:
         self.rho = []
         
 
-    def redshiftsurvey(self,parameters,halos):
-        print "So far this function is empty"
-        
-     
+ 
     
     def observe(self, parameters,halos):
 

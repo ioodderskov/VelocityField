@@ -88,6 +88,13 @@ def initiate_observers_CoDECSsubhalos(parameters,halos):
         
 #    pdb.set_trace()
     return observers[0:parameters.number_of_observers]
+
+
+def load_grid(gridfile):
+    # It is not really a halocatalogue...
+    halocatalogue = sp.loadtxt(gridfile)
+    return halocatalogue   
+
     
     
 # Load the halo catalogue
@@ -97,12 +104,19 @@ def load_halocatalogue(parameters,halocatalogue_file):
         halocatalogue_unsorted = load_CoDECS_catalogue(halocatalogue_file)
         halocatalogue = sp.array(sorted(halocatalogue_unsorted,
                                         key=lambda halocatalogue_unsorted: halocatalogue_unsorted[3]))
+
+    elif parameters.use_grid:
+        halocatalogue_unsorted = load_grid(parameters.gridfile)
+        halocatalogue = sp.array(sorted(halocatalogue_unsorted, 
+                                        key=lambda halocatalogue_unsorted: halocatalogue_unsorted[3]))            
+
     else:
         halocatalogue_unsorted = sp.loadtxt(halocatalogue_file)
         halocatalogue = sp.array(sorted(halocatalogue_unsorted, 
                                         key=lambda halocatalogue_unsorted: halocatalogue_unsorted[2]))
                                     
     return halocatalogue
+
     
     
 def initiate_halos(parameters, halocatalogue):
@@ -118,6 +132,18 @@ def initiate_halos(parameters, halocatalogue):
             mass = halocatalogue[h,3]*massunit
             ID = int(halocatalogue[h,1])
             ID_host = int(halocatalogue[h,0])
+            
+            halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
+            halos[h] = halo
+ 
+    elif parameters.use_grid:
+
+        for h in range(n_halos):
+            position = halocatalogue[h,[0,1,2]]
+            velocity = halocatalogue[h,[4,5,6]]
+            mass = halocatalogue[h,3]
+            ID = h
+            ID_host = -1
             
             halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
             halos[h] = halo
@@ -243,25 +269,25 @@ def initiate_observers_indices_from_file(parameters,halos):
         observers[ob_number] = (hc.Observer(ob_number,position))
         
     return observers[0:parameters.number_of_observers]
+
+def periodic_coordinate(parameters,coordinate):
+    
+    if coordinate > parameters.boxsize/2:
+        coordinate = coordinate-parameters.boxsize
+    if coordinate < -parameters.boxsize/2:
+        coordinate = coordinate+parameters.boxsize
+        
+    return coordinate
     
     
 def periodic_boundaries(parameters,xobs,yobs,zobs,xop,yop,zop):
     
     x,y,z = xop-xobs,yop-yobs,zop-zobs
-    
-    def periodic_coordinate(coordinate,parameters):
-        
-        if coordinate > parameters.boxsize/2:
-            coordinate = coordinate-parameters.boxsize
-        if coordinate < -parameters.boxsize/2:
-            coordinate = coordinate+parameters.boxsize
-            
-        return coordinate
             
       
-    x = periodic_coordinate(x,parameters)+xobs
-    y = periodic_coordinate(y,parameters)+yobs    
-    z = periodic_coordinate(z,parameters)+zobs
+    x = periodic_coordinate(parameters,x)+xobs
+    y = periodic_coordinate(parameters,y)+yobs    
+    z = periodic_coordinate(parameters,z)+zobs
     
     return [x,y,z]
     

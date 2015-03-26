@@ -8,6 +8,7 @@ import multiprocessing
 from functools import partial
 import scipy as sp
 import cPickle
+import assignment_to_grid as ag
 
 # There is one argument, namely the parameterfile
 if len(sys.argv) != 2:
@@ -40,11 +41,16 @@ else:
     observers = map(partial_observe_and_analyse,observers)
 
 
+if parameters.assign_to_grid:    
+    ag.create_density_and_velocity_grid(parameters,halos)
+
+
 if parameters.calculate_hubble_constants:
     hf.print_hubbleconstants_to_file(parameters,observers)
     
 if parameters.calculate_powerspectra:
     pf.print_powerspectra_to_file(parameters,observers)
+
     
 #f = file(parameters.path+'parameters.save', 'wb')
 #cPickle.dump(parameters, f, protocol=cPickle.HIGHEST_PROTOCOL)
