@@ -118,7 +118,8 @@ class Parameters:
 
         self.assign_to_grid = int(param["assign_to_grid"])
         self.Ng = int(param["Ng"])
-        self.smoothing = int(param["smoothing"])        
+        self.smoothing = int(param["smoothing"])    
+        self.smoothing_radius = sp.double(param["smoothing_radius"])
 
 
 class Halo:

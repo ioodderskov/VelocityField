@@ -10,15 +10,16 @@ gridfile: grid.txt
 
 # ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
 ##########################################################################
-snapshot: 0
+snapshot: 1
 CoDECS: 0
-use_grid: 1
+use_grid: 0
 
 ##########################################################################
 # Should positions, velocities and masses be assigned to a grid?
-assign_to_grid: 0
-Ng: 5
-smoothing: 0
+assign_to_grid: 1
+Ng: 10
+smoothing: 1
+smoothing_radius: 1 # Mpc/h
 ##########################################################################
 
 # Use parallel processing?

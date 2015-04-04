@@ -30,6 +30,6 @@ for i, data in enumerate([data0]):
     #plt.xscale('log')
     #plt.yscale('log')
     plt.xlim([0,20])
-#    plt.ylim([0,800])    
+    plt.ylim([0,800])    
     titel = 'datasaet nummer' + str(i+1)
     plt.title(titel)

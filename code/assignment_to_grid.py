@@ -1,10 +1,13 @@
 from __future__ import division
 import scipy as sp
-import scipy.ndimage as nd
+#import scipy.ndimage as nd
+from copy import copy
+from astropy.convolution import convolve 
+from astropy_make_kernel import make_kernel
 
 periodic_boundaries = 1
 
-def positions_and_values_from_grid(parameters,values_tsc):
+def positions_and_values_from_grid(parameters,values):
 
     # I write the densities to a vector (and construct another vector with the corresponding coordinates)
     # While this is done, I interpolate to a finer grid        
@@ -30,7 +33,7 @@ def positions_and_values_from_grid(parameters,values_tsc):
         for y_index,y in enumerate(grid_y):
             for z_index,z in enumerate(grid_z):
 
-                cell_value = values_tsc[x_index,y_index,z_index]
+                cell_value = values[x_index,y_index,z_index]
                 gridpoint_values.append(cell_value)
                 gridpoint_positions.append(sp.array([x,y,z]))
                 
@@ -40,34 +43,90 @@ def positions_and_values_from_grid(parameters,values_tsc):
     return gridpoint_positions, gridpoint_values
 
 
+def ngp(parameters,positions,values):
+    
+    values_ngp = sp.zeros((parameters.Ng,parameters.Ng,parameters.Ng))
+    counts_ngp = sp.zeros((parameters.Ng,parameters.Ng,parameters.Ng))
+    cellsize = parameters.boxsize/parameters.Ng
+
+
+    for position,pvalue in zip(positions,values):
+
+        position = sp.array(position)
+        
+        position_cellunits = position/cellsize
+
+        # cell indices
+        cell_indices = sp.floor(position_cellunits)
+        
+
+        if periodic_boundaries:
+            cell_indices = sp.mod(cell_indices,parameters.Ng)
+
+        index_x, index_y, index_z = cell_indices[0],cell_indices[1],cell_indices[2]
+
+
+        values_ngp[index_x][index_y][index_z] += pvalue
+        counts_ngp[index_x][index_y][index_z] += 1                                    
+
+    values_ngp = sp.array(values_ngp)/sp.array(counts_ngp)
+    print "Don't mind this warning. Astropy can handle nan-values"                
+    
+
+    return values_ngp     
+    
+    
 def velocity_field(parameters,positions,velocities):
     
-    # Need to convert from velocity-density to velocity:
-    cellsize = parameters.boxsize/parameters.Ng
-    
-    vx_tsc = tsc(parameters,positions,velocities[:,0])*cellsize**3
-    vy_tsc = tsc(parameters,positions,velocities[:,1])*cellsize**3
-    vz_tsc = tsc(parameters,positions,velocities[:,2])*cellsize**3
 
-    if parameters.smoothing:
-        vx_tsc_smoothed = nd.gaussian_filter(vx_tsc,parameters.smoothing_radius,mode='wrap') 
-        vy_tsc_smoothed = nd.gaussian_filter(vy_tsc,parameters.smoothing_radius,mode='wrap') 
-        vz_tsc_smoothed = nd.gaussian_filter(vz_tsc,parameters.smoothing_radius,mode='wrap')         
-        
-        vx,vy,vz = vx_tsc_smoothed,vy_tsc_smoothed,vz_tsc_smoothed
+
+    vx_ngp = ngp(parameters,positions,velocities[:,0])
+    vy_ngp = ngp(parameters,positions,velocities[:,1])
+    vz_ngp = ngp(parameters,positions,velocities[:,2])
+
+
+
+    if parameters.smoothing:  
+        cellsize = parameters.boxsize/parameters.Ng
+        smoothing_radius_cells = parameters.smoothing_radius/cellsize
+        kernel_res = int(smoothing_radius_cells*2*3)
+        if sp.mod(kernel_res,2) == 0:
+            kernel_res = kernel_res+1
+        kernel_res = 3
+        print "the kernel resolution is", kernel_res
+        kernel = make_kernel([kernel_res,kernel_res,kernel_res],smoothing_radius_cells)
+
+        vx_ngp_smoothed = copy(vx_ngp)
+        vy_ngp_smoothed = copy(vy_ngp)
+        vz_ngp_smoothed = copy(vz_ngp)
+
+        n = 0
+        while sp.any(sp.isnan(vx_ngp_smoothed)):
+            n = n+1
+            vx_ngp_smoothed = convolve(vx_ngp_smoothed,kernel,boundary='wrap') 
+            vy_ngp_smoothed = convolve(vy_ngp_smoothed,kernel,boundary='wrap') 
+            vz_ngp_smoothed = convolve(vz_ngp_smoothed,kernel,boundary='wrap') 
+        print "Went through the while-loop", n, "times"
+
+
+        vx,vy,vz = vx_ngp_smoothed,vy_ngp_smoothed,vz_ngp_smoothed
+
     else:
-        vx,vy,vz = vx_tsc,vy_tsc,vz_tsc
-        
-        
-        
+        vx,vy,vz = vx_ngp,vy_ngp,vz_ngp
+
     gridpoint_positions, gridpoint_vx = positions_and_values_from_grid(parameters,vx)
     gridpoint_positions, gridpoint_vy = positions_and_values_from_grid(parameters,vy)
     gridpoint_positions, gridpoint_vz = positions_and_values_from_grid(parameters,vz)
+    
+
         
 
     gridpoint_velocities = sp.array([gridpoint_vx,gridpoint_vy,gridpoint_vz]).T
     
-    return gridpoint_positions, gridpoint_velocities
+    
+    return gridpoint_positions, gridpoint_velocities    
+    
+    
     
     
 
