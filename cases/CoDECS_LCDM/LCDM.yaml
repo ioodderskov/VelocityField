@@ -11,6 +11,13 @@ snapshot_file:
 snapshot: 0
 CoDECS: 1
 
+##########################################################################
+# Correct for the velocity from the matter distribution?
+correct_for_peculiar_velocities: 1
+survey_radius: 16
+##########################################################################
+
+##########################################################################
 # Use parallel processing?
 ##########################################################################
 parallel_processing: 0

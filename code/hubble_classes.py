@@ -5,7 +5,7 @@ import scipy as sp
 import yaml
 import pdb
 import healpy as hp 
-
+import gravitational_instability as gi
 
 
 class Parameters:
@@ -31,6 +31,9 @@ class Parameters:
             self.snapshot_file = self.path+param["snapshot_file"]
 
         self.use_grid = int(param["use_grid"])        
+
+        self.correct_for_peculiar_velocities = int(param["correct_for_peculiar_velocities"])
+        self.survey_radius = sp.double(param["survey_radius"])
         
         self.observer_choice = param["observer_choice"]
         self.observerfile = param["observerfile"]
@@ -50,6 +53,7 @@ class Parameters:
         self.width = sp.double(param["width"])
         self.number_of_SNe = int(param["number_of_SNe"])
         self.boxsize = sp.double(param["boxsize"])
+        self.omegam = sp.double(param["omegam"])
         self.number_of_cones = int(param["number_of_cones"])
         self.skyfraction = sp.double(param["skyfraction"])
         self.max_angular_distance = sp.arccos(1-2*self.skyfraction)
@@ -229,6 +233,16 @@ class Observer:
             
             [vx,vy,vz] = h.velocity[[0,1,2]]
 
+            if parameters.correct_for_peculiar_velocities:
+                halo_position = sp.array([x,y,z])
+                observer_position = sp.array([self.x,self.y,self.z])
+#                pdb.set_trace()
+                velocity_correction = gi.velocity_from_matterdistribution(parameters,observer_position,halo_position,halos)
+                vx = vx - velocity_correction[0]
+                vy = vy - velocity_correction[1]
+                vz = vz - velocity_correction[2]
+
+
             vr_peculiar = ((xop-self.x)*vx+(yop-self.y)*vy+(zop-self.z)*vz)/r
             vrs_peculiar.append(vr_peculiar)
             
@@ -278,8 +292,7 @@ class Observer:
             
             
     def do_hubble_analysis(self,parameters):
-        
-        
+                
         if parameters.test_isotropy:
             self.Hubbleconstants, self.cones = hf.calculate_Hs_for_varying_directions(parameters,self.observed_halos)
         
