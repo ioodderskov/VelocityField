@@ -2,7 +2,7 @@
 path: ../cases/CoDECS_LCDM/
 halocatalogue_file: LCDM_CoDECS_SubGroups_092.tar
 CoDECShosts_file: LCDM_CoDECS_Groups_092.tar
-hubblefile: Hubbleconstants_CoM_nocorrection
+hubblefile: Hubbleconstants_corrected
 powerspectrafile: powerspectra.txt
 snapshot_file:  
 gridfile: grid.txt
@@ -45,7 +45,7 @@ parallel_processing: 0
 observer_choice: subhalos               
 
 # Specify the number of observers you want to use
-number_of_observers: 100
+number_of_observers: 10
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
