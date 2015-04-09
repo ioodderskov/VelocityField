@@ -69,7 +69,7 @@ def initiate_observers_CoDECSsubhalos(parameters,halos):
     groupmasses = sp.array(groups[:,2])*massunit
     group_IDs = groups[:,0]    
     
-    submasses = sp.array([halo.mass for halo in halos])*massunit
+    submasses = sp.array([halo.mass for halo in halos])
     ID_hosts = sp.array([halo.ID_host for halo in halos])
     
     localgroup_indices = sp.array(range(len(halos)))[(parameters.sub_min_m < submasses) & (submasses < parameters.sub_max_m)]    
@@ -110,10 +110,12 @@ def initiate_halos(parameters, halocatalogue):
     halos = [None]*n_halos
 
     if parameters.CoDECS:
+        
+        massunit = 1e10 # Msun/h 
         for h in range(n_halos):
             position = halocatalogue[h,[9,10,11]]/1000.
             velocity = halocatalogue[h,[12,13,14]]
-            mass = halocatalogue[h,3]
+            mass = halocatalogue[h,3]*massunit
             ID = int(halocatalogue[h,1])
             ID_host = int(halocatalogue[h,0])
             
@@ -348,10 +350,31 @@ def select_candidates(parameters,candidates):
     if parameters.observed_halos == 'random':
         selected_candidates = random_selection_of_halos(parameters,candidates)
         
+    if parameters.observed_halos == 'specified_mass':
+        selected_candidates = specified_mass_selection_of_halos(parameters,candidates)
+        
     return selected_candidates
 
    
-
+def specified_mass_selection_of_halos(parameters,candidates):
+    
+    selected_candidates = []
+    masses = sp.array([candidate.mass for candidate in candidates])
+    indices_of_candidates_of_specified_mass = sp.array(range(len(candidates)))[(parameters.SN_mass_min < masses) & (masses < parameters.SN_mass_max)]
+#    pdb.set_trace()
+    random.seed(0)
+    if len(indices_of_candidates_of_specified_mass) == 0:
+        print "No halos to observe"
+    else:
+        while len(selected_candidates) < parameters.number_of_SNe:
+            rnd_number = random.randint(0,len(indices_of_candidates_of_specified_mass)-1)
+            candidate_number = indices_of_candidates_of_specified_mass[rnd_number]
+            selected_candidates.append(candidate_number)
+            print candidates[candidate_number].mass
+            
+    return selected_candidates
+            
+        
     
 def random_selection_of_halos(parameters,candidates):
     
@@ -453,6 +476,7 @@ def print_hubbleconstants_to_file(parameters,observers):
 
         
     else:
+        sp.save(parameters.path+'observers_coma',observers)
     
         f = open(parameters.hubblefile+'_'+parameters.observer_choice+'.txt','w')
         

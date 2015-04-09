@@ -12,9 +12,10 @@ from gplot import Plot
 import hubvar_functions as hf
 import sys
 
+
 #observertype = 'random_positions'
-#observertype = 'random_halos'
-observertype = 'subhalos'
+observertype = 'coma_random_halos'
+#observertype = 'subhalos'
 comparisonfil = '../../cases/CoDECS_LCDM/Hubbleconstants_'+observertype+'.txt'
 
 
@@ -36,8 +37,9 @@ runname = sys.argv[1]
 a = float(sys.argv[2])
 N_observers = int(sys.argv[3])
 xaxis = sys.argv[4]
+output_folder = sys.argv[5]
 #output = sys.argv[5]+ '/'+runname+observertype+'.pdf'
-output = sys.argv[5]+ '/'+runname+observertype+'.pdf'
+output = output_folder+ '/'+runname+observertype+'.pdf'
 compare = int(sys.argv[6])
 write_to_tabular = int(sys.argv[7])
 planck_band = int(sys.argv[8])
@@ -123,6 +125,19 @@ if write_to_tabular == 1:
     tabel = open('tabel.txt','a')
     print >> tabel, runname, '&', mu67_pc, '&', mu150_pc, '&', mu256_pc, '&', sigma67_pc, '&', sigma150_pc, '&', sigma256_pc, '\\\\'
     tabel.close()
+
+for i in range(len(H[1,:])):
+    percent_above = 100.*len(H[:,i][H[:,i] > 1.05])/len(H[:,i])
+    percent_below = 100.*len(H[:,i][H[:,i] < 0.95])/len(H[:,i])
+    print "Within a distance of %s, %s percent of the observers measure a value of H 5 percent above the actual value. And %s percent measure a value 5 percent below the actual value.\n" % (rmax[i],percent_above,percent_below)
+
+sp.save(output_folder+'/H_coma',H)
+
+# A normalized histogram over the measuren H0 is plottet.
+# It is then fitted with a Gaussian and a log-normal distribution, respectively.
+#plt.axis([0,0.1,0,0.2])
+
+
 
 
 

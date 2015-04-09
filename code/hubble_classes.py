@@ -37,6 +37,8 @@ class Parameters:
         self.sub_max_m = sp.double(param["sub_max_m"])
         
         self.observed_halos = param["observed_halos"]
+        self.SN_mass_min = sp.double(param["SN_mass_min"])
+        self.SN_mass_max = sp.double(param["SN_mass_max"])
         
         self.mind = sp.double(param["mind"])
         self.maxd = sp.double(param["maxd"])

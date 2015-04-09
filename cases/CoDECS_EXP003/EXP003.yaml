@@ -18,7 +18,7 @@ parallel_processing: 1
 # Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
 ##########################################################################
 
-observer_choice: random_halos
+observer_choice: subhalos
 
 # Specify the number of observers you want to use
 number_of_observers: 11000
@@ -34,9 +34,11 @@ sub_max_m: 1e13
 host_min_m: 5e14
 host_max_m: 5e15
 
-# How should the observed halos be selected? mass_weighted, random or all
+# How should the observed halos be selected? mass_weighted, random, all, or specified_mass
 ##########################################################################
-observed_halos: mass_weighted
+observed_halos: specified_mass 
+SN_mass_min: 1e14
+SN_mass_max: 1e15
 
 ##########################################################################
 # Choose what to do:
@@ -108,9 +110,9 @@ omegam: 0.306843
 test_isotropy: 0
 ##########################################################################
 
-number_of_SNe: 600
-mind: 30
-maxd: 100
-width: 30
+number_of_SNe: 1
+mind: 62.8
+maxd: 72.8
+width: 10
 
 

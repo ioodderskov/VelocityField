@@ -14,11 +14,11 @@ export OMP_NUM_THREADS=32
 
 
 #python hubble.py ../cases/Planck512/Planck512.yaml
-python hubble.py ../cases/CoDECS_LCDM/LCDM.yaml
+#python hubble.py ../cases/CoDECS_LCDM/LCDM.yaml
 #python hubble.py ../cases/CoDECS_EXP003/EXP003.yaml
 #python hubble.py ../cases/CoDECS_EXP001/EXP001.yaml
 #python hubble.py ../cases/CoDECS_EXP008e3/EXP008e3.yaml
-#python hubble.py ../cases/CoDECS_SUGRA/SUGRA.yaml
+python hubble.py ../cases/CoDECS_SUGRA/SUGRA.yaml
 
 
 
