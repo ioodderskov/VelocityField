@@ -32,8 +32,14 @@ class Parameters:
 
         self.use_grid = int(param["use_grid"])        
 
+        self.use_CoM = int(param["use_CoM"])
         self.correct_for_peculiar_velocities = int(param["correct_for_peculiar_velocities"])
         self.survey_radius = sp.double(param["survey_radius"])
+        self.min_dist = sp.double(param["min_dist"])
+        self.cone_centered_on_halo = int(param["cone_centered_on_halo"])
+        
+        self.use_local_velocity = int(param["use_local_velocity"])
+        self.radius_local_group = sp.double(param["radius_local_group"])
         
         self.observer_choice = param["observer_choice"]
         self.observerfile = param["observerfile"]
@@ -155,6 +161,11 @@ class Cone:
         self.theta = theta
         self.phi = phi
         self.halos_in_cone = halos_in_cone
+        
+class cluster:
+    def __init__(self,position,velocity):
+        self.position = position
+        self.velocity = velocity
 
 
 
@@ -203,6 +214,8 @@ class Observer:
         zops = []
         masses = []
         
+        local_halos = []
+        
           
         for h in halos:
         
@@ -214,12 +227,15 @@ class Observer:
             r, theta, phi = hf.spherical_coordinates(parameters,self.x, self.y, self.z,
                                                 xop,yop,zop)
      
-             
+
+            if parameters.use_local_velocity:
+                if r < parameters.radius_local_group:
+                    local_halos.append(h)
             
             if r < parameters.mind or r > parameters.maxd:
                 continue
             
-            if (parameters.vary_skyfraction == 0) & (parameters.test_isotropy == 0):
+            if (parameters.vary_skyfraction == 0) & (parameters.test_isotropy == 0) & (parameters.cone_centered_on_halo == 0):
                 theta_max = sp.arccos(1-2*parameters.skyfraction)
                 if theta > theta_max:
                     continue
@@ -233,14 +249,14 @@ class Observer:
             
             [vx,vy,vz] = h.velocity[[0,1,2]]
 
-            if parameters.correct_for_peculiar_velocities:
-                halo_position = sp.array([x,y,z])
-                observer_position = sp.array([self.x,self.y,self.z])
-#                pdb.set_trace()
-                velocity_correction = gi.velocity_from_matterdistribution(parameters,observer_position,halo_position,halos)
-                vx = vx - velocity_correction[0]
-                vy = vy - velocity_correction[1]
-                vz = vz - velocity_correction[2]
+#            if parameters.correct_for_peculiar_velocities:
+#                halo_position = sp.array([x,y,z])
+#                observer_position = sp.array([self.x,self.y,self.z])
+#                velocity_correction = gi.velocity_from_matterdistribution(parameters,observer_position,halo_position,halos)
+##                pdb.set_trace()
+#                vx = vx - velocity_correction[0]
+#                vy = vy - velocity_correction[1]
+#                vz = vz - velocity_correction[2]
 
 
             vr_peculiar = ((xop-self.x)*vx+(yop-self.y)*vy+(zop-self.z)*vz)/r
@@ -255,43 +271,84 @@ class Observer:
             xops.append(xop)
             yops.append(yop)
             zops.append(zop)  
+
             
             mass = h.mass
             masses.append(mass)
+
+        if len(masses) == 0:
+            print "No observed halos for this observer"
+            return 0
             
-        
-        if parameters.test_isotropy:
-            halos_to_store = range(len(candidates))
+        if parameters.cone_centered_on_halo:            
+            theta_max = sp.arccos(1-2*parameters.skyfraction)
+            
+            index_center = sp.array(range(len(masses)))[sp.array(masses == max(masses))][0]
+            theta_center = thetas[index_center]
+            phi_center = phis[index_center]
+
+            candidates_around_center = []
+            for candidate,theta,phi in zip(candidates,thetas,phis):   
+                if hp.rotator.angdist([theta_center,phi_center],[theta,phi]) < theta_max:
+#                    print "dir_halo = ", theta,phi
+#                    print "dir_center = ", theta_center,phi_center
+#                    print "ang_dist = ",hp.rotator.angdist([theta_center,phi_center],[theta,phi])
+#                    print "theta_max = ", theta_max
+                    candidates_around_center.append(candidate)
+                    
+            candidates = candidates_around_center
+                    
+
+        if parameters.use_CoM:
+            observer_position = sp.array([self.x,self.y,self.z])
+            x_CoM,y_CoM,z_CoM, \
+            r_CoM, theta_CoM, phi_CoM,\
+            vr_peculiar_CoM, vr_CoM, \
+            total_mass = hf.determine_CoM_for_these_halos(parameters,halos,observer_position,local_halos,candidates)
+            self.observed_halos.append(Observed_halo(x_CoM,y_CoM,z_CoM,r_CoM,theta_CoM,phi_CoM,vr_peculiar_CoM,vr_CoM,-1,total_mass))
+           
         else:
-            halos_to_store = hf.select_candidates(parameters,candidates)
-
-
-        # If distances are to be calculated from the perturbed metric, this is only done for
-        # the selected halos.
-        if parameters.distances_from_perturbed_metric:
-            for halo_to_store in halos_to_store:
-                [xop,yop,zop] = [xops[halo_to_store],yops[halo_to_store],zops[halo_to_store]]
-                psi_int = hf.distance_correction_from_perturbed_metric(parameters,self.x,self.y,self.z,xop,yop,zop)
-                rs[halo_to_store] = rs[halo_to_store]*psi_int 
-#                print "rper = ",rs[selected_candidate]
-
         
-       
-        for halo_to_store in halos_to_store:
-            r = rs[halo_to_store]
-            theta = thetas[halo_to_store]
-            phi = phis[halo_to_store]
-            vr_peculiar = vrs_peculiar[halo_to_store]
-            vr = vrs[halo_to_store]
-            ID = IDs[halo_to_store]
-            mass = masses[halo_to_store]
-            xop,yop,zop = xops[halo_to_store],yops[halo_to_store],zops[halo_to_store] 
+            if parameters.test_isotropy:
+                halos_to_store = range(len(candidates))
+            else:
+                halos_to_store = hf.select_candidates(parameters,candidates)
+    
+    
+            # If distances are to be calculated from the perturbed metric, this is only done for
+            # the selected halos.
+            if parameters.distances_from_perturbed_metric:
+                for halo_to_store in halos_to_store:
+                    [xop,yop,zop] = [xops[halo_to_store],yops[halo_to_store],zops[halo_to_store]]
+                    psi_int = hf.distance_correction_from_perturbed_metric(parameters,self.x,self.y,self.z,xop,yop,zop)
+                    rs[halo_to_store] = rs[halo_to_store]*psi_int 
+    #                print "rper = ",rs[selected_candidate]
+    
             
-            self.observed_halos.append(Observed_halo(xop,yop,zop,r,theta,phi,vr_peculiar,vr,ID,mass))
+           
+            for halo_to_store in halos_to_store:
+                r = rs[halo_to_store]
+                theta = thetas[halo_to_store]
+                phi = phis[halo_to_store]
+                vr_peculiar = vrs_peculiar[halo_to_store]
+                vr = vrs[halo_to_store]
+                ID = IDs[halo_to_store]
+                mass = masses[halo_to_store]
+                xop,yop,zop = xops[halo_to_store],yops[halo_to_store],zops[halo_to_store] 
+            
+                self.observed_halos.append(Observed_halo(xop,yop,zop,r,theta,phi,vr_peculiar,vr,ID,mass))
 
+        return 1
+
+            
             
             
     def do_hubble_analysis(self,parameters):
+        
+        if len(self.observed_halos) == 0:
+            print "No observed halos for this observer"
+            self.Hubblecontants = sp.ones_like(parameters.bindistances)*sp.nan
+            return 0
                 
         if parameters.test_isotropy:
             self.Hubbleconstants, self.cones = hf.calculate_Hs_for_varying_directions(parameters,self.observed_halos)
@@ -306,7 +363,7 @@ class Observer:
         else:
             self.Hubbleconstants = hf.calculate_Hs_for_these_observed_halos(parameters,self.observed_halos)
         
-    
+        return 1
                     
     def calculate_powerspectra(self,parameters):
         
