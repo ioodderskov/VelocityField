@@ -1,20 +1,39 @@
 ---
-halocatalogue_file: ../cases/sim16/parents_11
-hubblefile: ../cases/sim16/Hubbleconstants.txt
-powerspectrafile: ../cases/sim16/powerspectra.txt
-snapshot_file: ../cases/sim16/snapshot_sim16
+path: ../cases/sim16/
+halocatalogue_file: parents_11
+hubblefile: Hubbleconstants.txt
+powerspectrafile: powerspectra.txt
+snapshot_file: snapshot_sim16
+gridfile: grid.txt
+#The gridfile is both the one that will be written if assign_to_grid = 1, 
+#and the one that will be read if use_grid = 1
 
-# ROCKSTAR halocatalogue (default) or snapshot?
+# ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
 ##########################################################################
-snapshot: 1
+snapshot: 0
+CoDECS: 0
+use_grid: 0
+
+##########################################################################
+# Should positions, velocities and masses be assigned to a grid?
+assign_to_grid: 0
+Ng: 10
+smoothing: 1
+smoothing_radius: 1 # Mpc/h
+##########################################################################
+
+##########################################################################
+# Correct for the velocity from the matter distribution?
+correct_for_peculiar_velocities: 1
+survey_radius: 16
+##########################################################################
 
 # Use parallel processing?
 ##########################################################################
 parallel_processing: 0
 
-# Observer selection: from_file, subhalos, random_positions or random_halos
+# Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
 ##########################################################################
-#
 observer_choice: from_file
 
 # Specify the number of observers you want to use
@@ -22,6 +41,8 @@ number_of_observers: 1
 
 # If from_file, specify the file here
 observerfile: ../cases/sim16/howdy16.txt
+# If indices_from_file, specify the file here
+observer_indices_file: observer_indices.txt
 
 # If subhalos, specify the mass-requirements here
 host_min_m: 1.1e13
@@ -29,9 +50,11 @@ host_max_m: 2.3e13
 sub_min_m: 1.6e12
 sub_max_m: 2.8e12
 
-# How should the observed halos be selected? mass_weighted, random or all
-observed_halos: all
+# How should the observed halos be selected? mass_weighted, random, all, or specified_mass
 ##########################################################################
+observed_halos: all
+SN_mass_min: 0
+SN_mass_max: 0
 
 
 ##########################################################################
@@ -39,7 +62,7 @@ observed_halos: all
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 0
+calculate_hubble_constants: 1
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
@@ -52,7 +75,7 @@ make_hubblediagram: 0
 # Create a map of the velocityfield?
 map_velocityfield: 0
 # Calculate powerspectra?
-calculate_powerspectra: 1
+calculate_powerspectra: 0
 
 # Distances from perturbed metric?
 ##########################################################################
@@ -97,13 +120,20 @@ preset_smoothinglength: 0
 smoothing_fwhm: 0.2
 ##########################################################################
 
-boxsize: 16
 skyfraction: 1
+boxsize: 16
 omegam: 0.306843
+
+##########################################################################
+# Should the direction of the cone be varied?
+test_isotropy: 0
+##########################################################################
 
 number_of_SNe: 10
 mind: 2
 maxd: 8
-width: 2
+width: 6
+
+
 
 
