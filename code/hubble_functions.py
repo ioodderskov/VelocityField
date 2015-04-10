@@ -808,41 +808,44 @@ def read_snapshot(parameters):
     size_fortranstuff = 6*size_unit
     f.seek(size_header+256+size_fortranstuff)
 
-    N = int(Npart[Npart != 0])
-    massunit = 1e10 #Msun/h
-    M = sp.double(Massarr[Massarr != 0])*massunit
-#    print M
-    
-    pos = sp.fromfile(f,sp.single,count=N*3)
+    print Npart
+    print Massarr
 
-    size_more_fortran_stuff = 6*size_unit
-    f.seek(size_more_fortran_stuff,1)
-
-    vel = sp.fromfile(f,sp.single,count=N*3)
-
-
-    xindices = sp.mod(range(N*3),3) == 0
-    yindices = sp.mod(range(N*3),3) == 1
-    zindices = sp.mod(range(N*3),3) == 2
-    
-    xs = pos[xindices]/1000.
-    ys = pos[yindices]/1000.
-    zs = pos[zindices]/1000.
-
-    vxs = vel[xindices]    
-    vys = vel[yindices]
-    vzs = vel[zindices]    
-
-    halos = [None]*N
-    
-    for p in range(N):
-        position = sp.array([xs[p],ys[p],zs[p]])
-        velocity = sp.array([vxs[p],vys[p],vzs[p]])
-        ID = p
-        ID_host = -1
+    halos = [None]*sp.sum(Npart)
+    for particle_type in [0,1]:
+        N = int(Npart[particle_type])
+        massunit = 1e10 #Msun/h
+        M = sp.double(Massarr[particle_type])*massunit
+    #    print M
         
-        halo = hc.Halo(position,velocity,M,ID,ID_host,p)
-        halos[p] = halo
+        pos = sp.fromfile(f,sp.single,count=N*3)
+    
+        size_more_fortran_stuff = 6*size_unit
+        f.seek(size_more_fortran_stuff,1)
+    
+        vel = sp.fromfile(f,sp.single,count=N*3)
+    
+    
+        xindices = sp.mod(range(N*3),3) == 0
+        yindices = sp.mod(range(N*3),3) == 1
+        zindices = sp.mod(range(N*3),3) == 2
+        
+        xs = pos[xindices]/1000.
+        ys = pos[yindices]/1000.
+        zs = pos[zindices]/1000.
+    
+        vxs = vel[xindices]    
+        vys = vel[yindices]
+        vzs = vel[zindices]    
+    
+        for p in range(N):
+            position = sp.array([xs[p],ys[p],zs[p]])
+            velocity = sp.array([vxs[p],vys[p],vzs[p]])
+            ID = p
+            ID_host = -1
+            
+            halo = hc.Halo(position,velocity,M,ID,ID_host,p)
+            halos[p] = halo
     
 #    position = sp.array([0,0,0])
 #    velocity = sp.array([0,0,0])
