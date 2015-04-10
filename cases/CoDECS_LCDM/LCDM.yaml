@@ -2,9 +2,9 @@
 path: ../cases/CoDECS_LCDM/
 halocatalogue_file: LCDM_CoDECS_SubGroups_092.tar
 CoDECShosts_file: LCDM_CoDECS_Groups_092.tar
-hubblefile: Hubbleconstants_corrected
+hubblefile: Hubbleconstants_corrected_3.5
 powerspectrafile: powerspectra.txt
-snapshot_file:  
+snapshot_file: LCDM_CoDECS_snap_092.tar
 gridfile: grid.txt
 
 # ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
@@ -12,6 +12,11 @@ gridfile: grid.txt
 snapshot: 0
 CoDECS: 1
 use_grid: 0
+
+# Use snapshot for background?
+##########################################################################
+use_snapshot_for_background: 1
+##########################################################################
 
 ##########################################################################
 # Should positions, velocities and masses be assigned to a grid?
@@ -42,10 +47,10 @@ parallel_processing: 0
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
 ##########################################################################
-observer_choice: subhalos               
+observer_choice: random_positions
 
 # Specify the number of observers you want to use
-number_of_observers: 10
+number_of_observers: 1
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
@@ -126,9 +131,11 @@ halocatalogue_filebase:
 
 
 
-skyfraction: 0.0002
+skyfraction: 1
 boxsize: 1000
-omegam: 0.306843
+# WMAP 7 parameters
+omegam: 0.272
+h: 0.702
 
 ##########################################################################
 # Should the direction of the cone be varied?
@@ -136,7 +143,7 @@ test_isotropy: 0
 ##########################################################################
 
 number_of_SNe: 100
-mind: 120
-maxd: 127
-width: 7
+mind: 70.2
+maxd: 90.2
+width: 20
 

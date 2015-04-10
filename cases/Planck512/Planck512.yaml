@@ -22,9 +22,17 @@ smoothing_radius: 5 # Mpc/h
 ##########################################################################
 
 ##########################################################################
+use_local_velocity: 0
+radius_local_group: 3 # Mpc/h
+##########################################################################
+
+##########################################################################
 # Correct for the velocity from the matter distribution?
+use_CoM: 1
 correct_for_peculiar_velocities: 1
+min_dist: 3.5 # Mpc/h
 survey_radius: 200
+cone_centered_on_halo: 1
 ##########################################################################
 
 # Use parallel processing?
@@ -33,11 +41,10 @@ parallel_processing: 0
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
 ##########################################################################
-
-observer_choice: from_file
+observer_choice: random_positions
 
 # Specify the number of observers you want to use
-number_of_observers: 1
+number_of_observers: 10
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
@@ -53,7 +60,7 @@ host_max_m: 5e15
 
 # How should the observed halos be selected? mass_weighted, random, all, or specified_mass
 ##########################################################################
-observed_halos: random
+observed_halos: all
 SN_mass_min: 1e14
 SN_mass_max: 1e15
 
@@ -121,9 +128,10 @@ halocatalogue_filebase: /home/isho07/Rockstar/Planck512_lightcone_output/parents
 
 
 
-skyfraction: 1
+skyfraction: 0.0001
 boxsize: 512
 omegam: 0.306843
+h: 0.678
 
 ##########################################################################
 # Should the direction of the cone be varied?
@@ -131,7 +139,7 @@ test_isotropy: 0
 ##########################################################################
 
 number_of_SNe: 100
-mind: 70.
-maxd: 80.
-width: 10
+mind: 70.2
+maxd: 90.2
+width: 20
 

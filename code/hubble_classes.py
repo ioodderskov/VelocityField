@@ -6,6 +6,7 @@ import yaml
 import pdb
 import healpy as hp 
 import gravitational_instability as gi
+import scipy.linalg as linalg
 
 
 class Parameters:
@@ -27,9 +28,11 @@ class Parameters:
         self.parallel_processing = int(param["parallel_processing"])
         
         self.snapshot = int(param["snapshot"])
-        if self.snapshot:
-            self.snapshot_file = self.path+param["snapshot_file"]
+#        if self.snapshot:
+        self.snapshot_file = self.path+param["snapshot_file"]
 
+
+        self.use_snapshot_for_background = int(param["use_snapshot_for_background"])
         self.use_grid = int(param["use_grid"])        
 
         self.use_CoM = int(param["use_CoM"])
@@ -60,6 +63,7 @@ class Parameters:
         self.number_of_SNe = int(param["number_of_SNe"])
         self.boxsize = sp.double(param["boxsize"])
         self.omegam = sp.double(param["omegam"])
+        self.h = sp.double(param["h"])
         self.number_of_cones = int(param["number_of_cones"])
         self.skyfraction = sp.double(param["skyfraction"])
         self.max_angular_distance = sp.arccos(1-2*self.skyfraction)
@@ -161,11 +165,6 @@ class Cone:
         self.theta = theta
         self.phi = phi
         self.halos_in_cone = halos_in_cone
-        
-class cluster:
-    def __init__(self,position,velocity):
-        self.position = position
-        self.velocity = velocity
 
 
 
@@ -189,17 +188,12 @@ class Observer:
 
  
     
-    def observe(self, parameters,halos):
+    def observe(self, parameters,halos,particles):
 
         if parameters.use_lightcone:
             halocatalogue_file = parameters.halocatalogue_filebase + '_' + str(self.observer_number)
             halocatalogue = hf.load_halocatalogue(parameters,halocatalogue_file)
             halos = hf.initiate_halos(parameters,halocatalogue)
-#        else:
-#            halocatalogue_file = parameters.halocatalogue_file
-#            halocatalogue = hf.load_halocatalogue(halocatalogue_file)
-#            halos = hf.initiate_halos(parameters,halocatalogue)
-            
 
 
         candidates = []
@@ -212,6 +206,7 @@ class Observer:
         xops = []
         yops = []
         zops = []
+        positions_op = []
         masses = []
         
         local_halos = []
@@ -249,15 +244,6 @@ class Observer:
             
             [vx,vy,vz] = h.velocity[[0,1,2]]
 
-#            if parameters.correct_for_peculiar_velocities:
-#                halo_position = sp.array([x,y,z])
-#                observer_position = sp.array([self.x,self.y,self.z])
-#                velocity_correction = gi.velocity_from_matterdistribution(parameters,observer_position,halo_position,halos)
-##                pdb.set_trace()
-#                vx = vx - velocity_correction[0]
-#                vy = vy - velocity_correction[1]
-#                vz = vz - velocity_correction[2]
-
 
             vr_peculiar = ((xop-self.x)*vx+(yop-self.y)*vy+(zop-self.z)*vz)/r
             vrs_peculiar.append(vr_peculiar)
@@ -271,6 +257,8 @@ class Observer:
             xops.append(xop)
             yops.append(yop)
             zops.append(zop)  
+            position_op = sp.array([xop,yop,zop])
+            positions_op.append(position_op)
 
             
             mass = h.mass
@@ -281,30 +269,54 @@ class Observer:
             return 0
             
         if parameters.cone_centered_on_halo:            
-            theta_max = sp.arccos(1-2*parameters.skyfraction)
-            
-            index_center = sp.array(range(len(masses)))[sp.array(masses == max(masses))][0]
-            theta_center = thetas[index_center]
-            phi_center = phis[index_center]
+            masses = sp.array(masses)            
+            central_strip_indices = sp.array(range(len(masses)))\
+                                    [(rs-parameters.bindistances[0] > parameters.min_dist) \
+                                    & (parameters.bindistances[-1]-rs > parameters.min_dist)]
+            central_strip_masses = masses[central_strip_indices]
+            if len(central_strip_masses) == 0:
+                print "No central strip halos for this observer"
+                return 0
+                
+            index_center = central_strip_indices[central_strip_masses == max(central_strip_masses)][0]
+
+            position_op_center = positions_op[index_center]
+
+#            pdb.set_trace()
 
             candidates_around_center = []
-            for candidate,theta,phi in zip(candidates,thetas,phis):   
-                if hp.rotator.angdist([theta_center,phi_center],[theta,phi]) < theta_max:
-#                    print "dir_halo = ", theta,phi
-#                    print "dir_center = ", theta_center,phi_center
-#                    print "ang_dist = ",hp.rotator.angdist([theta_center,phi_center],[theta,phi])
-#                    print "theta_max = ", theta_max
+            for candidate,position_op in zip(candidates,positions_op):   
+                if linalg.norm(position_op_center-position_op) < parameters.min_dist:
                     candidates_around_center.append(candidate)
                     
             candidates = candidates_around_center
+
+
+
+            
+#            theta_center = thetas[index_center]
+#            phi_center = phis[index_center]
+#
+#            candidates_around_center = []
+#            for candidate,theta,phi in zip(candidates,thetas,phis):   
+#                if hp.rotator.angdist([theta_center,phi_center],[theta,phi]) < theta_max:
+##                    print "dir_halo = ", theta,phi
+##                    print "dir_center = ", theta_center,phi_center
+##                    print "ang_dist = ",hp.rotator.angdist([theta_center,phi_center],[theta,phi])
+##                    print "theta_max = ", theta_max
+#                    candidates_around_center.append(candidate)
+#                    
+#            candidates = candidates_around_center
                     
 
         if parameters.use_CoM:
             observer_position = sp.array([self.x,self.y,self.z])
+            if parameters.correct_for_peculiar_velocities:
+                survey_positions,survey_masses = self.survey(parameters,particles)
             x_CoM,y_CoM,z_CoM, \
             r_CoM, theta_CoM, phi_CoM,\
             vr_peculiar_CoM, vr_CoM, \
-            total_mass = hf.determine_CoM_for_these_halos(parameters,halos,observer_position,local_halos,candidates)
+            total_mass = hf.determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,observer_position,local_halos,candidates)
             self.observed_halos.append(Observed_halo(x_CoM,y_CoM,z_CoM,r_CoM,theta_CoM,phi_CoM,vr_peculiar_CoM,vr_CoM,-1,total_mass))
            
         else:
@@ -322,7 +334,6 @@ class Observer:
                     [xop,yop,zop] = [xops[halo_to_store],yops[halo_to_store],zops[halo_to_store]]
                     psi_int = hf.distance_correction_from_perturbed_metric(parameters,self.x,self.y,self.z,xop,yop,zop)
                     rs[halo_to_store] = rs[halo_to_store]*psi_int 
-    #                print "rper = ",rs[selected_candidate]
     
             
            
@@ -340,6 +351,41 @@ class Observer:
 
         return 1
 
+
+
+    def survey(self,parameters,particles):
+
+
+        positions = []
+        masses = []
+                
+          
+        for p in particles:
+        
+            x,y,z = p.position[0],p.position[1],p.position[2]
+             
+            [xop,yop,zop] = hf.periodic_boundaries(parameters,self.x,self.y,self.z,x,y,z)
+
+
+            r, theta, phi = hf.spherical_coordinates(parameters,self.x, self.y, self.z,
+                                                xop,yop,zop)
+
+  
+            if r > parameters.survey_radius:
+                continue
+            
+            position = sp.array([x,y,z])
+            positions.append(position)
+
+            
+            mass = p.mass
+            masses.append(mass)
+
+        if len(masses) == 0:
+            print "No particles in survey for this observer"
+            return 0
+
+        return positions, masses
             
             
             
@@ -347,7 +393,7 @@ class Observer:
         
         if len(self.observed_halos) == 0:
             print "No observed halos for this observer"
-            self.Hubblecontants = sp.ones_like(parameters.bindistances)*sp.nan
+            self.Hubbleconstants = sp.ones_like(parameters.bindistances)*sp.nan
             return 0
                 
         if parameters.test_isotropy:

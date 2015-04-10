@@ -16,7 +16,7 @@ import gravitational_instability as gi
 import copy
 
 
-plot_field = 0
+plot_field = 1
 
 
 
@@ -70,6 +70,9 @@ def initiate_observers_CoDECSsubhalos(parameters,halos):
     
     submasses = sp.array([halo.mass for halo in halos])
     ID_hosts = sp.array([halo.ID_host for halo in halos])
+
+    print "Total group masses = ", sp.sum(groupmasses)
+    print "Total sub masses = ", sp.sum(submasses)
     
     localgroup_indices = sp.array(range(len(halos)))[(parameters.sub_min_m < submasses) & (submasses < parameters.sub_max_m)]    
     virgo_indices = (parameters.host_min_m < groupmasses) & (groupmasses < parameters.host_max_m)
@@ -131,9 +134,17 @@ def initiate_halos(parameters, halocatalogue):
             mass = halocatalogue[h,3]*massunit
             ID = int(halocatalogue[h,1])
             ID_host = int(halocatalogue[h,0])
-            
             halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
             halos[h] = halo
+
+#        print "position of last halo = ", position
+#        print "changing mass of last halo from", mass, "to", mass*1e16
+#        halos[h] = hc.Halo(position,velocity,mass*1e16,ID,ID_host,h)
+            
+#        position = sp.array([0,0,0])
+#        velocity = sp.array([0,0,0])
+#        mass = sp.sum([halocatalogue[h,3]*massunit for h in range(n_halos)])*1e16
+#        halos[-1] = hc.Halo(position,velocity,mass,0,0,n_halos)
  
     elif parameters.use_grid:
 
@@ -393,6 +404,9 @@ def center_of_mass(parameters,observer_position,candidates):
     vx_CoM = sp.average(vxs,weights=masses)
     vy_CoM = sp.average(vys,weights=masses)
     vz_CoM = sp.average(vzs,weights=masses)
+
+
+
     
     total_mass = sp.sum(masses)
     
@@ -404,7 +418,7 @@ def center_of_mass(parameters,observer_position,candidates):
     
     
 
-def determine_CoM_for_these_halos(parameters,halos,observer_position,local_halos,candidates):
+def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,observer_position,local_halos,candidates):
 
     if len(candidates) == 0:
         print "No observed halo to calculate CoM for"
@@ -417,23 +431,23 @@ def determine_CoM_for_these_halos(parameters,halos,observer_position,local_halos
 
     if parameters.correct_for_peculiar_velocities:
 
-        vx_bulk = 0
-        vy_bulk = 0
-        vz_bulk = 0
-        
-        if parameters.use_local_velocity:
-                xop_local_CoM, yop_local_CoM, zop_local_CoM, \
-                vx_local_CoM, vy_local_CoM, vz_local_CoM, \
-                total_local_mass, xops_local,yops_local = center_of_mass(parameters,observer_position,local_halos)        
-                
-                local_group_position = sp.array([xop_local_CoM,yop_local_CoM,zop_local_CoM])
-                velocity_correction_local_group = gi.velocity_from_matterdistribution(parameters,observer_position,local_group_position,halos)
-                vx_bulk = vx_local_CoM - velocity_correction_local_group[0]
-                vy_bulk = vy_local_CoM - velocity_correction_local_group[1]
-                vz_bulk = vz_local_CoM - velocity_correction_local_group[2]
+#        vx_bulk = 0
+#        vy_bulk = 0
+#        vz_bulk = 0
+#        
+#        if parameters.use_local_velocity:
+#                xop_local_CoM, yop_local_CoM, zop_local_CoM, \
+#                vx_local_CoM, vy_local_CoM, vz_local_CoM, \
+#                total_local_mass, xops_local,yops_local = center_of_mass(parameters,observer_position,local_halos)        
+#                
+#                local_group_position = sp.array([xop_local_CoM,yop_local_CoM,zop_local_CoM])
+#                velocity_correction_local_group = gi.velocity_from_matterdistribution(parameters,observer_position,local_group_position,halos)
+#                vx_bulk = vx_local_CoM - velocity_correction_local_group[0]
+#                vy_bulk = vy_local_CoM - velocity_correction_local_group[1]
+#                vz_bulk = vz_local_CoM - velocity_correction_local_group[2]
 
         halo_position = sp.array([xop_CoM,yop_CoM,zop_CoM])
-        velocity_correction = gi.velocity_from_matterdistribution(parameters,observer_position,halo_position,halos)
+        velocity_correction = gi.velocity_from_matterdistribution(parameters,observer_position,halo_position,survey_positions,survey_masses)
 #        pdb.set_trace()
         # Save non-corrected velocities
         vx_CoM_nc = copy.copy(vx_CoM)
@@ -457,34 +471,40 @@ def determine_CoM_for_these_halos(parameters,halos,observer_position,local_halos
         import matplotlib.pyplot as plt
         plt.figure()
         ax = plt.gca()
-        ax.set_xlim([observer_position[0]-130,observer_position[0]+130])
-        ax.set_ylim([observer_position[1]-130,observer_position[1]+130])
-        ax.plot(observer_position[0],observer_position[1],'g*',markersize=20)
-        halo_positions = sp.array([halo.position for halo in halos])
+        ax.set_xlim([observer_position[0]-parameters.survey_radius,observer_position[0]+parameters.survey_radius])
+        ax.set_ylim([observer_position[1]-parameters.survey_radius,observer_position[1]+parameters.survey_radius])
+        halo_positions = sp.array(survey_positions)
         halo_indices = (observer_position[2]-50 < halo_positions[:,2]) & (halo_positions[:,2] < observer_position[2]+50) 
-        ax.plot(halo_positions[halo_indices,0],halo_positions[halo_indices,1],'r*')
+#        ax.plot(halo_positions[halo_indices,0],halo_positions[halo_indices,1],'r*')
+        ax.plot(observer_position[0],observer_position[1],'g*',markersize=20)
         ax.plot(xops,yops,'y*')
-        ax.plot(xop_CoM,yop_CoM,'bx',markersize=20)
+        ax.plot(xop_CoM,yop_CoM,'bx')
         
     #    ax.plot(xop_local_CoM,yop_local_CoM,'gx',markersize=20)
     #    ax.quiver(xop_local_CoM,yop_local_CoM,vx_local_CoM,vy_local_CoM,color='g',scale_units='inches',scale=700)
     #    ax.quiver(xop_local_CoM,yop_local_CoM,velocity_correction_local_group[0],velocity_correction_local_group[1],color='black',scale_units='inches',scale=700)
         
     #    pdb.set_trace()
-        candidate_positions = sp.array([candidate.position for candidate in candidates])
+#        candidate_positions = sp.array([candidate.position for candidate in candidates])
+        scale = 100
         candidate_velocities = sp.array([candidate.velocity for candidate in candidates])
-        plot_velocities(candidate_positions,candidate_velocities,ax,'y',700)
-        ax.quiver(xop_CoM,yop_CoM,vx_CoM_nc,vy_CoM_nc,color='r',scale_units='inches',scale=700)
+#        plot_velocities(candidate_positions,candidate_velocities,ax,'y',700)
+        ax.quiver(xops,yops,candidate_velocities[:,0],candidate_velocities[:,1],color='y',scale_units='inches',scale=scale)
+        ax.quiver(xop_CoM,yop_CoM,vx_CoM_nc,vy_CoM_nc,color='r',scale_units='inches',scale=scale)
     #    ax.quiver(xop_CoM,yop_CoM,vx_bulk,vy_bulk,color='m',scale_units='inches',scale=700)
-    #    ax.quiver(xop_CoM,yop_CoM,velocity_correction[0],velocity_correction[1],color='black',scale_units='inches',scale=700)
-        ax.quiver(xop_CoM,yop_CoM,vx_CoM,vy_CoM,color='b',scale_units='inches',scale=700)
+        ax.quiver(xop_CoM,yop_CoM,velocity_correction[0],velocity_correction[1],color='black',scale_units='inches',scale=scale)
+        print "Velocity = ", vx_CoM_nc,vy_CoM_nc,vz_CoM_nc
+        print "Velocity correction  = ", velocity_correction
+
+#        ax.quiver(xop_CoM,yop_CoM,vx_CoM,vy_CoM,color='b',scale_units='inches',scale=700)
     
     #    print "total_local_mass = ", total_local_mass
         print "total_mass = ", total_mass
-        plt.savefig("/home/io/Desktop/cepheid_observation%s.png" %total_mass)    
-    #    plt.show()
-    #    pdb.set_trace()
+        plt.savefig("cepheid_observation%s.png" %total_mass)    
+#        plt.show()
+#        pdb.set_trace()
 
+#    pdb.set_trace()
 
 
     return  xop_CoM,yop_CoM,zop_CoM, \
@@ -789,7 +809,9 @@ def read_snapshot(parameters):
     f.seek(size_header+256+size_fortranstuff)
 
     N = int(Npart[Npart != 0])
-    M = sp.double(Massarr[Massarr != 0])
+    massunit = 1e10 #Msun/h
+    M = sp.double(Massarr[Massarr != 0])*massunit
+#    print M
     
     pos = sp.fromfile(f,sp.single,count=N*3)
 
@@ -821,6 +843,11 @@ def read_snapshot(parameters):
         
         halo = hc.Halo(position,velocity,M,ID,ID_host,p)
         halos[p] = halo
+    
+#    position = sp.array([0,0,0])
+#    velocity = sp.array([0,0,0])
+#    M = N*M*1e16    
+#    halos[p] = hc.Halo(position,velocity,M,ID,ID_host,p)
         
     return halos
 
