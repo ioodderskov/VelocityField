@@ -13,6 +13,12 @@ gridfile: grid.txt
 snapshot: 0
 CoDECS: 0
 use_grid: 0
+##########################################################################
+
+# Use snapshot for background?
+##########################################################################
+use_snapshot_for_background: 1
+##########################################################################
 
 ##########################################################################
 # Should positions, velocities and masses be assigned to a grid?
@@ -23,9 +29,17 @@ smoothing_radius: 1 # Mpc/h
 ##########################################################################
 
 ##########################################################################
+use_local_velocity: 0
+radius_local_group: 3 # Mpc/h
+##########################################################################
+
+##########################################################################
 # Correct for the velocity from the matter distribution?
+use_CoM: 1
 correct_for_peculiar_velocities: 1
-survey_radius: 16
+min_dist: 1 # Mpc/h
+survey_radius: 12
+cone_centered_on_halo: 1
 ##########################################################################
 
 # Use parallel processing?
@@ -34,10 +48,10 @@ parallel_processing: 0
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
 ##########################################################################
-observer_choice: from_file
+observer_choice: random_positions
 
 # Specify the number of observers you want to use
-number_of_observers: 1
+number_of_observers: 10
 
 # If from_file, specify the file here
 observerfile: ../cases/sim16/howdy16.txt
@@ -123,6 +137,7 @@ smoothing_fwhm: 0.2
 skyfraction: 1
 boxsize: 16
 omegam: 0.306843
+h: 0.678
 
 ##########################################################################
 # Should the direction of the cone be varied?

@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -l  nodes=1:ppn=32 -q qcap
+#PBS -l  nodes=1:ppn=48 -q qmult
 #PBS -l walltime=1000:00:00
 #PBS -N hubvar
 export PATH=/com/openmpi-1.2.5/bin:$PATH
@@ -14,11 +14,11 @@ export OMP_NUM_THREADS=32
 
 
 #python hubble.py ../cases/Planck512/Planck512.yaml
-#python hubble.py ../cases/CoDECS_LCDM/LCDM.yaml
+python hubble.py ../cases/CoDECS_LCDM/LCDM.yaml
 #python hubble.py ../cases/CoDECS_EXP003/EXP003.yaml
 #python hubble.py ../cases/CoDECS_EXP001/EXP001.yaml
 #python hubble.py ../cases/CoDECS_EXP008e3/EXP008e3.yaml
-python hubble.py ../cases/CoDECS_SUGRA/SUGRA.yaml
+#python hubble.py ../cases/CoDECS_SUGRA/SUGRA.yaml
 
 
 

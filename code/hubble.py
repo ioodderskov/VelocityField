@@ -30,7 +30,11 @@ else:
     halos = hf.initiate_halos(parameters,halocatalogue)
     observers = hf.initiate_observers(parameters,halos)
 
-partial_observe_and_analyse = partial(pp.observe_and_analyse,parameters=parameters,halos=halos)
+particles = []
+if parameters.use_snapshot_for_background:
+    particles = hf.read_snapshot(parameters)
+
+partial_observe_and_analyse = partial(pp.observe_and_analyse,parameters=parameters,halos=halos,particles=particles)
 
 if parameters.parallel_processing:
     pool = multiprocessing.Pool()
