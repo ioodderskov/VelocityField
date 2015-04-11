@@ -6,9 +6,6 @@ hubblefile: Hubbleconstants_corrected_3.5
 powerspectrafile: powerspectra.txt
 snapshot_file: LCDM_CoDECS_snap_092.tar
 gridfile: grid.txt
-powerspectrafile: powerspectra.txt
-snapshot_file:  
-gridfile: grid.txt
 
 # ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
 ##########################################################################
@@ -53,11 +50,7 @@ parallel_processing: 0
 observer_choice: random_positions
 
 # Specify the number of observers you want to use
-<<<<<<< HEAD
-number_of_observers: 11000
-=======
 number_of_observers: 1
->>>>>>> 92e8e214cf4ca153e521f4f813546a09d8dfed1c
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt

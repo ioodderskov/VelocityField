@@ -3,7 +3,7 @@ path: ../cases/sim16/
 halocatalogue_file: parents_11
 hubblefile: Hubbleconstants.txt
 powerspectrafile: powerspectra.txt
-snapshot_file: snapshot_sim16
+snapshot_file: snapshot_011
 gridfile: grid.txt
 #The gridfile is both the one that will be written if assign_to_grid = 1, 
 #and the one that will be read if use_grid = 1

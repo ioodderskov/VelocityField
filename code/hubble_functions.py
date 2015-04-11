@@ -774,13 +774,33 @@ def calculate_Hs_for_varying_number_of_SNe(parameters,observed_halos):
         
     return number_of_SNe_Hubbleconstants_array
 
+def load_CoDECS_catalogue(halocatalogue_file):
+    tar = tarfile.open(halocatalogue_file,mode='r')
 
+    for i,catalogue in enumerate(tar.getmembers()):
+        f=tar.extractfile(catalogue)
+        content = sp.loadtxt(f)
+        if not 'halocatalogue' in locals():
+            halocatalogue = content
+        else:
+            sp.vstack((halocatalogue,content))
+    
+    tar.close()
+    
+    return halocatalogue
+ 
 
 
 def read_snapshot(parameters):
+
+    if parameters.CoDECS:
+        tar = tarfile.open(parameters.snapshot_file,mode='r')
+        for i,snapshot in enumerate(tar.getmembers()):
+            f=tar.extractfile(snapshot)
+    else:
+        f = open(parameters.snapshot_file,'r')
     
     size_unit = 4
-    f = open(parameters.snapshot_file,'r')
     print "reading file:", parameters.snapshot_file
     size_header = 5*size_unit
     f.seek(size_header)
@@ -806,8 +826,8 @@ def read_snapshot(parameters):
     size_fortranstuff = 6*size_unit
     f.seek(size_header+256+size_fortranstuff)
 
-    print Npart
-    print Massarr
+    print "Npart = ", Npart
+    print "Massarr = ", Massarr
 
     halos = [None]*sp.sum(Npart)
     for particle_type in [0,1]:
@@ -850,6 +870,11 @@ def read_snapshot(parameters):
 #    M = N*M*1e16    
 #    halos[p] = hc.Halo(position,velocity,M,ID,ID_host,p)
         
+    if parameters.CoDECS:
+        tar.close()
+
+	f.close()
+
     return halos
 
     
