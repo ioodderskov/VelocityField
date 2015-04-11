@@ -15,7 +15,7 @@ use_grid: 0
 
 # Use snapshot for background?
 ##########################################################################
-use_snapshot_for_background: 1
+use_snapshot_for_background: 0
 ##########################################################################
 
 ##########################################################################
@@ -33,11 +33,12 @@ radius_local_group: 3 # Mpc/h
 
 ##########################################################################
 # Correct for the velocity from the matter distribution?
+use_lonely_halo: 1
 use_CoM: 1
 correct_for_peculiar_velocities: 1
-min_dist: 3.5 # Mpc/h
+min_dist: 6 # Mpc/h
 survey_radius: 200
-cone_centered_on_halo: 1
+cone_centered_on_halo: 0
 ##########################################################################
 
 ##########################################################################
@@ -50,7 +51,7 @@ parallel_processing: 0
 observer_choice: random_positions
 
 # Specify the number of observers you want to use
-number_of_observers: 1
+number_of_observers: 20
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
@@ -143,7 +144,7 @@ test_isotropy: 0
 ##########################################################################
 
 number_of_SNe: 100
-mind: 70.2
-maxd: 90.2
-width: 20
+mind: 60
+maxd: 100
+width: 40
 

@@ -11,8 +11,6 @@ periodic_boundaries = 1
 
 def velocity_from_matterdistribution(parameters,observer_position,halo_position,survey_positions,survey_masses):
     
-#    positions = sp.array([halo.position for halo in halos])
-#    masses = sp.array([halo.mass for halo in halos])
     
     positions = sp.array(survey_positions)
     masses  = sp.array(survey_masses)
@@ -42,8 +40,7 @@ def velocity_from_matterdistribution(parameters,observer_position,halo_position,
         positions_oh = []
         for index,position in enumerate(positions):
 
-            x,y,z = position[0],position[1],position[2]
-            xop,yop,zop = hf.periodic_boundaries(parameters,halo_position[0],halo_position[1],halo_position[2],x,y,z)
+            xop,yop,zop = hf.periodic_boundaries(parameters,halo_position,position)
             positions_oh.append(sp.array([xop,yop,zop]))
 
         positions = sp.array(positions_oh)
