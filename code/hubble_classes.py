@@ -35,6 +35,7 @@ class Parameters:
         self.use_snapshot_for_background = int(param["use_snapshot_for_background"])
         self.use_grid = int(param["use_grid"])        
 
+        self.use_lonely_halo = int(param["use_lonely_halo"])
         self.use_CoM = int(param["use_CoM"])
         self.correct_for_peculiar_velocities = int(param["correct_for_peculiar_velocities"])
         self.survey_radius = sp.double(param["survey_radius"])
@@ -148,10 +149,8 @@ class Halo:
 
 
 class Observed_halo:
-    def __init__(self,xop,yop,zop,r,theta,phi,vr_peculiar,vr,ID,mass):
-        self.xop = xop
-        self.yop = yop
-        self.zop = zop
+    def __init__(self,position_op,r,theta,phi,vr_peculiar,vr,ID,mass):
+        self.position_op = position_op
         self.r = r
         self.theta = theta
         self.phi = phi
@@ -172,9 +171,7 @@ class Cone:
 class Observer:
     def __init__(self,observer_number,position):
         self.observer_number = observer_number
-        self.x = position[0]
-        self.y = position[1]
-        self.z = position[2]
+        self.position = position
         self.observed_halos = []
         self.cones = []
         self.Hubbleconstants = []
@@ -203,9 +200,6 @@ class Observer:
         vrs_peculiar = []
         vrs = []
         IDs = []
-        xops = []
-        yops = []
-        zops = []
         positions_op = []
         masses = []
         
@@ -214,13 +208,11 @@ class Observer:
           
         for h in halos:
         
-            x,y,z = h.position[0],h.position[1],h.position[2]
-             
-            [xop,yop,zop] = hf.periodic_boundaries(parameters,self.x,self.y,self.z,x,y,z)
+            position_op = hf.periodic_boundaries(parameters,self.position,h.position)
 
              
-            r, theta, phi = hf.spherical_coordinates(parameters,self.x, self.y, self.z,
-                                                xop,yop,zop)
+            r, theta, phi = hf.spherical_coordinates(parameters,self.position,
+                                                position_op)
      
 
             if parameters.use_local_velocity:
@@ -245,7 +237,7 @@ class Observer:
             [vx,vy,vz] = h.velocity[[0,1,2]]
 
 
-            vr_peculiar = ((xop-self.x)*vx+(yop-self.y)*vy+(zop-self.z)*vz)/r
+            vr_peculiar = sp.dot(position_op-self.position,h.velocity)/r
             vrs_peculiar.append(vr_peculiar)
             
             vr = vr_peculiar + r*100
@@ -254,22 +246,40 @@ class Observer:
             ID = h.ID
             IDs.append(ID)
             
-            xops.append(xop)
-            yops.append(yop)
-            zops.append(zop)  
-            position_op = sp.array([xop,yop,zop])
             positions_op.append(position_op)
 
             
             mass = h.mass
             masses.append(mass)
 
+        masses = sp.array(masses)
+        positions_op = sp.array(positions_op)
         if len(masses) == 0:
             print "No observed halos for this observer"
             return 0
+        
+        lonely_candidates = []
+        if parameters.use_lonely_halo:
+            central_strip_indices = sp.array(range(len(masses)))\
+                                    [(rs-parameters.bindistances[0] > parameters.min_dist) \
+                                    & (parameters.bindistances[-1]-rs > parameters.min_dist)]
+            for index,position_halo in zip(central_strip_indices,positions_op[central_strip_indices]):
+                distances_to_other_candidates = sp.array([linalg.norm(position_halo-position)\
+                                                for position in positions_op if linalg.norm(position_halo-position) != 0])
+#                pdb.set_trace()
+                if sp.amin(distances_to_other_candidates) > parameters.min_dist:
+                    lonely_candidates.append(candidates[index])
+                    candidates = lonely_candidates
+                    print "Here len(candidates) = ", len(candidates)
+                    break
+            if len(lonely_candidates) == 0:
+                return 0
+                    
+
+
             
-        if parameters.cone_centered_on_halo:            
-            masses = sp.array(masses)            
+        elif parameters.cone_centered_on_halo:            
+                        
             central_strip_indices = sp.array(range(len(masses)))\
                                     [(rs-parameters.bindistances[0] > parameters.min_dist) \
                                     & (parameters.bindistances[-1]-rs > parameters.min_dist)]
@@ -308,16 +318,21 @@ class Observer:
 #                    
 #            candidates = candidates_around_center
                     
+            
 
         if parameters.use_CoM:
-            observer_position = sp.array([self.x,self.y,self.z])
+
+            observer_position = self.position
             if parameters.correct_for_peculiar_velocities:
-                survey_positions,survey_masses = self.survey(parameters,particles)
-            x_CoM,y_CoM,z_CoM, \
+                if parameters.use_snapshot_for_background:
+                    survey_positions,survey_masses = self.survey(parameters,particles)
+                else:
+                    survey_positions,survey_masses = self.survey(parameters,halos)
+            position_CoM, \
             r_CoM, theta_CoM, phi_CoM,\
             vr_peculiar_CoM, vr_CoM, \
             total_mass = hf.determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,observer_position,local_halos,candidates)
-            self.observed_halos.append(Observed_halo(x_CoM,y_CoM,z_CoM,r_CoM,theta_CoM,phi_CoM,vr_peculiar_CoM,vr_CoM,-1,total_mass))
+            self.observed_halos.append(Observed_halo(position_CoM,r_CoM,theta_CoM,phi_CoM,vr_peculiar_CoM,vr_CoM,-1,total_mass))
            
         else:
         
@@ -331,7 +346,7 @@ class Observer:
             # the selected halos.
             if parameters.distances_from_perturbed_metric:
                 for halo_to_store in halos_to_store:
-                    [xop,yop,zop] = [xops[halo_to_store],yops[halo_to_store],zops[halo_to_store]]
+                    xop,yop,zop = positions_op[halo_to_store,0],positions_op[halo_to_store,1],positions_op[halo_to_store,2]
                     psi_int = hf.distance_correction_from_perturbed_metric(parameters,self.x,self.y,self.z,xop,yop,zop)
                     rs[halo_to_store] = rs[halo_to_store]*psi_int 
     
@@ -345,9 +360,10 @@ class Observer:
                 vr = vrs[halo_to_store]
                 ID = IDs[halo_to_store]
                 mass = masses[halo_to_store]
-                xop,yop,zop = xops[halo_to_store],yops[halo_to_store],zops[halo_to_store] 
+                xop,yop,zop = positions_op[halo_to_store,0],positions_op[halo_to_store,1],positions_op[halo_to_store,2]
+
             
-                self.observed_halos.append(Observed_halo(xop,yop,zop,r,theta,phi,vr_peculiar,vr,ID,mass))
+                self.observed_halos.append(Observed_halo(position_op,r,theta,phi,vr_peculiar,vr,ID,mass))
 
         return 1
 
@@ -364,11 +380,11 @@ class Observer:
         
             x,y,z = p.position[0],p.position[1],p.position[2]
              
-            [xop,yop,zop] = hf.periodic_boundaries(parameters,self.x,self.y,self.z,x,y,z)
+            position_op = hf.periodic_boundaries(parameters,self.position,p.position)
 
 
-            r, theta, phi = hf.spherical_coordinates(parameters,self.x, self.y, self.z,
-                                                xop,yop,zop)
+            r, theta, phi = hf.spherical_coordinates(parameters,self.position,
+                                                position_op)
 
   
             if r > parameters.survey_radius:

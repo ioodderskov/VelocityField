@@ -290,30 +290,32 @@ def periodic_coordinate(parameters,coordinate):
     return coordinate
     
     
-def periodic_boundaries(parameters,xobs,yobs,zobs,xop,yop,zop):
+def periodic_boundaries(parameters,position_obs,position_halo):
     
-    x,y,z = xop-xobs,yop-yobs,zop-zobs
-            
-      
-    x = periodic_coordinate(parameters,x)+xobs
-    y = periodic_coordinate(parameters,y)+yobs    
-    z = periodic_coordinate(parameters,z)+zobs
-    
-    return [x,y,z]
-    
-    
-    
-def spherical_coordinates(parameters,xobs,yobs,zobs,xop,yop,zop):
 
-    rvec = sp.array([xop-xobs,yop-yobs,zop-zobs])
+    position = position_halo-position_obs    
+    x,y,z = position[0],position[1],position[2]
+      
+    x = periodic_coordinate(parameters,x)+position_obs[0]
+    y = periodic_coordinate(parameters,y)+position_obs[1]    
+    z = periodic_coordinate(parameters,z)+position_obs[2]
+    
+    return sp.array([x,y,z])
+    
+    
+    
+def spherical_coordinates(parameters,position_obs,position_op):
+
+
+    rvec = position_op-position_obs
     r = la.norm(rvec)
 
     # Just to prevent problems if the observer is on top of the halo
     if r == 0:
         r = 1e-15         
         
-    theta = sp.arccos((zop-zobs)/r)
-    phi = sp.arctan2(yop-yobs,xop-xobs)+sp.pi
+    theta = sp.arccos((position_op[2]-position_obs[2])/r)
+    phi = sp.arctan2(position_op[1]-position_obs[1],position_op[0]-position_obs[0])+sp.pi
 
     return r,theta, phi
     
@@ -379,91 +381,56 @@ def center_of_mass(parameters,observer_position,candidates):
     masses = sp.array([halo.mass for halo in candidates])    
 
 
-    xs = sp.array([halo.position[0] for halo in candidates])
-    ys = sp.array([halo.position[1] for halo in candidates])
-    zs = sp.array([halo.position[2] for halo in candidates])
+    positions = sp.array([halo.position for halo in candidates])
 
-    xops = sp.empty_like(xs)
-    yops = sp.empty_like(ys)
-    zops = sp.empty_like(zs)
+    
+    positions_op = sp.empty_like(positions)    
 
-    for i,x,y,z in zip(range(len(xs)),xs,ys,zs):
-        [xop,yop,zop] = periodic_boundaries(parameters,observer_position[0],observer_position[1],observer_position[2],x,y,z)    
-        xops[i] = xop
-        yops[i] = yop
-        zops[i] = zop
+    for i, position in enumerate(positions):
 
-    vxs = sp.array([halo.velocity[0] for halo in candidates])
-    vys = sp.array([halo.velocity[1] for halo in candidates])
-    vzs = sp.array([halo.velocity[2] for halo in candidates])
+        position_op = periodic_boundaries(parameters,observer_position,position)
+        positions_op[i] = position_op
 
-    xop_CoM = sp.average(xops,weights=masses)
-    yop_CoM = sp.average(yops,weights=masses)
-    zop_CoM = sp.average(zops,weights=masses)
+    velocities = sp.array([halo.velocity for halo in candidates])
 
-    vx_CoM = sp.average(vxs,weights=masses)
-    vy_CoM = sp.average(vys,weights=masses)
-    vz_CoM = sp.average(vzs,weights=masses)
+    
+    position_CoM = sp.average(positions_op,axis=0,weights=masses)
 
 
+    velocity_CoM = sp.average(velocities,axis=0,weights=masses)
 
     
     total_mass = sp.sum(masses)
-    
 
-    
-    return xop_CoM, yop_CoM, zop_CoM, vx_CoM, vy_CoM, vz_CoM, total_mass, xops, yops
-    
+    return position_CoM, velocity_CoM, total_mass
     
     
     
 
 def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,observer_position,local_halos,candidates):
 
+    print "len(candidates) = ", len(candidates)
+
     if len(candidates) == 0:
         print "No observed halo to calculate CoM for"
         return 0,0,0,0,0,0,0,0,0
 
-    xop_CoM, yop_CoM, zop_CoM, \
-    vx_CoM, vy_CoM, vz_CoM, total_mass, xops,yops = center_of_mass(parameters,observer_position,candidates)        
+    position_CoM, \
+    velocity_CoM, total_mass = center_of_mass(parameters,observer_position,candidates)        
     
     
 
     if parameters.correct_for_peculiar_velocities:
 
-#        vx_bulk = 0
-#        vy_bulk = 0
-#        vz_bulk = 0
-#        
-#        if parameters.use_local_velocity:
-#                xop_local_CoM, yop_local_CoM, zop_local_CoM, \
-#                vx_local_CoM, vy_local_CoM, vz_local_CoM, \
-#                total_local_mass, xops_local,yops_local = center_of_mass(parameters,observer_position,local_halos)        
-#                
-#                local_group_position = sp.array([xop_local_CoM,yop_local_CoM,zop_local_CoM])
-#                velocity_correction_local_group = gi.velocity_from_matterdistribution(parameters,observer_position,local_group_position,halos)
-#                vx_bulk = vx_local_CoM - velocity_correction_local_group[0]
-#                vy_bulk = vy_local_CoM - velocity_correction_local_group[1]
-#                vz_bulk = vz_local_CoM - velocity_correction_local_group[2]
+        velocity_correction = gi.velocity_from_matterdistribution(parameters,observer_position,position_CoM,survey_positions,survey_masses)
 
-        halo_position = sp.array([xop_CoM,yop_CoM,zop_CoM])
-        velocity_correction = gi.velocity_from_matterdistribution(parameters,observer_position,halo_position,survey_positions,survey_masses)
-#        pdb.set_trace()
-        # Save non-corrected velocities
-        vx_CoM_nc = copy.copy(vx_CoM)
-        vy_CoM_nc = copy.copy(vy_CoM)
-        vz_CoM_nc = copy.copy(vz_CoM)
-        
-        vx_CoM = vx_CoM - velocity_correction[0]
-        vy_CoM = vy_CoM - velocity_correction[1]
-        vz_CoM = vz_CoM - velocity_correction[2]
-
-
+        velocity_CoM_nc = copy.copy(velocity_CoM)
+        velocity_CoM = velocity_CoM - velocity_correction
              
-    r_CoM, theta_CoM, phi_CoM = spherical_coordinates(parameters,observer_position[0],observer_position[1],observer_position[2],
-                                                xop_CoM,yop_CoM,zop_CoM)
+    r_CoM, theta_CoM, phi_CoM = spherical_coordinates(parameters,observer_position,
+                                                position_CoM)
 
-    vr_peculiar_CoM = ((xop_CoM-observer_position[0])*vx_CoM+(yop_CoM-observer_position[1])*vy_CoM+(zop_CoM-observer_position[2])*vz_CoM)/r_CoM
+    vr_peculiar_CoM = sp.dot(position_CoM-observer_position,velocity_CoM)/r_CoM
     
     vr_CoM = vr_peculiar_CoM + r_CoM*100
  
@@ -473,41 +440,32 @@ def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,obse
         ax = plt.gca()
         ax.set_xlim([observer_position[0]-parameters.survey_radius,observer_position[0]+parameters.survey_radius])
         ax.set_ylim([observer_position[1]-parameters.survey_radius,observer_position[1]+parameters.survey_radius])
-        halo_positions = sp.array(survey_positions)
-        halo_indices = (observer_position[2]-50 < halo_positions[:,2]) & (halo_positions[:,2] < observer_position[2]+50) 
+#        halo_positions = sp.array(survey_positions)
+#        halo_indices = (observer_position[2]-50 < halo_positions[:,2]) & (halo_positions[:,2] < observer_position[2]+50) 
 #        ax.plot(halo_positions[halo_indices,0],halo_positions[halo_indices,1],'r*')
         ax.plot(observer_position[0],observer_position[1],'g*',markersize=20)
-        ax.plot(xops,yops,'y*')
-        ax.plot(xop_CoM,yop_CoM,'bx')
+        candidate_positions = sp.array([candidate.position for candidate in candidates])
+        candidate_positions_op = sp.empty_like(candidate_positions)
+        for i,candidate_position in enumerate(candidate_positions):
+            candidate_positions_op[i] = periodic_boundaries(parameters,observer_position,candidate_position)
+            
+        ax.plot(candidate_positions_op[:,0],candidate_positions_op[:,1],'y*')
         
-    #    ax.plot(xop_local_CoM,yop_local_CoM,'gx',markersize=20)
-    #    ax.quiver(xop_local_CoM,yop_local_CoM,vx_local_CoM,vy_local_CoM,color='g',scale_units='inches',scale=700)
-    #    ax.quiver(xop_local_CoM,yop_local_CoM,velocity_correction_local_group[0],velocity_correction_local_group[1],color='black',scale_units='inches',scale=700)
+        ax.plot(position_CoM[0],position_CoM[1],'bx')
         
-    #    pdb.set_trace()
-#        candidate_positions = sp.array([candidate.position for candidate in candidates])
         scale = 100
         candidate_velocities = sp.array([candidate.velocity for candidate in candidates])
-#        plot_velocities(candidate_positions,candidate_velocities,ax,'y',700)
-        ax.quiver(xops,yops,candidate_velocities[:,0],candidate_velocities[:,1],color='y',scale_units='inches',scale=scale)
-        ax.quiver(xop_CoM,yop_CoM,vx_CoM_nc,vy_CoM_nc,color='r',scale_units='inches',scale=scale)
-    #    ax.quiver(xop_CoM,yop_CoM,vx_bulk,vy_bulk,color='m',scale_units='inches',scale=700)
-        ax.quiver(xop_CoM,yop_CoM,velocity_correction[0],velocity_correction[1],color='black',scale_units='inches',scale=scale)
-        print "Velocity = ", vx_CoM_nc,vy_CoM_nc,vz_CoM_nc
+        ax.quiver(candidate_positions_op[:,0],candidate_positions_op[:,1],candidate_velocities[:,0],candidate_velocities[:,1],color='y',scale_units='inches',scale=scale)
+        ax.quiver(position_CoM[0],position_CoM[1],velocity_CoM_nc[0],velocity_CoM_nc[1],color='r',scale_units='inches',scale=scale)
+        ax.quiver(position_CoM[0],position_CoM[1],velocity_correction[0],velocity_correction[1],color='black',scale_units='inches',scale=scale)
+        print "Velocity = ", velocity_CoM_nc
         print "Velocity correction  = ", velocity_correction
 
-#        ax.quiver(xop_CoM,yop_CoM,vx_CoM,vy_CoM,color='b',scale_units='inches',scale=700)
-    
-    #    print "total_local_mass = ", total_local_mass
         print "total_mass = ", total_mass
-        plt.savefig("cepheid_observation%s.png" %total_mass)    
-#        plt.show()
-#        pdb.set_trace()
-
-#    pdb.set_trace()
+        plt.show()
 
 
-    return  xop_CoM,yop_CoM,zop_CoM, \
+    return  position_CoM, \
             r_CoM, theta_CoM, phi_CoM,\
             vr_peculiar_CoM, vr_CoM, \
             total_mass   
