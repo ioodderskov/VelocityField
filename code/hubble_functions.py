@@ -462,7 +462,7 @@ def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,obse
         print "Velocity correction  = ", velocity_correction
 
         print "total_mass = ", total_mass
-        plt.show()
+        plt.savefig('cepheids_%s.png' %position_CoM[0])
 
 
     return  position_CoM, \
