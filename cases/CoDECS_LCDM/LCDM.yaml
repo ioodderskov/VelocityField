@@ -33,12 +33,12 @@ radius_local_group: 3 # Mpc/h
 
 ##########################################################################
 # Correct for the velocity from the matter distribution?
-use_lonely_halo: 1
+use_lonely_halo: 0
+cone_centered_on_halo: 1
 use_CoM: 1
 correct_for_peculiar_velocities: 1
-min_dist: 6 # Mpc/h
-survey_radius: 200
-cone_centered_on_halo: 0
+min_dist: 4 # Mpc/h
+survey_radius: 400
 ##########################################################################
 
 ##########################################################################
@@ -51,7 +51,7 @@ parallel_processing: 0
 observer_choice: random_positions
 
 # Specify the number of observers you want to use
-number_of_observers: 20
+number_of_observers: 100
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt

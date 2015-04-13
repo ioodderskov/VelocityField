@@ -149,7 +149,7 @@ class Halo:
 
 
 class Observed_halo:
-    def __init__(self,position_op,r,theta,phi,vr_peculiar,vr,ID,mass):
+    def __init__(self,position_op,r,theta,phi,vr_peculiar,vr,ID,mass,observed_velocity,velocity_correction):
         self.position_op = position_op
         self.r = r
         self.theta = theta
@@ -158,6 +158,8 @@ class Observed_halo:
         self.vr_peculiar = vr_peculiar
         self.ID = ID
         self.mass = mass
+        self.observed_velocity = observed_velocity
+        self.velocity_correction = velocity_correction
         
 class Cone:
     def __init__(self,theta,phi,halos_in_cone):
@@ -266,11 +268,9 @@ class Observer:
             for index,position_halo in zip(central_strip_indices,positions_op[central_strip_indices]):
                 distances_to_other_candidates = sp.array([linalg.norm(position_halo-position)\
                                                 for position in positions_op if linalg.norm(position_halo-position) != 0])
-#                pdb.set_trace()
                 if sp.amin(distances_to_other_candidates) > parameters.min_dist:
                     lonely_candidates.append(candidates[index])
                     candidates = lonely_candidates
-                    print "Here len(candidates) = ", len(candidates)
                     break
             if len(lonely_candidates) == 0:
                 return 0
@@ -298,7 +298,7 @@ class Observer:
             for candidate,position_op in zip(candidates,positions_op):   
                 if linalg.norm(position_op_center-position_op) < parameters.min_dist:
                     candidates_around_center.append(candidate)
-                    
+#            pdb.set_trace()        
             candidates = candidates_around_center
 
 
@@ -331,8 +331,8 @@ class Observer:
             position_CoM, \
             r_CoM, theta_CoM, phi_CoM,\
             vr_peculiar_CoM, vr_CoM, \
-            total_mass = hf.determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,observer_position,local_halos,candidates)
-            self.observed_halos.append(Observed_halo(position_CoM,r_CoM,theta_CoM,phi_CoM,vr_peculiar_CoM,vr_CoM,-1,total_mass))
+            total_mass, observed_velocity, velocity_correction = hf.determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,observer_position,local_halos,candidates)
+            self.observed_halos.append(Observed_halo(position_CoM,r_CoM,theta_CoM,phi_CoM,vr_peculiar_CoM,vr_CoM,-1,total_mass,observed_velocity,velocity_correction))
            
         else:
         
@@ -363,7 +363,7 @@ class Observer:
                 xop,yop,zop = positions_op[halo_to_store,0],positions_op[halo_to_store,1],positions_op[halo_to_store,2]
 
             
-                self.observed_halos.append(Observed_halo(position_op,r,theta,phi,vr_peculiar,vr,ID,mass))
+                self.observed_halos.append(Observed_halo(position_op,r,theta,phi,vr_peculiar,vr,ID,mass,[],[]))
 
         return 1
 
