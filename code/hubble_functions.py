@@ -159,16 +159,20 @@ def initiate_halos(parameters, halocatalogue):
             halos[h] = halo
             
 
-    else:    
+    else: 
+#        halos = []
         for h in range(n_halos):
             position = halocatalogue[h,[8,9,10]]
             velocity = halocatalogue[h,[11,12,13]]
             mass = halocatalogue[h,2]
             ID = int(halocatalogue[h,0])
             ID_host = int(halocatalogue[h,33])
+#            if ID_host == -1:
             
             halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
+#                halos.append(halo)
             halos[h] = halo
+#        halos = sp.array(halos)
         
     return halos
     
@@ -398,6 +402,8 @@ def center_of_mass(parameters,observer_position,candidates):
 
 
     velocity_CoM = sp.average(velocities,axis=0,weights=masses)
+    
+#    pdb.set_trace()
 
     
     total_mass = sp.sum(masses)
@@ -453,7 +459,7 @@ def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,obse
         
         ax.plot(position_CoM[0],position_CoM[1],'bx')
         
-        scale = 100
+        scale = 500
         candidate_velocities = sp.array([candidate.velocity for candidate in candidates])
         ax.quiver(candidate_positions_op[:,0],candidate_positions_op[:,1],candidate_velocities[:,0],candidate_velocities[:,1],color='y',scale_units='inches',scale=scale)
         ax.quiver(position_CoM[0],position_CoM[1],velocity_CoM_nc[0],velocity_CoM_nc[1],color='r',scale_units='inches',scale=scale)
@@ -468,7 +474,7 @@ def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,obse
     return  position_CoM, \
             r_CoM, theta_CoM, phi_CoM,\
             vr_peculiar_CoM, vr_CoM, \
-            total_mass   
+            total_mass, velocity_CoM_nc, velocity_correction   
 
 def plot_velocities(pos,vel,ax,color,scale):
 

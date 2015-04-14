@@ -12,6 +12,7 @@ gridfile: grid.txt
 snapshot: 0
 CoDECS: 0
 use_grid: 0
+##########################################################################
 
 # Use snapshot for background?
 ##########################################################################
@@ -36,7 +37,7 @@ radius_local_group: 3 # Mpc/h
 use_lonely_halo: 0
 use_CoM: 1
 correct_for_peculiar_velocities: 1
-min_dist: 3.5 # Mpc/h
+min_dist: 3 # Mpc/h
 survey_radius: 200
 cone_centered_on_halo: 1
 ##########################################################################

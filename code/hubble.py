@@ -55,7 +55,17 @@ if parameters.calculate_hubble_constants:
 if parameters.calculate_powerspectra:
     pf.print_powerspectra_to_file(parameters,observers)
 
-    
+
+observed_velocities = sp.array([observer.observed_halos[0].observed_velocity for observer in observers if len(observer.observed_halos) == 1])
+velocity_corrections = sp.array([observer.observed_halos[0].velocity_correction for observer in observers if len(observer.observed_halos) == 1])    
+
+print "correlation coefficients:"
+print "x:", sp.corrcoef(observed_velocities[:,0],velocity_corrections[:,0])
+print "y:", sp.corrcoef(observed_velocities[:,1],velocity_corrections[:,1])
+print "z:", sp.corrcoef(observed_velocities[:,2],velocity_corrections[:,2])
+
+
+
 #f = file(parameters.path+'parameters.save', 'wb')
 #cPickle.dump(parameters, f, protocol=cPickle.HIGHEST_PROTOCOL)
 #f.close()
