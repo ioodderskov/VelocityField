@@ -5,7 +5,7 @@ CoDECShosts_file:
 hubblefile: Hubbleconstants
 powerspectrafile: powerspectra.txt
 snapshot_file: snapshot_011 
-gridfile: grid.txt
+gridfile: grid_Ng200.txt
 
 # ROCKSTAR halocatalogue (default) or snapshot?
 ##########################################################################
@@ -16,13 +16,13 @@ use_grid: 0
 
 # Use snapshot for background?
 ##########################################################################
-use_snapshot_for_background: 1
+use_snapshot_for_background: 0
 ##########################################################################
 
 ##########################################################################
 # Should positions, velocities and masses be assigned to a grid?
-assign_to_grid: 0
-Ng: 40
+assign_to_grid: 1
+Ng: 200
 smoothing: 1
 smoothing_radius: 5 # Mpc/h
 ##########################################################################
@@ -51,7 +51,7 @@ parallel_processing: 0
 observer_choice: random_positions
 
 # Specify the number of observers you want to use
-number_of_observers: 5
+number_of_observers: 1
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
@@ -76,7 +76,7 @@ SN_mass_max: 1e15
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 1
+calculate_hubble_constants: 0
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
