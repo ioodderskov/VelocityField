@@ -21,24 +21,24 @@ use_snapshot_for_background: 0
 
 ##########################################################################
 # Should positions, velocities and masses be assigned to a grid?
-assign_to_grid: 1
+assign_to_grid: 0
 Ng: 200
 smoothing: 1
 smoothing_radius: 5 # Mpc/h
 ##########################################################################
 
 ##########################################################################
-use_local_velocity: 0
-radius_local_group: 3 # Mpc/h
+use_local_velocity: 1
+radius_local_group: 50 # Mpc/h
 ##########################################################################
 
 ##########################################################################
 # Correct for the velocity from the matter distribution?
-use_lonely_halo: 1
+use_lonely_halo: 0
 use_CoM: 1
 correct_for_peculiar_velocities: 1
-min_dist: 2 # Mpc/h
-survey_radius: 200
+min_dist: 50 # Mpc/h
+survey_radius: 400
 cone_centered_on_halo: 1
 ##########################################################################
 
@@ -48,10 +48,10 @@ parallel_processing: 0
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
 ##########################################################################
-observer_choice: random_positions
+observer_choice: random_halos
 
 # Specify the number of observers you want to use
-number_of_observers: 1
+number_of_observers: 100
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
@@ -146,7 +146,7 @@ test_isotropy: 0
 ##########################################################################
 
 number_of_SNe: 100
-mind: 70.2
-maxd: 90.2
-width: 20
+mind: 60
+maxd: 160
+width: 100
 
