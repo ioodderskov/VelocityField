@@ -1,6 +1,7 @@
 ---
 path: ../cases/sim16/
 halocatalogue_file: parents_11
+CoDECShosts_file:
 hubblefile: Hubbleconstants.txt
 powerspectrafile: powerspectra.txt
 snapshot_file: snapshot_sim16
@@ -29,18 +30,18 @@ smoothing_radius: 1 # Mpc/h
 ##########################################################################
 
 ##########################################################################
-use_local_velocity: 0
+use_local_velocity: 1
 radius_local_group: 3 # Mpc/h
 ##########################################################################
 
 ##########################################################################
 # Correct for the velocity from the matter distribution?
 use_lonely_halo: 0
-cone_centered_on_halo: 1
 use_CoM: 1
 correct_for_peculiar_velocities: 1
-min_dist: 2 # Mpc/h
+min_dist: 3 # Mpc/h
 survey_radius: 12
+cone_centered_on_halo: 1
 ##########################################################################
 
 # Use parallel processing?
@@ -49,7 +50,7 @@ parallel_processing: 0
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
 ##########################################################################
-observer_choice: random_positions
+observer_choice: random_halos
 
 # Specify the number of observers you want to use
 number_of_observers: 10
@@ -147,8 +148,8 @@ test_isotropy: 0
 
 number_of_SNe: 10
 mind: 2
-maxd: 8
-width: 6
+maxd: 10
+width: 8
 
 
 

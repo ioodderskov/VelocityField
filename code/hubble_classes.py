@@ -188,7 +188,7 @@ class Observer:
         
 
  
-    
+        
     def observe(self, parameters,halos,particles):
 
         if parameters.use_lightcone:

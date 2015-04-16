@@ -16,7 +16,7 @@ import gravitational_instability as gi
 import copy
 
 
-plot_field = 1
+plot_field = 0
 
 
 
@@ -164,7 +164,7 @@ def initiate_halos(parameters, halocatalogue):
         for h in range(n_halos):
             position = halocatalogue[h,[8,9,10]]
             velocity = halocatalogue[h,[11,12,13]]
-            mass = halocatalogue[h,2]
+            mass = halocatalogue[h,19]
             ID = int(halocatalogue[h,0])
             ID_host = int(halocatalogue[h,33])
 #            if ID_host == -1:
@@ -221,7 +221,9 @@ def initiate_observers_from_file(parameters):
     
     
 def initiate_observers_random_halos(parameters,halos):
+    sp.random.seed(0)
     random_indices = sp.random.random_integers(0,len(halos)-1,parameters.number_of_observers)
+    print "random_indices = ", random_indices
     observers = [None]*len(random_indices)
     
     for ob_index, ob_number in zip(random_indices,range(len(random_indices))):
@@ -233,10 +235,9 @@ def initiate_observers_random_halos(parameters,halos):
     return observers[0:parameters.number_of_observers]
     
 def initiate_observers_subhalos(parameters,halos):
-    print "WARNING! This function needs to be tested before use. Se evt. den tilsvarende fkt for CoDECS."
     masses = [halo.mass for halo in halos]
     
-    localgroup_indices = (parameters.sub_min_m < masses) & (masses < parameters.sub_max_m)
+    localgroup_indices = sp.array(range(len(halos)))[(parameters.sub_min_m < masses) & (masses < parameters.sub_max_m)]
     virgo_indices = (parameters.host_min_m < masses) & (masses < parameters.host_max_m)
     
     ID_hosts = sp.array([halo.ID_host for halo in halos])
@@ -248,12 +249,16 @@ def initiate_observers_subhalos(parameters,halos):
                             
     observers = [None]*len(observer_indices)
     
-    for ob_index, ob_number in zip(observer_indices, range(len(observer_indices))):
-        halo = halos[ob_index]
+    for observer_index, observer_number in zip(observer_indices, range(len(observer_indices))):
+        halo = halos[observer_index]
         position = halo.position
-        observers[ob_number] = hc.Observer(ob_number,position)
+        observers[observer_number] = hc.Observer(observer_number,position)
+
+    pdb.set_trace()    
     
     return observers[0:parameters.number_of_observers]
+    
+
 
 def initiate_observers_random_positions(parameters):
 
@@ -412,7 +417,6 @@ def center_of_mass(parameters,observer_position,candidates):
     
     
     
-
 def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,observer_position,local_halos,candidates):
 
     print "len(candidates) = ", len(candidates)
@@ -462,7 +466,7 @@ def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,obse
         
         ax.plot(position_CoM[0],position_CoM[1],'bx')
         
-        scale = 500
+        scale = 200
         candidate_velocities = sp.array([candidate.velocity for candidate in candidates])
 #        ax.quiver(candidate_positions_op[:,0],candidate_positions_op[:,1],candidate_velocities[:,0],candidate_velocities[:,1],color='y',scale_units='inches',scale=scale)
         ax.quiver(position_CoM[0],position_CoM[1],velocity_CoM_nc[0],velocity_CoM_nc[1],color='r',scale_units='inches',scale=scale)
@@ -472,7 +476,7 @@ def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,obse
         print "local velocity = ", local_velocity
         print "local velocity correction = ", local_velocity_correction
         print "Velocity = ", velocity_CoM_nc
-        print "Velocity correction  = ", velocity_correction+bulk_velocity
+        print "Velocity correction  = ", velocity_correction
 
         print "total_mass = ", total_mass
 #        plt.savefig("/home/io/Desktop/cepheids_LCDM_%s.png" % total_mass)

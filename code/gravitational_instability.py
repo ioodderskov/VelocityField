@@ -3,12 +3,23 @@ import numpy as sp
 import scipy.linalg as linalg
 import pdb
 import hubble_functions as hf
-
+from functools import partial
 
 periodic_boundaries = 1
 
+def calculate_contribution(index,parameters,halo_position,masses,positions):
+    
+    if linalg.norm(positions[index]-halo_position) > parameters.min_dist:    
+        contribution = masses[index]*(positions[index]-halo_position)\
+                        /linalg.norm(positions[index]-halo_position)**3
+    else:
+        contribution = sp.array([0,0,0])
+
+    return contribution
 
 
+
+#@profile
 def velocity_from_matterdistribution(parameters,observer_position,halo_position,survey_positions,survey_masses):
     
     
@@ -27,8 +38,12 @@ def velocity_from_matterdistribution(parameters,observer_position,halo_position,
 
 
     
-#    rho_mean = sp.sum(masses)/parameters.boxsize**3
+#    rho_mean_sim = sp.sum(masses)/parameters.boxsize**3
+    survey_volume = 4/3*sp.pi*parameters.survey_radius**3
+    rho_survey = sp.sum(masses)/survey_volume
     rho_mean = rho_critical_astro*parameters.omegam
+#    rho_mean = rho_survey
+    print "rho_survey = ", rho_survey, "and rho_critical_astro*parameters.omegam = ", rho_critical_astro*parameters.omegam
 #    survey_mass = sp.array([masses[i] for i in range(len(masses)) \
 #                if linalg.norm(positions[i]-observer_position) < parameters.survey_radius ])
 #    rho_mean = sp.sum(survey_mass)/(4/3*sp.pi*parameters.survey_radius**3)
@@ -64,12 +79,16 @@ def velocity_from_matterdistribution(parameters,observer_position,halo_position,
 #                                        if (linalg.norm(positions[i]-halo_position) > parameters.min_dist) \
 #                                        & (linalg.norm(positions[i]-observer_position) < parameters.survey_radius) ])
 
-    individual_contributions = sp.array([masses[i] \
-                                        *(positions[i]-halo_position) \
-                                        /linalg.norm(positions[i]-halo_position)**3 \
-                                        for i in range(len(masses)) \
-                                        if (linalg.norm(positions[i]-halo_position) > parameters.min_dist)])
+#    individual_contributions = sp.array([masses[i] \
+#                                        *(positions[i]-halo_position) \
+#                                        /linalg.norm(positions[i]-halo_position)**3 \
+#                                        for i in range(len(masses)) \
+#                                        if (linalg.norm(positions[i]-halo_position) > parameters.min_dist)])
 
+    partial_calculate_contribution = partial(calculate_contribution,parameters=parameters,halo_position=halo_position,masses=masses,positions=positions)
+    individual_contributions = sp.array(map(partial_calculate_contribution,range(len(masses))))
+
+#    pdb.set_trace()
 #    contributing_masses = sp.array([masses[i] for i in range(len(masses)) \
 #                                        if (linalg.norm(positions[i]-halo_position) > parameters.min_dist) \
 #                                        & (linalg.norm(positions[i]-observer_position) < parameters.survey_radius)])
