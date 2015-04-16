@@ -20,19 +20,16 @@ def velocity_from_matterdistribution(parameters,observer_position,halo_position,
     kg = 1. # kg
     Mpc = 1e6*3.085678e16*meter
     Msun = 1.989e30*kg
-    H0 = 100. *1e3*meter/second/(Mpc/parameters.h) # s**-1
+    H0 = 100. *1e3*meter/(second*(Mpc/parameters.h)) # s**-1
     Gc = 6.67e-11 *meter**3/(kg*second**2)
     rho_critical = 3.*H0**2/(8*sp.pi*Gc) # kg/m**3
     rho_critical_astro = rho_critical / (Msun/parameters.h) * (Mpc/parameters.h)**3
 
-
-
-    
-#    rho_mean = sp.sum(masses)/parameters.boxsize**3
+    survey_volume = 4/3*sp.pi*parameters.survey_radius**3
+    rho_survey = sp.sum(masses)/survey_volume
     rho_mean = rho_critical_astro*parameters.omegam
-#    survey_mass = sp.array([masses[i] for i in range(len(masses)) \
-#                if linalg.norm(positions[i]-observer_position) < parameters.survey_radius ])
-#    rho_mean = sp.sum(survey_mass)/(4/3*sp.pi*parameters.survey_radius**3)
+    print "rho_survey = ", rho_survey, "and rho_critical_astro*parameters.omegam = ", rho_critical_astro*parameters.omegam
+			
 
     #PERIODISKE GRAENSER:
     if periodic_boundaries:
@@ -92,7 +89,7 @@ def velocity_from_matterdistribution(parameters,observer_position,halo_position,
     else:
 
         H0_astro = 100.
-        f = parameters.omegam**0.6
+        f = parameters.omegam**0.55
     
         vx_from_matterdistribution = f*H0_astro/(4*sp.pi*rho_mean)*sp.sum(individual_contributions[:,0])#+f*H0_astro/3*(halo_position[0]-observer_position[0])
         vy_from_matterdistribution = f*H0_astro/(4*sp.pi*rho_mean)*sp.sum(individual_contributions[:,1])#+f*H0_astro/3*(halo_position[1]-observer_position[1])

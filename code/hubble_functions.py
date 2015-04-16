@@ -16,7 +16,7 @@ import gravitational_instability as gi
 import copy
 
 
-plot_field = 1
+plot_field = 0
 
 
 
@@ -131,7 +131,7 @@ def initiate_halos(parameters, halocatalogue):
         for h in range(n_halos):
             position = halocatalogue[h,[9,10,11]]/1000.
             velocity = halocatalogue[h,[12,13,14]]
-            mass = halocatalogue[h,3]*massunit
+            mass = halocatalogue[h,4]*massunit
             ID = int(halocatalogue[h,1])
             ID_host = int(halocatalogue[h,0])
             halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
@@ -160,19 +160,19 @@ def initiate_halos(parameters, halocatalogue):
             
 
     else: 
-#        halos = []
+        halos = []
         for h in range(n_halos):
             position = halocatalogue[h,[8,9,10]]
             velocity = halocatalogue[h,[11,12,13]]
             mass = halocatalogue[h,2]
             ID = int(halocatalogue[h,0])
             ID_host = int(halocatalogue[h,33])
-#            if ID_host == -1:
+            if ID_host == -1:
             
-            halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
-#                halos.append(halo)
-            halos[h] = halo
-#        halos = sp.array(halos)
+                halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
+                halos.append(halo)
+#            halos[h] = halo
+        halos = sp.array(halos)
         
     return halos
     
@@ -423,8 +423,11 @@ def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,obse
 
     position_CoM, \
     velocity_CoM, total_mass = center_of_mass(parameters,observer_position,candidates)        
+    position_local_CoM, local_velocity, total_mass = center_of_mass(parameters,observer_position,local_halos)
     
-    
+    local_velocity_correction = gi.velocity_from_matterdistribution(parameters,observer_position,position_local_CoM,survey_positions,survey_masses )
+
+    bulk_velocity = local_velocity - local_velocity_correction
 
     if parameters.correct_for_peculiar_velocities:
 
@@ -440,14 +443,20 @@ def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,obse
     
     vr_CoM = vr_peculiar_CoM + r_CoM*100
  
+    print "local velocity = ", local_velocity
+    print "local velocity correction = ", local_velocity_correction
+    print "Velocity = ", velocity_CoM_nc
+    print "Velocity correction  = ", velocity_correction
+    print "velocity correction + bulk velocity = ", velocity_correction+bulk_velocity
+
     if plot_field:
         import matplotlib.pyplot as plt
         plt.figure()
         ax = plt.gca()
         ax.set_xlim([observer_position[0]-parameters.survey_radius,observer_position[0]+parameters.survey_radius])
         ax.set_ylim([observer_position[1]-parameters.survey_radius,observer_position[1]+parameters.survey_radius])
-#        halo_positions = sp.array(survey_positions)
-#        halo_indices = (observer_position[2]-50 < halo_positions[:,2]) & (halo_positions[:,2] < observer_position[2]+50) 
+        halo_positions = sp.array(survey_positions)
+        halo_indices = (observer_position[2]-100 < halo_positions[:,2]) & (halo_positions[:,2] < observer_position[2]+100) 
 #        ax.plot(halo_positions[halo_indices,0],halo_positions[halo_indices,1],'r*')
         ax.plot(observer_position[0],observer_position[1],'g*',markersize=20)
         candidate_positions = sp.array([candidate.position for candidate in candidates])
@@ -459,22 +468,23 @@ def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,obse
         
         ax.plot(position_CoM[0],position_CoM[1],'bx')
         
-        scale = 500
+        scale = 100 
         candidate_velocities = sp.array([candidate.velocity for candidate in candidates])
-        ax.quiver(candidate_positions_op[:,0],candidate_positions_op[:,1],candidate_velocities[:,0],candidate_velocities[:,1],color='y',scale_units='inches',scale=scale)
+#        ax.quiver(candidate_positions_op[:,0],candidate_positions_op[:,1],candidate_velocities[:,0],candidate_velocities[:,1],color='y',scale_units='inches',scale=scale)
         ax.quiver(position_CoM[0],position_CoM[1],velocity_CoM_nc[0],velocity_CoM_nc[1],color='r',scale_units='inches',scale=scale)
         ax.quiver(position_CoM[0],position_CoM[1],velocity_correction[0],velocity_correction[1],color='black',scale_units='inches',scale=scale)
-        print "Velocity = ", velocity_CoM_nc
-        print "Velocity correction  = ", velocity_correction
+        ax.quiver(position_local_CoM[0],position_local_CoM[1],local_velocity[0],local_velocity[1],color='g',scale_units='inches',scale=scale)
+        ax.quiver(position_local_CoM[0],position_local_CoM[1],local_velocity_correction[0],local_velocity_correction[1],color='grey',scale_units='inches',scale=scale)
 
         print "total_mass = ", total_mass
-        plt.savefig('cepheids_%s.png' %position_CoM[0])
+        plt.savefig('cepheids_Planck512%s.png' %position_CoM[0])
 
 
     return  position_CoM, \
             r_CoM, theta_CoM, phi_CoM,\
             vr_peculiar_CoM, vr_CoM, \
-            total_mass, velocity_CoM_nc, velocity_correction   
+            total_mass, velocity_CoM_nc, velocity_correction,\
+            local_velocity, local_velocity_correction
 
 def plot_velocities(pos,vel,ax,color,scale):
 

@@ -174,6 +174,8 @@ class Observer:
     def __init__(self,observer_number,position):
         self.observer_number = observer_number
         self.position = position
+        self.local_velocity = []
+        self.local_velocity_correction = []
         self.observed_halos = []
         self.cones = []
         self.Hubbleconstants = []
@@ -331,8 +333,11 @@ class Observer:
             position_CoM, \
             r_CoM, theta_CoM, phi_CoM,\
             vr_peculiar_CoM, vr_CoM, \
-            total_mass, observed_velocity, velocity_correction = hf.determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,observer_position,local_halos,candidates)
+            total_mass, observed_velocity, velocity_correction,\
+            local_velocity, local_velocity_correction = hf.determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,observer_position,local_halos,candidates)
             self.observed_halos.append(Observed_halo(position_CoM,r_CoM,theta_CoM,phi_CoM,vr_peculiar_CoM,vr_CoM,-1,total_mass,observed_velocity,velocity_correction))
+            self.local_velocity = local_velocity
+            self.local_velocity_correction = local_velocity_correction
            
         else:
         
