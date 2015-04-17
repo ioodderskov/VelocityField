@@ -14,6 +14,7 @@ import healpy as hp
 import hubble_classes as hc
 import gravitational_instability as gi
 import copy
+import gc
 
 
 plot_field = 0
@@ -134,7 +135,7 @@ def initiate_halos(parameters, halocatalogue):
             mass = halocatalogue[h,4]*massunit
             ID = int(halocatalogue[h,1])
             ID_host = int(halocatalogue[h,0])
-            halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
+            halo = hc.Halo(position,velocity,mass,ID,ID_host)
             halos[h] = halo
 
 #        print "position of last halo = ", position
@@ -155,7 +156,7 @@ def initiate_halos(parameters, halocatalogue):
             ID = h
             ID_host = -1
             
-            halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
+            halo = hc.Halo(position,velocity,mass,ID,ID_host)
             halos[h] = halo
             
 
@@ -169,7 +170,7 @@ def initiate_halos(parameters, halocatalogue):
             ID_host = int(halocatalogue[h,33])
 #            if ID_host == -1:
             
-            halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
+            halo = hc.Halo(position,velocity,mass,ID,ID_host)
 #                halos.append(halo)
             halos[h] = halo
 #        halos = sp.array(halos)
@@ -254,7 +255,7 @@ def initiate_observers_subhalos(parameters,halos):
         position = halo.position
         observers[observer_number] = hc.Observer(observer_number,position)
 
-    pdb.set_trace()    
+    print "The number of potential observers is", len(observers)
     
     return observers[0:parameters.number_of_observers]
     
@@ -482,6 +483,7 @@ def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,obse
 #        plt.savefig("/home/io/Desktop/cepheids_LCDM_%s.png" % total_mass)
         plt.show()
 
+    gc.collect()
 
     return  position_CoM, \
             r_CoM, theta_CoM, phi_CoM,\
@@ -821,7 +823,7 @@ def read_snapshot(parameters):
             ID = p
             ID_host = -1
             
-            halo = hc.Halo(position,velocity,M,ID,ID_host,p)
+            halo = hc.Halo(position,velocity,M,ID,ID_host)
             halos[p] = halo
     
 #    position = sp.array([0,0,0])

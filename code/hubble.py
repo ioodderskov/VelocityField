@@ -13,6 +13,7 @@ import assignment_to_grid as ag
 
 
 
+
 # There is one argument, namely the parameterfile
 if len(sys.argv) != 2:
     print "Wrong number of arguments"

@@ -138,13 +138,13 @@ class Parameters:
 
 
 class Halo:
-    def __init__(self,position,velocity,mass,ID,ID_host,index):
+    def __init__(self,position,velocity,mass,ID,ID_host):
         self.position = position
         self.velocity = velocity
         self.mass = mass
         self.ID = ID
         self.ID_host = ID_host
-        self.index = index
+
 
 
 
