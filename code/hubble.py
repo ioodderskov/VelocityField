@@ -13,6 +13,7 @@ import assignment_to_grid as ag
 
 
 
+
 # There is one argument, namely the parameterfile
 if len(sys.argv) != 2:
     print "Wrong number of arguments"
@@ -66,6 +67,10 @@ print "------ observers --------"
 local_velocities = sp.array([observer.local_velocity for observer in observers if len(observer.local_velocity) != 0] )
 local_velocity_corrections = sp.array([observer.local_velocity_correction for observer in observers if len(observer.local_velocity) != 0])
 
+
+print "local_velocities = ", local_velocities
+print "local_velocity_corrections = ", local_velocity_corrections
+
 print "correlation coefficients:"
 print "x:", sp.corrcoef(local_velocities[:,0],local_velocity_corrections[:,0])
 print "y:", sp.corrcoef(local_velocities[:,1],local_velocity_corrections[:,1])
@@ -76,8 +81,8 @@ sp.mean(sp.absolute(local_velocities),axis=0)/sp.mean(sp.absolute(local_velocity
 bulk_flows = sp.array([observer.local_velocity-observer.local_velocity_correction for observer in observers])
 
 print "------ observed halos --------"
-observed_velocities = sp.array([observer.observed_halos[0].observed_velocity for observer in observers if len(observer.observed_halos) == 1])
-velocity_corrections = sp.array([observer.observed_halos[0].velocity_correction for observer in observers if len(observer.observed_halos) == 1])
+observed_velocities = sp.array([observer.chosen_halos[0].observed_velocity for observer in observers if len(observer.chosen_halos) == 1])
+velocity_corrections = sp.array([observer.chosen_halos[0].velocity_correction for observer in observers if len(observer.chosen_halos) == 1])
 print "correlation coefficients:"
 print "x:", sp.corrcoef(observed_velocities[:,0],velocity_corrections[:,0])
 print "y:", sp.corrcoef(observed_velocities[:,1],velocity_corrections[:,1])

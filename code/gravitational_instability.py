@@ -86,19 +86,9 @@ def velocity_from_matterdistribution(parameters,observer_position,halo_position,
 
 #    partial_calculate_contribution = partial(calculate_contribution,parameters=parameters,halo_position=halo_position,masses=masses,positions=positions)
 #    individual_contributions = sp.array(map(partial_calculate_contribution,range(len(masses))))
-
-    print "observer_position = ", observer_position
-    print "individual_contributions = ", individual_contributions
-    individual_distances = sp.array([linalg.norm(positions[i]-halo_position) for i in range(len(masses))\
-        if (linalg.norm(positions[i]-halo_position) > parameters.min_dist) ])
-    vectors = sp.array([positions[i]-halo_position for i in range(len(masses))\
-        if (linalg.norm(positions[i]-halo_position) > parameters.min_dist) ])
-    masses = sp.array([masses[i] for i in range(len(masses))\
-        if (linalg.norm(positions[i]-halo_position) > parameters.min_dist) ])
-
-    print "indivifual_distances = ", individual_distances 
-    print "vectors = ", vectors
-    print "masses = ", masses
+    
+    
+    
 #    pdb.set_trace()
 #    contributing_masses = sp.array([masses[i] for i in range(len(masses)) \
 #                                        if (linalg.norm(positions[i]-halo_position) > parameters.min_dist) \

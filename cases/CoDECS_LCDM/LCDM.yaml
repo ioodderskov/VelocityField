@@ -28,7 +28,7 @@ smoothing_radius: 1 # Mpc/h
 
 ##########################################################################
 use_local_velocity: 1
-radius_local_group: 34.8 # Mpc/h
+radius_local_group: 30 # Mpc/h
 ##########################################################################
 
 ##########################################################################
@@ -37,8 +37,8 @@ use_lonely_halo: 0
 cone_centered_on_halo: 1
 use_CoM: 1
 correct_for_peculiar_velocities: 1
-min_dist: 34.8 # Mpc/h
-survey_radius: 600
+min_dist: 40 # Mpc/h
+survey_radius: 500
 ##########################################################################
 
 ##########################################################################
@@ -51,7 +51,7 @@ parallel_processing: 0
 observer_choice: random_halos
 
 # Specify the number of observers you want to use
-number_of_observers: 100
+number_of_observers: 10
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
@@ -144,7 +144,7 @@ test_isotropy: 0
 ##########################################################################
 
 number_of_SNe: 100
-mind: 33
-maxd: 116
-width: 83
+mind: 30
+maxd: 150
+width: 120
 

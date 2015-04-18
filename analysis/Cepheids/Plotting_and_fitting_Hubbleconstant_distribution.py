@@ -9,12 +9,13 @@ import scipy.integrate as integrate
 #import pdb
 
 os.chdir('/home/io/Dropbox/Projekter/Hubble/VelocityField/code/')
-model = 'EXP008e3'
-case = 'CoDECS_'+model
+#model = 'EXP008e3'
+#case = 'CoDECS_'+model
+case = 'Planck512'
 path = '../cases/'+case+'/'
-data = sp.loadtxt(path+'Hubbleconstants_subhalos.txt')
+data = sp.loadtxt(path+'Hubbleconstants_nocorrections_subhalos.txt')
 H_fullsky = data[:,1]/100
-number_of_bins = 50
+number_of_bins = 100
 #cut_tails = sp.absolute(H_fullsky-1) < 0.1 
 #H_cut_tails = H_fullsky[cut_tails]
 #plot_H_distribution(H_fullsky)
@@ -64,19 +65,21 @@ bin_width = bin_locations[1]-bin_locations[0]
 bin_centers = (bin_locations[:-1]+bin_locations[1:])/2
 factor = sp.sum(numbers_in_bins)
 plt.bar(bin_centers, numbers_in_bins/factor, align = 'center', width=bin_width, alpha=0.5, color='g')
-plt.title(model)
+#plt.title(model)
 #    plt.hist(H,bins=bin_centers,normed=True)
 
 #pmax = max(numbers_in_bins/factor)+0.05
 pmax = 0.1
 
-x = np.linspace(0.7, 1.3, num=300) # values for x-axis
+#x = np.linspace(0.7, 1.3, num=300) # values for x-axis
+x = np.linspace(0.9, 1.1, num=300) # values for x-axis
 fitted_distribution = dist.pdf(x, shape_out, loc=0, scale=scale_out)
 ax1.plot(x,fitted_distribution/factor, 'b', lw=2, label='Fitted distribution')
 #plt.xlim(0,150)
 plt.xlabel('$H_{loc}/H_0$',fontsize=16)
 plt.ylabel('P($H_{loc}/H_0$)',fontsize=16)
-plt.axis([0.85,1.15,0,pmax])
+#plt.axis([0.85,1.15,0,pmax])
+plt.axis([0.9,1.1,0,0.3])
 plt.plot([1,1],[0,pmax],'k--',linewidth=1.5)
 print "scale = ", scale_out
 print "shape = ", shape_out
@@ -111,6 +114,6 @@ print integrate.quad(lambda x: fitted_lognorm(x,mu,sigma),0,20)
 #s_in=%.2f
 #s_out=%.2f""" % (M, scale_out, s, np.exp(shape_out))
 #txt=plt.text(0.97, 0.3, results_txt, transform=ax2.transAxes, horizontalalignment='right', fontsize='large')
-plt.savefig(path+'H_distribution_coma_'+case+'.pdf')
+#plt.savefig(path+'H_distribution_coma_'+case+'.pdf')
 
 #plt.show()

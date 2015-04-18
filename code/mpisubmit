@@ -12,11 +12,13 @@ export LD_LIBRARY_PATH=${opmpi}:${intel}:$LD_LIBRARY_PATH
 cd $PBS_O_WORKDIR
 export OMP_NUM_THREADS=32
 
+
 #python hubble.py ../cases/Planck512/Planck512_withcorrections.yaml
+python hubble.py ../cases/Planck512/Planck512.yaml
 #python hubble.py ../cases/Planck512/Planck512_nocorrections.yaml
 #python hubble.py ../cases/Planck1024/Planck1024.yaml
 #python hubble.py ../cases/Planck1024_box1024/Planck1024_box1024.yaml
-python hubble.py ../cases/sim16/sim16.yaml
+#python hubble.py ../cases/sim16/sim16.yaml
 #python hubble.py ../cases/CoDECS_LCDM/LCDM.yaml
 #python hubble.py ../cases/CoDECS_EXP003/EXP003.yaml
 #python hubble.py ../cases/CoDECS_EXP001/EXP001.yaml
