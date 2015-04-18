@@ -247,8 +247,9 @@ class Observer:
         chosen_halos = hf.choose_halos(parameters,observed_halos)
 
         if parameters.use_CoM:
+            
             position_CoM,position_CoM_op,velocity_CoM,r_CoM,theta_CoM,phi_CoM,vr_peculiar_CoM,vr_CoM,total_mass\
-            = hf.determine_CoM_for_these_halos(parameters,self.position,chosen_halos)    
+            = gi.determine_CoM_for_these_halos(parameters,self.position,chosen_halos)    
             
             chosen_halos = []
             CoM_halo = Observed_halo(position_CoM,position_CoM_op,velocity_CoM,r_CoM,theta_CoM,phi_CoM,
@@ -281,7 +282,7 @@ class Observer:
 
             local_position_CoM, local_position_CoM_op,local_velocity_CoM,\
             dummy, dummy, dummy, dummy, dummy,local_total_mass\
-            = hf.determine_CoM_for_these_halos(parameters,self.position,local_halos)
+            = gi.determine_CoM_for_these_halos(parameters,self.position,local_halos)
 
             self.local_position = local_position_CoM
             self.local_velocity = local_velocity_CoM

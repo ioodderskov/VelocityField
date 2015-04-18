@@ -67,6 +67,9 @@ print "------ observers --------"
 local_velocities = sp.array([observer.local_velocity for observer in observers if len(observer.local_velocity) != 0] )
 local_velocity_corrections = sp.array([observer.local_velocity_correction for observer in observers if len(observer.local_velocity) != 0])
 
+print "local_velocities = ", local_velocities
+print "local_velocity_corrections = ", local_velocity_corrections
+
 print "correlation coefficients:"
 print "x:", sp.corrcoef(local_velocities[:,0],local_velocity_corrections[:,0])
 print "y:", sp.corrcoef(local_velocities[:,1],local_velocity_corrections[:,1])

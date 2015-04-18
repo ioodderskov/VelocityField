@@ -68,9 +68,6 @@ def initiate_observers_CoDECSsubhalos(parameters,halos):
     
     submasses = sp.array([halo.mass for halo in halos])
     ID_hosts = sp.array([halo.ID_host for halo in halos])
-
-    print "Total group masses = ", sp.sum(groupmasses)
-    print "Total sub masses = ", sp.sum(submasses)
     
     localgroup_indices = sp.array(range(len(halos)))[(parameters.sub_min_m < submasses) & (submasses < parameters.sub_max_m)]    
     virgo_indices = (parameters.host_min_m < groupmasses) & (groupmasses < parameters.host_max_m)
@@ -213,7 +210,7 @@ def initiate_observers_from_file(parameters):
 def initiate_observers_random_halos(parameters,halos):
     sp.random.seed(0)
     random_indices = sp.random.random_integers(0,len(halos)-1,parameters.number_of_observers)
-    print "random_indices = ", random_indices
+    
     observers = [None]*len(random_indices)
     
     for ob_index, ob_number in zip(random_indices,range(len(random_indices))):
@@ -341,40 +338,6 @@ def distance_correction_from_perturbed_metric(parameters,xobs,yobs,zobs,xop,yop,
     
     return psi_int
     
-def center_of_mass(parameters,observer_position,chosen_halos):
-    masses = sp.array([chosen_halo.mass for chosen_halo in chosen_halos])    
-#    positions = sp.array([halo.position for halo in chosen_halos])
-#    positions_op = sp.empty_like(positions)
-    positions = sp.array([chosen_halo.position for chosen_halo in chosen_halos])
-    positions_op = sp.array([chosen_halo.position_op for chosen_halo in chosen_halos])    
-    velocities = sp.array([chosen_halo.velocity for halo in chosen_halos])
-    position_CoM = sp.average(positions,axis=0,weights=masses)
-    position_CoM_op = sp.average(positions_op,axis=0,weights=masses)
-    velocity_CoM = sp.average(velocities,axis=0,weights=masses)
-    
-    total_mass = sp.sum(masses)
-
-    return position_CoM, position_CoM_op, velocity_CoM, total_mass
-    
-    
-    
-def determine_CoM_for_these_halos(parameters,observer_position,chosen_halos):
-
-    print "len(chosen_halos) = ", len(chosen_halos)
-
-    position_CoM, position_CoM_op, velocity_CoM, total_mass = \
-        center_of_mass(parameters,observer_position,chosen_halos)        
-                 
-    r_CoM, theta_CoM, phi_CoM = spherical_coordinates(parameters,observer_position,position_CoM)
-
-    vr_peculiar_CoM = sp.dot(position_CoM-observer_position,velocity_CoM)/r_CoM
-    
-    vr_CoM = vr_peculiar_CoM + r_CoM*100
- 
-
-    return position_CoM,position_CoM_op,velocity_CoM,r_CoM,theta_CoM,phi_CoM,\
-            vr_peculiar_CoM,vr_CoM,total_mass 
-
 
 #    if plot_field:
 #
@@ -449,9 +412,6 @@ def find_halos_around_massive_halo(parameters,observed_halos):
 
     # Since the halos are sorted according to mass, this should be the most massive halo                    
     center_halo = central_strip_halos[-1]
-    print "mass of center_halo = ", center_halo.mass
-    print "mass of the most massive central strip halo = ",\
-            sp.amax(sp.array([central_strip_halo.mass for central_strip_halo in central_strip_halos ]))
 
     for central_strip_halo in central_strip_halos:   
         if linalg.norm(center_halo.position_op-central_strip_halo.position_op)< parameters.min_dist:
@@ -726,8 +686,6 @@ def read_snapshot(parameters):
     size_fortranstuff = 6*size_unit
     f.seek(size_header+256+size_fortranstuff)
 
-    print Npart
-    print Massarr
 
     halos = [None]*sp.sum(Npart)
     for particle_type in [0,1]:
