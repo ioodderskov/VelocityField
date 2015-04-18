@@ -121,6 +121,40 @@ def velocity_from_matterdistribution(parameters,observer_position,halo_position,
     
 #        pdb.set_trace()
     return v_from_matterdistribution
+    
+    
+def center_of_mass(parameters,observer_position,chosen_halos):
+    masses = sp.array([chosen_halo.mass for chosen_halo in chosen_halos])    
+#    positions = sp.array([halo.position for halo in chosen_halos])
+#    positions_op = sp.empty_like(positions)
+    positions = sp.array([chosen_halo.position for chosen_halo in chosen_halos])
+    positions_op = sp.array([chosen_halo.position_op for chosen_halo in chosen_halos])    
+    velocities = sp.array([chosen_halo.velocity for chosen_halo in chosen_halos])
+    position_CoM = sp.average(positions,axis=0,weights=masses)
+    position_CoM_op = sp.average(positions_op,axis=0,weights=masses)
+    velocity_CoM = sp.average(velocities,axis=0,weights=masses)
+    
+    total_mass = sp.sum(masses)
+
+    return position_CoM, position_CoM_op, velocity_CoM, total_mass
+    
+    
+    
+def determine_CoM_for_these_halos(parameters,observer_position,chosen_halos):
+
+    position_CoM, position_CoM_op, velocity_CoM, total_mass = \
+        center_of_mass(parameters,observer_position,chosen_halos)        
+                 
+    r_CoM, theta_CoM, phi_CoM = hf.spherical_coordinates(parameters,observer_position,position_CoM_op)
+
+    vr_peculiar_CoM = sp.dot(position_CoM-observer_position,velocity_CoM)/r_CoM
+    
+    vr_CoM = vr_peculiar_CoM + r_CoM*100
+ 
+
+    return position_CoM,position_CoM_op,velocity_CoM,r_CoM,theta_CoM,phi_CoM,\
+            vr_peculiar_CoM,vr_CoM,total_mass 
+
 
 
     
