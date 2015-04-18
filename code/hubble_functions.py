@@ -1,20 +1,17 @@
 from __future__ import division
 import scipy as sp
 import random
-import scipy.linalg as la
-#import multiprocessing
-#from functools import partial
-#import pdb
+import scipy.linalg as linalg
 import scipy.ndimage as ndi
 import hubble_classes as hc
 from scipy import interpolate
 import pdb
 import tarfile
 import healpy as hp
-import hubble_classes as hc
 import gravitational_instability as gi
 import copy
 import gc
+import matplotlib.pyplot as plt
 
 
 plot_field = 0
@@ -138,14 +135,6 @@ def initiate_halos(parameters, halocatalogue):
             halo = hc.Halo(position,velocity,mass,ID,ID_host)
             halos[h] = halo
 
-#        print "position of last halo = ", position
-#        print "changing mass of last halo from", mass, "to", mass*1e16
-#        halos[h] = hc.Halo(position,velocity,mass*1e16,ID,ID_host,h)
-            
-#        position = sp.array([0,0,0])
-#        velocity = sp.array([0,0,0])
-#        mass = sp.sum([halocatalogue[h,3]*massunit for h in range(n_halos)])*1e16
-#        halos[-1] = hc.Halo(position,velocity,mass,0,0,n_halos)
  
     elif parameters.use_grid:
 
@@ -279,14 +268,14 @@ def initiate_observers_random_positions(parameters):
 def initiate_observers_indices_from_file(parameters,halos):
 
     observer_indices = sp.array(sp.loadtxt(parameters.observer_indices_file))
-    observers = [None]*len([observer_indices])
-    
-    for ob_index, ob_number in zip([observer_indices],range(len([observer_indices]))):
+    observers = sp.empty(len(observer_indices),dtype=object)
+        
+    for ob_number,ob_index in enumerate(observer_indices):
+        
         ob_index = int(ob_index)
         halo = halos[ob_index]
         position = halo.position
-        
-        observers[ob_number] = (hc.Observer(ob_number,position))
+        observers[ob_number] = hc.Observer(ob_number,position)
         
     return observers[0:parameters.number_of_observers]
 
@@ -318,7 +307,7 @@ def spherical_coordinates(parameters,position_obs,position_op):
 
 
     rvec = position_op-position_obs
-    r = la.norm(rvec)
+    r = linalg.norm(rvec)
 
     # Just to prevent problems if the observer is on top of the halo
     if r == 0:
@@ -329,18 +318,6 @@ def spherical_coordinates(parameters,position_obs,position_op):
 
     return r,theta, phi
     
-#    if parameters.distances_from_perturbed_metric:
-#
-#        # No reason to do a lengthy calculation of the perturbed distance, if 
-#        # the halo won't be used anyway
-#        max_distance_correction = sp.sqrt(1-2*parameters.potential_min)
-#        if (ro*max_distance_correction < parameters.mind) or (ro > parameters.maxd):
-#            return ro,theta
-#        
-#        rper = calculate_distance_in_perturbed_metric(parameters,xobs,yobs,zobs,xop,yop,zop,ro)
-#        return rper, theta
-#        
-#    else:
      
     
     
@@ -350,231 +327,193 @@ def distance_correction_from_perturbed_metric(parameters,xobs,yobs,zobs,xop,yop,
     f = sp.linspace(0,1,res)
     
     d = sp.array([f*(xop-xobs)+xobs, f*(yop-yobs)+yobs, f*(zop-zobs)+zobs])
-#    pdb.set_trace()
 
-#    d[d<0] = d[d<0]+parameters.boxsize
     Ng = len(parameters.potential)    
     d_grid = d*Ng/parameters.boxsize-1/2.
     # For the sake of the periodic boundaries
     d_grid[d_grid < 0] = d_grid[d_grid < 0]+Ng
     d_grid[d_grid > Ng] = d_grid[d_grid > Ng]-Ng
-#    pdb.set_trace()
  
     psi = ndi.map_coordinates(parameters.potential,d_grid,mode='nearest')
-#    pdb.set_trace()
     tck = interpolate.splrep(f,sp.sqrt(1-2*psi),s=0)
-#    pdb.set_trace()
     psi_int = interpolate.splint(0,1,tck)
-#    rper = psi_int*ro
-#    pdb.set_trace()
-    # This is only to check the interpolation of the potential onto the vector
-#    sp.save("../cases/sim16/line_of_sight_vector",d*parameters.boxsize)
-#    sp.save("../cases/sim16/psi_along_the_line_of_sight",psi)
-#    sp.save("../cases/sim16/potential_array",parameters.potential)
-#
-#    import matplotlib.pyplot as plt
-#    x = d[0,:]
-##    x = d[0,:]*parameters.boxsize    
-#    potential_along_x_axis = parameters.potential[:,0,0]
-#    x_pot = sp.linspace(1,15,8)
-#
-#    plt.plot(x_pot,potential_along_x_axis)
-#    plt.plot(x_pot-parameters.boxsize,potential_along_x_axis)
-#    plt.plot(x_pot+parameters.boxsize,potential_along_x_axis)
-#    plt.plot(x,psi)
-#    plt.show()
 
     
     return psi_int
     
-def center_of_mass(parameters,observer_position,candidates):
-    masses = sp.array([halo.mass for halo in candidates])    
-
-
-    positions = sp.array([halo.position for halo in candidates])
-
-    
-    positions_op = sp.empty_like(positions)    
-
-    for i, position in enumerate(positions):
-
-        position_op = periodic_boundaries(parameters,observer_position,position)
-        positions_op[i] = position_op
-
-    velocities = sp.array([halo.velocity for halo in candidates])
-
-    
-    position_CoM = sp.average(positions_op,axis=0,weights=masses)
-
-
+def center_of_mass(parameters,observer_position,chosen_halos):
+    masses = sp.array([chosen_halo.mass for chosen_halo in chosen_halos])    
+#    positions = sp.array([halo.position for halo in chosen_halos])
+#    positions_op = sp.empty_like(positions)
+    positions = sp.array([chosen_halo.position for chosen_halo in chosen_halos])
+    positions_op = sp.array([chosen_halo.position_op for chosen_halo in chosen_halos])    
+    velocities = sp.array([chosen_halo.velocity for halo in chosen_halos])
+    position_CoM = sp.average(positions,axis=0,weights=masses)
+    position_CoM_op = sp.average(positions_op,axis=0,weights=masses)
     velocity_CoM = sp.average(velocities,axis=0,weights=masses)
-    
-#    pdb.set_trace()
-
     
     total_mass = sp.sum(masses)
 
-    return position_CoM, velocity_CoM, total_mass
+    return position_CoM, position_CoM_op, velocity_CoM, total_mass
     
     
     
-def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,observer_position,local_halos,candidates):
+def determine_CoM_for_these_halos(parameters,observer_position,chosen_halos):
 
-    print "len(candidates) = ", len(candidates)
+    print "len(chosen_halos) = ", len(chosen_halos)
 
-    if len(candidates) == 0:
-        print "No observed halo to calculate CoM for"
-        return 0,0,0,0,0,0,0,0,0
-
-    position_CoM, \
-    velocity_CoM, total_mass = center_of_mass(parameters,observer_position,candidates)        
-    position_local_CoM, local_velocity, total_mass = center_of_mass(parameters,observer_position,local_halos)
-    
-    local_velocity_correction = gi.velocity_from_matterdistribution(parameters,observer_position,position_local_CoM,survey_positions,survey_masses )
-
-    bulk_velocity = local_velocity - local_velocity_correction
-
-    if parameters.correct_for_peculiar_velocities:
-
-        velocity_correction = gi.velocity_from_matterdistribution(parameters,observer_position,position_CoM,survey_positions,survey_masses)
-
-        velocity_CoM_nc = copy.copy(velocity_CoM)
-        velocity_CoM = velocity_CoM - (velocity_correction + bulk_velocity) 
-             
-    r_CoM, theta_CoM, phi_CoM = spherical_coordinates(parameters,observer_position,
-                                                position_CoM)
+    position_CoM, position_CoM_op, velocity_CoM, total_mass = \
+        center_of_mass(parameters,observer_position,chosen_halos)        
+                 
+    r_CoM, theta_CoM, phi_CoM = spherical_coordinates(parameters,observer_position,position_CoM)
 
     vr_peculiar_CoM = sp.dot(position_CoM-observer_position,velocity_CoM)/r_CoM
     
     vr_CoM = vr_peculiar_CoM + r_CoM*100
  
-    if plot_field:
-        import matplotlib.pyplot as plt
-        plt.figure()
-        ax = plt.gca()
-        ax.set_xlim([observer_position[0]-parameters.survey_radius,observer_position[0]+parameters.survey_radius])
-        ax.set_ylim([observer_position[1]-parameters.survey_radius,observer_position[1]+parameters.survey_radius])
-        halo_positions = sp.array(survey_positions)
-        halo_indices = (observer_position[2]-100 < halo_positions[:,2]) & (halo_positions[:,2] < observer_position[2]+100) 
-#        ax.plot(halo_positions[halo_indices,0],halo_positions[halo_indices,1],'r*')
-        ax.plot(observer_position[0],observer_position[1],'g*',markersize=20)
-        candidate_positions = sp.array([candidate.position for candidate in candidates])
-        candidate_positions_op = sp.empty_like(candidate_positions)
-        for i,candidate_position in enumerate(candidate_positions):
-            candidate_positions_op[i] = periodic_boundaries(parameters,observer_position,candidate_position)
-            
-        ax.plot(candidate_positions_op[:,0],candidate_positions_op[:,1],'y*')
+
+    return position_CoM,position_CoM_op,velocity_CoM,r_CoM,theta_CoM,phi_CoM,\
+            vr_peculiar_CoM,vr_CoM,total_mass 
+
+
+#    if plot_field:
+#
+#        plt.figure()
+#        ax = plt.gca()
+#        ax.set_xlim([observer_position[0]-parameters.survey_radius,observer_position[0]+parameters.survey_radius])
+#        ax.set_ylim([observer_position[1]-parameters.survey_radius,observer_position[1]+parameters.survey_radius])
+##        halo_positions = sp.array(survey_positions)
+##        halo_indices = (observer_position[2]-100 < halo_positions[:,2]) & (halo_positions[:,2] < observer_position[2]+100) 
+##        ax.plot(halo_positions[halo_indices,0],halo_positions[halo_indices,1],'r*')
+#        ax.plot(observer_position[0],observer_position[1],'g*',markersize=20)
+#        candidate_positions = sp.array([chosen_halo.position for chosen_halo in chosen_halos])
+#        candidate_positions_op = sp.empty_like(candidate_positions)
+#        for i,candidate_position in enumerate(candidate_positions):
+#            candidate_positions_op[i] = periodic_boundaries(parameters,observer_position,candidate_position)
+#            
+#        ax.plot(candidate_positions_op[:,0],candidate_positions_op[:,1],'y*')
+#        
+#        ax.plot(position_CoM[0],position_CoM[1],'bx')
+#        
+#        scale = 200
+##        chosen_halos_velocities = sp.array([chosen_halo.velocity for chosen_halo in chosen_halos])
+##        ax.quiver(candidate_positions_op[:,0],candidate_positions_op[:,1],candidate_velocities[:,0],candidate_velocities[:,1],color='y',scale_units='inches',scale=scale)
+#        ax.quiver(position_CoM[0],position_CoM[1],velocity_CoM_nc[0],velocity_CoM_nc[1],color='r',scale_units='inches',scale=scale)
+#        ax.quiver(position_CoM[0],position_CoM[1],velocity_correction[0],velocity_correction[1],color='black',scale_units='inches',scale=scale)
+#        ax.quiver(position_local_CoM[0],position_local_CoM[1],local_velocity[0],local_velocity[1],color='g',scale_units='inches',scale=scale)
+#        ax.quiver(position_local_CoM[0],position_local_CoM[1],local_velocity_correction[0],local_velocity_correction[1],color='grey',scale_units='inches',scale=scale)
+#        print "local velocity = ", local_velocity
+#        print "local velocity correction = ", local_velocity_correction
+#        print "Velocity = ", velocity_CoM_nc
+#        print "Velocity correction  = ", velocity_correction
+#
+#        print "total_mass = ", total_mass
+##        plt.savefig("/home/io/Desktop/cepheids_LCDM_%s.png" % total_mass)
+#        plt.show()
+#
+#    gc.collect()
+
+
+
         
-        ax.plot(position_CoM[0],position_CoM[1],'bx')
-        
-        scale = 200
-        candidate_velocities = sp.array([candidate.velocity for candidate in candidates])
-#        ax.quiver(candidate_positions_op[:,0],candidate_positions_op[:,1],candidate_velocities[:,0],candidate_velocities[:,1],color='y',scale_units='inches',scale=scale)
-        ax.quiver(position_CoM[0],position_CoM[1],velocity_CoM_nc[0],velocity_CoM_nc[1],color='r',scale_units='inches',scale=scale)
-        ax.quiver(position_CoM[0],position_CoM[1],velocity_correction[0],velocity_correction[1],color='black',scale_units='inches',scale=scale)
-        ax.quiver(position_local_CoM[0],position_local_CoM[1],local_velocity[0],local_velocity[1],color='g',scale_units='inches',scale=scale)
-        ax.quiver(position_local_CoM[0],position_local_CoM[1],local_velocity_correction[0],local_velocity_correction[1],color='grey',scale_units='inches',scale=scale)
-        print "local velocity = ", local_velocity
-        print "local velocity correction = ", local_velocity_correction
-        print "Velocity = ", velocity_CoM_nc
-        print "Velocity correction  = ", velocity_correction
 
-        print "total_mass = ", total_mass
-#        plt.savefig("/home/io/Desktop/cepheids_LCDM_%s.png" % total_mass)
-        plt.show()
-
-    gc.collect()
-
-    return  position_CoM, \
-            r_CoM, theta_CoM, phi_CoM,\
-            vr_peculiar_CoM, vr_CoM, \
-            total_mass, velocity_CoM_nc, velocity_correction,\
-            local_velocity, local_velocity_correction
-
-def plot_velocities(pos,vel,ax,color,scale):
-
-    xs = pos[:,0]
-    ys = pos[:,1]
-    vxs = vel[:,0]
-    vys = vel[:,1]
-
-    ax.quiver(xs,ys,vxs,vys,color=color,scale_units='inches',scale=scale)
-
-
-    
-
-def select_candidates(parameters,candidates):
+def choose_halos(parameters,observed_halos):
 
     if parameters.observed_halos == 'all':
-        selected_candidates = range(len(candidates))    
+        chosen_halos = observed_halos    
 
     if parameters.observed_halos == 'mass_weighted':
-        selected_candidates = mass_weighted_selection_of_halos(parameters,candidates)
+        chosen_halos = mass_weighted_selection_of_halos(parameters,observed_halos)
 
     if parameters.observed_halos == 'random':
-        selected_candidates = random_selection_of_halos(parameters,candidates)
+        chosen_halos = random_selection_of_halos(parameters,observed_halos)
         
     if parameters.observed_halos == 'specified_mass':
-        selected_candidates = specified_mass_selection_of_halos(parameters,candidates)
+        chosen_halos = specified_mass_selection_of_halos(parameters,observed_halos)
         
-    return selected_candidates
+    if parameters.observed_halos == 'centered_around_massive_halo':    
+        chosen_halos = find_halos_around_massive_halo(parameters,observed_halos) 
+        
+    return chosen_halos
+
+
+def find_halos_around_massive_halo(parameters,observed_halos):
+    halos_around_halo = []
+    central_strip_halos = [observed_halo for observed_halo in observed_halos\
+                        if (observed_halo.r-parameters.bindistances[0] > parameters.min_dist)\
+                        & (parameters.bindistances[-1]-observed_halo.r > parameters.min_dist)]            
+
+    if len(central_strip_halos) == 0:
+        print "No central strip halos for this observer"
+        return 0
+
+    # Since the halos are sorted according to mass, this should be the most massive halo                    
+    center_halo = central_strip_halos[-1]
+    print "mass of center_halo = ", center_halo.mass
+    print "mass of the most massive central strip halo = ",\
+            sp.amax(sp.array([central_strip_halo.mass for central_strip_halo in central_strip_halos ]))
+
+    for central_strip_halo in central_strip_halos:   
+        if linalg.norm(center_halo.position_op-central_strip_halo.position_op)< parameters.min_dist:
+            halos_around_halo.append(central_strip_halo)
+
+
+    return halos_around_halo
+
 
    
-def specified_mass_selection_of_halos(parameters,candidates):
+def specified_mass_selection_of_halos(parameters,observed_halos):
     
-    selected_candidates = []
-    masses = sp.array([candidate.mass for candidate in candidates])
-    indices_of_candidates_of_specified_mass = sp.array(range(len(candidates)))[(parameters.SN_mass_min < masses) & (masses < parameters.SN_mass_max)]
+    chosen_halos = []
+    chosen_halos_of_specified_mass = [observed_halo for observed_halo in observed_halos\
+                                    if (parameters.SN_mass_min < observed_halo.mass)
+                                    & (observed_halo.mass < parameters.SN_mass_max)]
 #    pdb.set_trace()
     random.seed(0)
-    if len(indices_of_candidates_of_specified_mass) == 0:
+    if len(chosen_halos_of_specified_mass) == 0:
         print "No halos to observe"
     else:
-        while len(selected_candidates) < parameters.number_of_SNe:
-            rnd_number = random.randint(0,len(indices_of_candidates_of_specified_mass)-1)
-            candidate_number = indices_of_candidates_of_specified_mass[rnd_number]
-            selected_candidates.append(candidate_number)
-#            print candidates[candidate_number].mass
+        while len(chosen_halos) < parameters.number_of_SNe:
+            chosen_halo = random.choice(chosen_halos_of_specified_mass)
+            chosen_halos.append(chosen_halo)
             
-    return selected_candidates
+    return chosen_halos
             
         
     
-def random_selection_of_halos(parameters,candidates):
+def random_selection_of_halos(parameters,observed_halos):
     
-    selected_candidates = []
+    chosen_halos = []
     random.seed(0)
     for n in range(parameters.number_of_SNe):
-        rnd_candidate_number = random.randint(0,len(candidates)-1) # For some reason, the endpoint is included in the interval.
-#        rnd_candidate_number = candidates[rnd_int]
-        selected_candidates.append(rnd_candidate_number)
-        
+        chosen_halo = random.choice(observed_halos)
+        chosen_halos.append(chosen_halo)        
  
-    return selected_candidates
+    return chosen_halos
 
-def mass_weighted_selection_of_halos(parameters,candidates):
+def mass_weighted_selection_of_halos(parameters,observed_halos):
     
-    total_mass = sp.sum([c.mass for c in candidates])
+    total_mass = sp.sum([observed_halo.mass for observed_halo in observed_halos])
     
     cum_mass = 0
     cum_masses = []
     
-    for candidate in candidates:
-        mass = candidate.mass
+    for observed_halo in observed_halos:
+        mass = observed_halo.mass
         cum_mass = cum_mass+mass
         cum_masses.append(cum_mass/total_mass)
         
     
-    selected_candidates = []
+    chosen_halos = []
     random.seed(0)
     for n in range(parameters.number_of_SNe):
         rnd = random.random()
-        for candidate_number in range(len(candidates)):
-            if cum_masses[candidate_number] >= rnd:
-                selected_candidates.append(candidate_number)
+        for chosen_halo_number,chosen_halo in enumerate(chosen_halos):
+            if cum_masses[chosen_halo_number] >= rnd:
+                chosen_halos.append(chosen_halo)
                 break
             
-    return selected_candidates
+    return chosen_halos
         
         
 def print_hubbleconstants_to_file(parameters,observers):

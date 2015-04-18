@@ -79,15 +79,17 @@ def velocity_from_matterdistribution(parameters,observer_position,halo_position,
 #                                        if (linalg.norm(positions[i]-halo_position) > parameters.min_dist) \
 #                                        & (linalg.norm(positions[i]-observer_position) < parameters.survey_radius) ])
 
-#    individual_contributions = sp.array([masses[i] \
-#                                        *(positions[i]-halo_position) \
-#                                        /linalg.norm(positions[i]-halo_position)**3 \
-#                                        for i in range(len(masses)) \
-#                                        if (linalg.norm(positions[i]-halo_position) > parameters.min_dist)])
+    individual_contributions = sp.array([masses[i] \
+                                        *(positions[i]-halo_position) \
+                                        /linalg.norm(positions[i]-halo_position)**3 \
+                                        for i in range(len(masses)) \
+                                        if (linalg.norm(positions[i]-halo_position) > parameters.min_dist)])
 
-    partial_calculate_contribution = partial(calculate_contribution,parameters=parameters,halo_position=halo_position,masses=masses,positions=positions)
-    individual_contributions = sp.array(map(partial_calculate_contribution,range(len(masses))))
-
+#    partial_calculate_contribution = partial(calculate_contribution,parameters=parameters,halo_position=halo_position,masses=masses,positions=positions)
+#    individual_contributions = sp.array(map(partial_calculate_contribution,range(len(masses))))
+    
+    
+    
 #    pdb.set_trace()
 #    contributing_masses = sp.array([masses[i] for i in range(len(masses)) \
 #                                        if (linalg.norm(positions[i]-halo_position) > parameters.min_dist) \
