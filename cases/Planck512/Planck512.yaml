@@ -2,7 +2,7 @@
 path: ../cases/Planck512/
 halocatalogue_file: parents_11
 CoDECShosts_file: 
-hubblefile: Hubbleconstants
+hubblefile: Hubbleconstants_withcorrections
 powerspectrafile: powerspectra.txt
 snapshot_file: snapshot_011 
 gridfile: grid.txt
@@ -29,7 +29,7 @@ smoothing_radius: 5 # Mpc/h
 
 ##########################################################################
 use_local_velocity: 1
-radius_local_group: 20.34 # Mpc/h
+radius_local_group: 30 # Mpc/h
 ##########################################################################
 
 ##########################################################################
@@ -37,7 +37,7 @@ radius_local_group: 20.34 # Mpc/h
 use_lonely_halo: 0
 use_CoM: 1
 correct_for_peculiar_velocities: 1
-min_dist: 20.34 # Mpc/h
+min_dist: 30 # Mpc/h
 survey_radius: 400
 cone_centered_on_halo: 1
 ##########################################################################
@@ -48,10 +48,10 @@ parallel_processing: 1
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
 ##########################################################################
-observer_choice: random_halos
+observer_choice: subhalos
 
 # Specify the number of observers you want to use
-number_of_observers: random_halos
+number_of_observers: 800
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt
@@ -76,7 +76,7 @@ SN_mass_max: 1e15
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 0
+calculate_hubble_constants: 1
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
@@ -146,7 +146,7 @@ test_isotropy: 0
 ##########################################################################
 
 number_of_SNe: 100
-mind: 47.5
-maxd: 101.7
-width: 54.2
+mind: 60
+maxd: 160
+width: 100
 

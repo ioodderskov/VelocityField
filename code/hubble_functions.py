@@ -160,19 +160,19 @@ def initiate_halos(parameters, halocatalogue):
             
 
     else: 
-        halos = []
+#        halos = []
         for h in range(n_halos):
             position = halocatalogue[h,[8,9,10]]
             velocity = halocatalogue[h,[11,12,13]]
             mass = halocatalogue[h,2]
             ID = int(halocatalogue[h,0])
             ID_host = int(halocatalogue[h,33])
-            if ID_host == -1:
+#            if ID_host == -1:
             
-                halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
-                halos.append(halo)
-#            halos[h] = halo
-        halos = sp.array(halos)
+            halo = hc.Halo(position,velocity,mass,ID,ID_host,h)
+#                halos.append(halo)
+            halos[h] = halo
+#        halos = sp.array(halos)
         
     return halos
     
@@ -221,7 +221,9 @@ def initiate_observers_from_file(parameters):
     
     
 def initiate_observers_random_halos(parameters,halos):
+    sp.random.seed(0)
     random_indices = sp.random.random_integers(0,len(halos)-1,parameters.number_of_observers)
+    print "random_indices = ", random_indices
     observers = [None]*len(random_indices)
     
     for ob_index, ob_number in zip(random_indices,range(len(random_indices))):
@@ -233,10 +235,9 @@ def initiate_observers_random_halos(parameters,halos):
     return observers[0:parameters.number_of_observers]
     
 def initiate_observers_subhalos(parameters,halos):
-    print "WARNING! This function needs to be tested before use. Se evt. den tilsvarende fkt for CoDECS."
     masses = [halo.mass for halo in halos]
     
-    localgroup_indices = (parameters.sub_min_m < masses) & (masses < parameters.sub_max_m)
+    localgroup_indices = sp.array(range(len(halos)))[(parameters.sub_min_m < masses) & (masses < parameters.sub_max_m)]
     virgo_indices = (parameters.host_min_m < masses) & (masses < parameters.host_max_m)
     
     ID_hosts = sp.array([halo.ID_host for halo in halos])
@@ -248,12 +249,15 @@ def initiate_observers_subhalos(parameters,halos):
                             
     observers = [None]*len(observer_indices)
     
-    for ob_index, ob_number in zip(observer_indices, range(len(observer_indices))):
-        halo = halos[ob_index]
+    for observer_index, observer_number in zip(observer_indices, range(len(observer_indices))):
+        halo = halos[observer_index]
         position = halo.position
-        observers[ob_number] = hc.Observer(ob_number,position)
+        observers[observer_number] = hc.Observer(observer_number,position)
+
     
     return observers[0:parameters.number_of_observers]
+    
+
 
 def initiate_observers_random_positions(parameters):
 
@@ -273,15 +277,14 @@ def initiate_observers_random_positions(parameters):
 def initiate_observers_indices_from_file(parameters,halos):
 
     observer_indices = sp.array(sp.loadtxt(parameters.observer_indices_file))
-    observers = [None]*len([observer_indices])
-    
-    for ob_index, ob_number in zip([observer_indices],range(len([observer_indices]))):
+    observers = sp.empty(len(observer_indices),dtype=object)
+
+    for ob_number,ob_index in enumerate(observer_indices):
         ob_index = int(ob_index)
         halo = halos[ob_index]
         position = halo.position
-        
-        observers[ob_number] = (hc.Observer(ob_number,position))
-        
+        observers[ob_number] = hc.Observer(ob_number,position)
+
     return observers[0:parameters.number_of_observers]
 
 def periodic_coordinate(parameters,coordinate):
@@ -412,7 +415,6 @@ def center_of_mass(parameters,observer_position,candidates):
     
     
     
-
 def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,observer_position,local_halos,candidates):
 
     print "len(candidates) = ", len(candidates)
@@ -429,12 +431,12 @@ def determine_CoM_for_these_halos(parameters,survey_positions,survey_masses,obse
 
     bulk_velocity = local_velocity - local_velocity_correction
 
+    velocity_correction = sp.array([0,0,0])
     if parameters.correct_for_peculiar_velocities:
-
         velocity_correction = gi.velocity_from_matterdistribution(parameters,observer_position,position_CoM,survey_positions,survey_masses)
 
-        velocity_CoM_nc = copy.copy(velocity_CoM)
-        velocity_CoM = velocity_CoM - velocity_correction
+    velocity_CoM_nc = copy.copy(velocity_CoM)
+    velocity_CoM = velocity_CoM - velocity_correction
              
     r_CoM, theta_CoM, phi_CoM = spherical_coordinates(parameters,observer_position,
                                                 position_CoM)

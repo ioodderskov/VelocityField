@@ -188,7 +188,7 @@ class Observer:
         
 
  
-    
+        
     def observe(self, parameters,halos,particles):
 
         if parameters.use_lightcone:
@@ -325,11 +325,11 @@ class Observer:
         if parameters.use_CoM:
 
             observer_position = self.position
-            if parameters.correct_for_peculiar_velocities:
-                if parameters.use_snapshot_for_background:
-                    survey_positions,survey_masses = self.survey(parameters,particles)
-                else:
-                    survey_positions,survey_masses = self.survey(parameters,halos)
+#            if parameters.correct_for_peculiar_velocities:
+            if parameters.use_snapshot_for_background:
+                survey_positions,survey_masses = self.survey(parameters,particles)
+            else:
+                survey_positions,survey_masses = self.survey(parameters,halos)
             position_CoM, \
             r_CoM, theta_CoM, phi_CoM,\
             vr_peculiar_CoM, vr_CoM, \
