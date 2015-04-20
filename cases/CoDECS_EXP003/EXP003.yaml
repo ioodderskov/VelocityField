@@ -2,26 +2,56 @@
 path: ../cases/CoDECS_EXP003/
 halocatalogue_file: EXP003_CoDECS_SubGroups_092.tar
 CoDECShosts_file: EXP003_CoDECS_Groups_092.tar
-hubblefile: Hubbleconstants_isotropy
-powerspectrafile:
-snapshot_file:  
+hubblefile: Hubbleconstants_corrected_3.5
+powerspectrafile: powerspectra.txt
+snapshot_file: EXP003_CoDECS_snap_092.tar
+gridfile: grid.txt
 
 # ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
 ##########################################################################
 snapshot: 0
 CoDECS: 1
+use_grid: 0
 
+# Use snapshot for background?
+##########################################################################
+use_snapshot_for_background: 0
+##########################################################################
+
+##########################################################################
+# Should positions, velocities and masses be assigned to a grid?
+assign_to_grid: 0
+Ng: 10
+smoothing: 1
+smoothing_radius: 1 # Mpc/h
+##########################################################################
+
+##########################################################################
+use_local_velocity: 1
+radius_local_group: 100 # Mpc/h
+##########################################################################
+
+##########################################################################
+# Correct for the velocity from the matter distribution?
+use_lonely_halo: 0
+cone_centered_on_halo: 1
+use_CoM: 1
+correct_for_peculiar_velocities: 0
+min_dist: 100 # Mpc/h
+survey_radius: 866
+##########################################################################
+
+##########################################################################
 # Use parallel processing?
 ##########################################################################
 parallel_processing: 0
 
-# Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
+# Observer selection: indices_from_file, from_file, subhalos, random_positions, random_halos, or all
 ##########################################################################
-
-observer_choice: indices_from_file
+observer_choice: all
 
 # Specify the number of observers you want to use
-number_of_observers: 1
+number_of_observers: 0
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
@@ -34,15 +64,17 @@ sub_max_m: 1e13
 host_min_m: 5e14
 host_max_m: 5e15
 
-# How should the observed halos be selected? mass_weighted, random or all
+# How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
 ##########################################################################
-observed_halos: mass_weighted
+observed_halos: all
+SN_mass_min: 1e14
+SN_mass_max: 1e15
 
 ##########################################################################
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 1
+calculate_hubble_constants: 0
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
@@ -56,6 +88,8 @@ make_hubblediagram: 0
 map_velocityfield: 0
 # Calculate powerspectra for the observers?
 calculate_powerspectra: 0
+# Calculate pairwise velocities?
+calculate_pairwise_velocities: 1
 
 ##########################################################################
 # Should the distances be calculated using the perturbed metric?
@@ -98,19 +132,21 @@ use_lightcone: 0
 halocatalogue_filebase:
 ##########################################################################
 
-skyfraction: 0.2
-boxsize: 1000
-omegam: 0.306843
 
+
+skyfraction: 1
+boxsize: 1000
+# WMAP 7 parameters
+omegam: 0.272
+h: 0.702
 
 ##########################################################################
 # Should the direction of the cone be varied?
-test_isotropy: 1
+test_isotropy: 0
 ##########################################################################
 
-number_of_SNe: 240
-mind: 30
-maxd: 120
-width: 37.3
-
+number_of_SNe: 100
+mind: 60
+maxd: 360
+width: 300
 

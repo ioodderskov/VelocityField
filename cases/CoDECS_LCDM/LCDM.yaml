@@ -36,7 +36,7 @@ radius_local_group: 100 # Mpc/h
 use_lonely_halo: 0
 cone_centered_on_halo: 1
 use_CoM: 1
-correct_for_peculiar_velocities: 1
+correct_for_peculiar_velocities: 0
 min_dist: 100 # Mpc/h
 survey_radius: 866
 ##########################################################################
@@ -46,12 +46,12 @@ survey_radius: 866
 ##########################################################################
 parallel_processing: 0
 
-# Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
+# Observer selection: indices_from_file, from_file, subhalos, random_positions, random_halos, or all
 ##########################################################################
-observer_choice: random_halos
+observer_choice: all
 
 # Specify the number of observers you want to use
-number_of_observers: 30
+number_of_observers: 0
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
@@ -74,7 +74,7 @@ SN_mass_max: 1e15
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 1
+calculate_hubble_constants: 0
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
@@ -88,6 +88,8 @@ make_hubblediagram: 0
 map_velocityfield: 0
 # Calculate powerspectra for the observers?
 calculate_powerspectra: 0
+# Calculate pairwise velocities?
+calculate_pairwise_velocities: 1
 
 ##########################################################################
 # Should the distances be calculated using the perturbed metric?

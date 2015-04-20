@@ -76,6 +76,7 @@ class Parameters:
         self.calculate_powerspectra = int(param["calculate_powerspectra"])
         if self.calculate_powerspectra:
             self.powerspectrafile = self.path+param["powerspectrafile"]
+        self.calculate_pairwise_velocities = int(param["calculate_pairwise_velocities"])
 
         
         self.distances_from_perturbed_metric = int(param["distances_from_perturbed_metric"])
@@ -187,6 +188,7 @@ class Observer:
         self.vrmap = []
         self.skyfraction = []
         self.radius_of_greatest_hole = []
+        self.observed_radial_peculiar_velocities = []
         
 
  
@@ -307,7 +309,23 @@ class Observer:
 
         return 1
 
-
+    def calculate_pairwise_velocities(self,parameters):
+        
+        for halo_number,halo in enumerate(parameters.halos):
+            
+            position_op = hf.periodic_boundaries(parameters,self.position,halo.position)             
+            r, theta, phi = hf.spherical_coordinates(parameters,self.position,
+                                                position_op)
+            if r == 0:
+                continue
+            
+            vr_peculiar = sp.dot(position_op-self.position,halo.velocity)/r
+            self.observed_radial_peculiar_velocities.append(vr_peculiar)
+            
+        return 1
+            
+            
+        
 
 
 
@@ -388,6 +406,8 @@ class Observer:
         
         self.ls, self.cls = pf.do_harmonic_analysis(parameters,vrmap)
         self.vrmap = vrmap
+        
+
 
 
     

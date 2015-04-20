@@ -6,6 +6,8 @@ def observe_and_analyse(observer,parameters,particles):
 
     if parameters.use_lightcone:
         observer.observe(parameters,particles)
+    elif parameters.calculate_pairwise_velocities:
+        observer.calculate_pairwise_velocities(parameters)
     else:
         observer.observe(parameters,particles)
     

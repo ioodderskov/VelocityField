@@ -195,10 +195,20 @@ def initiate_observers(parameters):
             
         if parameters.observer_choice == 'indices_from_file':
             observers = initiate_observers_indices_from_file(parameters)
+        if parameters.observer_choice == 'all':
+            observers = initiate_observers_all(parameters)
     
     
     return observers
     
+def initiate_observers_all(parameters):
+
+    observers = sp.empty(len(parameters.halos),dtype=object)
+    for observer_number,halo in enumerate(parameters.halos):
+        position = halo.position
+        observers[observer_number] = hc.Observer(observer_number,position)
+        
+    return observers
     
 def initiate_observers_from_file(parameters):
     observer_positions = sp.array(sp.loadtxt(parameters.observerfile))
