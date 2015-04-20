@@ -1,8 +1,9 @@
 ---
 path: ../cases/sim16/
-halocatalogue_file: parents_11
+halocatalogue_file: parents_11_fake
 CoDECShosts_file:
 hubblefile: Hubbleconstants.txt
+pairwise_velocities_file: pairwise_velocities.txt
 powerspectrafile: powerspectra.txt
 snapshot_file: snapshot_sim16
 gridfile: grid.txt
@@ -48,10 +49,10 @@ parallel_processing: 0
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
 ##########################################################################
-observer_choice: indices_from_file
+observer_choice: subhalos
 
 # Specify the number of observers you want to use
-number_of_observers: 4
+number_of_observers: 3
 
 # If from_file, specify the file here
 observerfile: ../cases/sim16/howdy16.txt
@@ -76,7 +77,7 @@ SN_mass_max: 0
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 1
+calculate_hubble_constants: 0
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
@@ -90,6 +91,8 @@ make_hubblediagram: 0
 map_velocityfield: 0
 # Calculate powerspectra?
 calculate_powerspectra: 0
+# Calculate pairwise velocities?
+calculate_pairwise_velocities: 1
 
 # Distances from perturbed metric?
 ##########################################################################

@@ -5,6 +5,8 @@ import scipy as sp
 import yaml
 import healpy as hp 
 import gravitational_instability as gi
+import resource
+import pdb
 
 
 
@@ -132,6 +134,9 @@ class Parameters:
         self.Ng = int(param["Ng"])
         self.smoothing = int(param["smoothing"])    
         self.smoothing_radius = sp.double(param["smoothing_radius"])
+        
+        self.halos = []
+        self.subhalos = []
 
 
 class Halo:
@@ -186,7 +191,7 @@ class Observer:
 
  
         
-    def observe(self, parameters,halos,particles):
+    def observe(self, parameters,particles):
 
         if parameters.use_lightcone:
             halocatalogue_file = parameters.halocatalogue_filebase + '_' + str(self.observer_number)
@@ -200,7 +205,7 @@ class Observer:
         survey_positions = []
         survey_masses = []
           
-        for h in halos:
+        for h in parameters.halos:
         
             position_op = hf.periodic_boundaries(parameters,self.position,h.position)
 
@@ -299,6 +304,7 @@ class Observer:
 
 
         self.chosen_halos = chosen_halos
+
         return 1
 
 

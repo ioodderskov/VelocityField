@@ -10,8 +10,12 @@ from functools import partial
 import scipy as sp
 #import cPickle
 import assignment_to_grid as ag
+import resource
 
 
+
+print "Before beginning. The total memory used is:" 
+print resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000, 'Mb'
 
 
 # There is one argument, namely the parameterfile
@@ -23,7 +27,7 @@ parameters = hc.Parameters(parameterfile)
 
 
 if parameters.snapshot:
-    halos = hf.read_snapshot(parameters) # technically, its particles, not halos, in this case. But never mind.
+    hf.read_snapshot(parameters) # technically, its particles, not halos, in this case. But never mind.
     observers = hf.initiate_observers(parameters,[])
 
 elif parameters.use_lightcone:
@@ -31,14 +35,14 @@ elif parameters.use_lightcone:
     
 else:
     halocatalogue = hf.load_halocatalogue(parameters,parameters.halocatalogue_file)
-    halos = hf.initiate_halos(parameters,halocatalogue)
-    observers = hf.initiate_observers(parameters,halos)
+    hf.initiate_halos(parameters,halocatalogue)
+    observers = hf.initiate_observers(parameters)
 
 particles = []
 if parameters.use_snapshot_for_background:
     particles = hf.read_snapshot(parameters)
 
-partial_observe_and_analyse = partial(pp.observe_and_analyse,parameters=parameters,halos=halos,particles=particles)
+partial_observe_and_analyse = partial(pp.observe_and_analyse,parameters=parameters,particles=particles)
 
 if parameters.parallel_processing:
     pool = multiprocessing.Pool()
@@ -50,7 +54,7 @@ else:
 
 
 if parameters.assign_to_grid:    
-    ag.create_density_and_velocity_grid(parameters,halos)
+    ag.create_density_and_velocity_grid(parameters)
 
 
 if parameters.calculate_hubble_constants:
@@ -88,9 +92,8 @@ print "abs(observed_velocities)/abs(velocity_corrections)",\
 sp.mean(sp.absolute(observed_velocities),axis=0)/sp.mean(sp.absolute(velocity_corrections),axis=0)
 
 
-
-
-
+print "The total memory used is:" 
+print resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000, 'Mb'
 
 #f = file(parameters.path+'parameters.save', 'wb')
 #cPickle.dump(parameters, f, protocol=cPickle.HIGHEST_PROTOCOL)

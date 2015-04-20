@@ -1,13 +1,13 @@
 from __future__ import division
 
 
-def observe_and_analyse(observer,parameters,halos,particles):
+def observe_and_analyse(observer,parameters,particles):
 
 
     if parameters.use_lightcone:
-        observer.observe(parameters,halos,particles)
+        observer.observe(parameters,particles)
     else:
-        observer.observe(parameters,halos,particles)
+        observer.observe(parameters,particles)
     
     if parameters.calculate_hubble_constants:
         observer.do_hubble_analysis(parameters)
