@@ -29,7 +29,7 @@ smoothing_radius: 5 # Mpc/h
 
 ##########################################################################
 use_local_velocity: 1
-radius_local_group: 27.12 # Mpc/h
+radius_local_group: 60 # Mpc/h
 ##########################################################################
 
 ##########################################################################
@@ -37,8 +37,8 @@ radius_local_group: 27.12 # Mpc/h
 use_lonely_halo: 0
 use_CoM: 1
 correct_for_peculiar_velocities: 1
-min_dist: 27.12 # Mpc/h
-survey_radius: 400
+min_dist: 60 # Mpc/h
+survey_radius: 800
 cone_centered_on_halo: 1
 ##########################################################################
 
@@ -49,11 +49,10 @@ parallel_processing: 1
 
 # Observer selection: from_file, subhalos, random_positions or random_halos
 ##########################################################################
-
 observer_choice: random_halos
 
 # Specify the number of observers you want to use
-number_of_observers: 10
+number_of_observers: 100
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
@@ -68,7 +67,7 @@ host_max_m: 5e15
 
 # How should the observed halos be selected? mass_weighted, random or all
 ##########################################################################
-observed_halos: all
+observed_halos: centered_around_massive_halo
 SN_mass_min: 1e14
 SN_mass_max: 1e15
 
@@ -143,7 +142,7 @@ test_isotropy: 0
 ##########################################################################
 
 number_of_SNe: 100
-mind: 40.7
-maxd: 108.52
-width: 67.82
+mind: 60
+maxd: 260
+width: 200
 

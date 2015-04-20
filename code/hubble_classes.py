@@ -3,7 +3,6 @@ import hubble_functions as hf
 import powerspectrum_functions as pf
 import scipy as sp
 import yaml
-import pdb
 import healpy as hp 
 import gravitational_instability as gi
 
@@ -172,6 +171,7 @@ class Observer:
         self.observer_number = observer_number
         self.position = position
         self.local_position = []
+        self.local_position_op = []
         self.local_velocity = []
         self.local_velocity_correction = []
         self.chosen_halos = []
@@ -251,6 +251,7 @@ class Observer:
             position_CoM,position_CoM_op,velocity_CoM,r_CoM,theta_CoM,phi_CoM,vr_peculiar_CoM,vr_CoM,total_mass\
             = gi.determine_CoM_for_these_halos(parameters,self.position,chosen_halos)    
             
+            #Overwriting the chosen halos with their center of mass motion
             chosen_halos = []
             CoM_halo = Observed_halo(position_CoM,position_CoM_op,velocity_CoM,r_CoM,theta_CoM,phi_CoM,
                                      vr_peculiar_CoM,vr_CoM,-1,total_mass)
@@ -277,8 +278,9 @@ class Observer:
                 survey_positions,survey_masses = self.survey(parameters,particles)
             
             for chosen_halo in chosen_halos:
-                velocity_correction = gi.velocity_from_matterdistribution(parameters,self.position,\
-                                                chosen_halo.position,survey_positions,survey_masses)
+                velocity_correction = gi.velocity_from_matterdistribution(parameters,\
+                                        chosen_halo.position,survey_positions,survey_masses)
+#                print "Warning! I am sending periodic coordinates to vrm, though I think it should be regular coordinates"
                 chosen_halo.observed_velocity = chosen_halo.velocity
                 chosen_halo.velocity_correction = velocity_correction
                 chosen_halo.velocity = chosen_halo.velocity - velocity_correction
@@ -289,12 +291,15 @@ class Observer:
             = gi.determine_CoM_for_these_halos(parameters,self.position,local_halos)
 
             self.local_position = local_position_CoM
+            self.local_position_op = local_position_CoM_op
             self.local_velocity = local_velocity_CoM
 
             if parameters.correct_for_peculiar_velocities:
-            
-                local_velocity_correction = gi.velocity_from_matterdistribution(parameters,self.position,\
-                                            self.local_position,survey_positions,survey_masses)
+                
+                local_velocity_correction = gi.velocity_from_matterdistribution(parameters,\
+                                        self.local_position,survey_positions,survey_masses)
+#                print "Warning! I am sending periodic coordinates to vrm, though I think it should be regular coordinates"
+                
                 self.local_velocity_correction = local_velocity_correction
 
      

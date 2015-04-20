@@ -147,19 +147,19 @@ def initiate_halos(parameters, halocatalogue):
             
 
     else: 
-#        halos = []
+        halos = []
         for h in range(n_halos):
             position = halocatalogue[h,[8,9,10]]
             velocity = halocatalogue[h,[11,12,13]]
             mass = halocatalogue[h,2]
             ID = int(halocatalogue[h,0])
             ID_host = int(halocatalogue[h,33])
-#            if ID_host == -1:
+            if ID_host == -1:
             
-            halo = hc.Halo(position,velocity,mass,ID,ID_host)
-#                halos.append(halo)
-            halos[h] = halo
-#        halos = sp.array(halos)
+                halo = hc.Halo(position,velocity,mass,ID,ID_host)
+                halos.append(halo)
+#            halos[h] = halo
+        halos = sp.array(halos)
         
     return halos
     
