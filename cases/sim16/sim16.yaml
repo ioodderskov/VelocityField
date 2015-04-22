@@ -44,7 +44,7 @@ survey_radius: 12
 
 # Use parallel processing?
 ##########################################################################
-parallel_processing: 0
+parallel_processing: 1
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions, random_halos, all
 ##########################################################################
