@@ -17,13 +17,21 @@ export OMP_NUM_THREADS=48
 #python hubble.py ../cases/Planck512/Planck512.yaml
 #python hubble.py ../cases/Planck512/Planck512_nocorrections.yaml
 #python hubble.py ../cases/Planck1024/Planck1024.yaml
-python hubble.py ../cases/Planck1024_box1024/Planck1024_box1024_min_dist_80.yaml
+#python hubble.py ../cases/Planck1024_box1024/Planck1024_box1024_min_dist_80.yaml
 #python hubble.py ../cases/sim16/sim16.yaml
+
 #python hubble.py ../cases/CoDECS_LCDM/LCDM.yaml
 #python hubble.py ../cases/CoDECS_EXP003/EXP003.yaml
 #python hubble.py ../cases/CoDECS_EXP001/EXP001.yaml
+
 #python hubble.py ../cases/CoDECS_EXP008e3/EXP008e3.yaml
 #python hubble.py ../cases/CoDECS_SUGRA/SUGRA.yaml
+
+#python fit_distribution_to_pairwise_velocities.py CoDECS_LCDM
+#python fit_distribution_to_pairwise_velocities.py CoDECS_EXP001
+python fit_distribution_to_pairwise_velocities.py CoDECS_EXP003
+#python fit_distribution_to_pairwise_velocities.py sim16
+
 
 
 

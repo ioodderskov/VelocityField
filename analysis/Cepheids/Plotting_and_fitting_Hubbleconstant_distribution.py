@@ -15,9 +15,10 @@ case = 'Planck512'
 path = '../cases/'+case+'/'
 data = sp.loadtxt(path+'Hubbleconstants_nocorrections_subhalos.txt')
 H_fullsky = data[:,1]/100
-number_of_bins = 100
-#cut_tails = sp.absolute(H_fullsky-1) < 0.1 
-#H_cut_tails = H_fullsky[cut_tails]
+number_of_bins = 20
+cut_tails = sp.absolute(H_fullsky-1) < 0.1 
+H_cut_tails = H_fullsky[cut_tails]
+H_fullsky = H_cut_tails
 #plot_H_distribution(H_fullsky)
 
 dist = getattr(stats,'lognorm')
@@ -79,8 +80,8 @@ ax1.plot(x,fitted_distribution/factor, 'b', lw=2, label='Fitted distribution')
 plt.xlabel('$H_{loc}/H_0$',fontsize=16)
 plt.ylabel('P($H_{loc}/H_0$)',fontsize=16)
 #plt.axis([0.85,1.15,0,pmax])
-plt.axis([0.9,1.1,0,0.3])
-plt.plot([1,1],[0,pmax],'k--',linewidth=1.5)
+plt.axis([0.9,1.1,0,0.2])
+plt.plot([1,1],[0,0.3],'k--',linewidth=1.5)
 print "scale = ", scale_out
 print "shape = ", shape_out
 
@@ -115,5 +116,7 @@ print integrate.quad(lambda x: fitted_lognorm(x,mu,sigma),0,20)
 #s_out=%.2f""" % (M, scale_out, s, np.exp(shape_out))
 #txt=plt.text(0.97, 0.3, results_txt, transform=ax2.transAxes, horizontalalignment='right', fontsize='large')
 #plt.savefig(path+'H_distribution_coma_'+case+'.pdf')
+plt.savefig('/home/io/Desktop/H_distribution_nocorrections.pdf')
+
 
 #plt.show()

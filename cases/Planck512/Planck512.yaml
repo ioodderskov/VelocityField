@@ -51,7 +51,7 @@ parallel_processing: 1
 observer_choice: random_halos
 
 # Specify the number of observers you want to use
-number_of_observers: 800
+number_of_observers: 1
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck512/observer_positions_Planck512.txt

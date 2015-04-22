@@ -1,8 +1,9 @@
 ---
 path: ../cases/CoDECS_LCDM/
-halocatalogue_file: LCDM_CoDECS_SubGroups_092.tar
+halocatalogue_file: parents_CoDECS_LCDM
+#halocatalogue_file: LCDM_CoDECS_SubGroups_092.tar
 CoDECShosts_file: LCDM_CoDECS_Groups_092.tar
-hubblefile: Hubbleconstants_corrected_3.5
+hubblefile: Hubbleconstants_withcorrections
 powerspectrafile: powerspectra.txt
 snapshot_file: LCDM_CoDECS_snap_092.tar
 gridfile: grid.txt
@@ -10,7 +11,7 @@ gridfile: grid.txt
 # ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
 ##########################################################################
 snapshot: 0
-CoDECS: 1
+CoDECS: 0
 use_grid: 0
 
 # Use snapshot for background?
@@ -37,21 +38,21 @@ use_lonely_halo: 0
 cone_centered_on_halo: 1
 use_CoM: 1
 correct_for_peculiar_velocities: 1
-min_dist: 40 # Mpc/h
-survey_radius: 500
+min_dist: 30 # Mpc/h
+survey_radius: 866
 ##########################################################################
 
 ##########################################################################
 # Use parallel processing?
 ##########################################################################
-parallel_processing: 0
+parallel_processing: 1
 
-# Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
+# Observer selection: indices_from_file, from_file, subhalos, random_positions, random_halos, or all
 ##########################################################################
-observer_choice: random_halos
+observer_choice: subhalos
 
 # Specify the number of observers you want to use
-number_of_observers: 10
+number_of_observers: 100
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
@@ -64,9 +65,9 @@ sub_max_m: 1e13
 host_min_m: 5e14
 host_max_m: 5e15
 
-# How should the observed halos be selected? mass_weighted, random, all, or specified_mass
+# How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
 ##########################################################################
-observed_halos: all
+observed_halos: centered_around_massive_halo
 SN_mass_min: 1e14
 SN_mass_max: 1e15
 
@@ -88,6 +89,8 @@ make_hubblediagram: 0
 map_velocityfield: 0
 # Calculate powerspectra for the observers?
 calculate_powerspectra: 0
+# Calculate pairwise velocities?
+calculate_pairwise_velocities: 0
 
 ##########################################################################
 # Should the distances be calculated using the perturbed metric?
@@ -144,7 +147,7 @@ test_isotropy: 0
 ##########################################################################
 
 number_of_SNe: 100
-mind: 30
-maxd: 150
-width: 120
+mind: 60
+maxd: 160
+width: 100
 

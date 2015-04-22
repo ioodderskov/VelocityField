@@ -5,6 +5,8 @@ import scipy as sp
 import yaml
 import healpy as hp 
 import gravitational_instability as gi
+import resource
+import pdb
 
 
 
@@ -74,6 +76,7 @@ class Parameters:
         self.calculate_powerspectra = int(param["calculate_powerspectra"])
         if self.calculate_powerspectra:
             self.powerspectrafile = self.path+param["powerspectrafile"]
+        self.calculate_pairwise_velocities = int(param["calculate_pairwise_velocities"])
 
         
         self.distances_from_perturbed_metric = int(param["distances_from_perturbed_metric"])
@@ -132,6 +135,9 @@ class Parameters:
         self.Ng = int(param["Ng"])
         self.smoothing = int(param["smoothing"])    
         self.smoothing_radius = sp.double(param["smoothing_radius"])
+        
+        self.halos = []
+        self.subhalos = []
 
 
 class Halo:
@@ -182,11 +188,12 @@ class Observer:
         self.vrmap = []
         self.skyfraction = []
         self.radius_of_greatest_hole = []
+        self.observed_radial_peculiar_velocities = []
         
 
  
         
-    def observe(self, parameters,halos,particles):
+    def observe(self, parameters,particles):
 
         if parameters.use_lightcone:
             halocatalogue_file = parameters.halocatalogue_filebase + '_' + str(self.observer_number)
@@ -200,7 +207,7 @@ class Observer:
         survey_positions = []
         survey_masses = []
           
-        for h in halos:
+        for h in parameters.halos:
         
             position_op = hf.periodic_boundaries(parameters,self.position,h.position)
 
@@ -331,9 +338,26 @@ class Observer:
 
 
         self.chosen_halos = chosen_halos
+
         return 1
 
-
+    def calculate_pairwise_velocities(self,parameters):
+        
+        for halo_number,halo in enumerate(parameters.halos):
+            
+            position_op = hf.periodic_boundaries(parameters,self.position,halo.position)             
+            r, theta, phi = hf.spherical_coordinates(parameters,self.position,
+                                                position_op)
+            if r == 0:
+                continue
+            
+            vr_peculiar = sp.dot(position_op-self.position,halo.velocity)/r
+            self.observed_radial_peculiar_velocities.append(vr_peculiar)
+            
+        return 1
+            
+            
+        
 
 
 
@@ -414,6 +438,8 @@ class Observer:
         
         self.ls, self.cls = pf.do_harmonic_analysis(parameters,vrmap)
         self.vrmap = vrmap
+        
+
 
 
     
