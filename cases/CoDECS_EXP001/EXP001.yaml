@@ -1,8 +1,9 @@
 ---
 path: ../cases/CoDECS_EXP001/
-halocatalogue_file: EXP001_CoDECS_SubGroups_092.tar
+halocatalogue_file: parents_CoDECS_EXP001
+#halocatalogue_file: EXP001_CoDECS_SubGroups_092.tar
 CoDECShosts_file: EXP001_CoDECS_Groups_092.tar
-hubblefile: Hubbleconstants_corrected_3.5
+hubblefile: Hubbleconstants_withcorrections
 powerspectrafile: powerspectra.txt
 snapshot_file: EXP001_CoDECS_snap_092.tar
 gridfile: grid.txt
@@ -10,12 +11,17 @@ gridfile: grid.txt
 # ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
 ##########################################################################
 snapshot: 0
-CoDECS: 1
+CoDECS: 0
 use_grid: 0
 
 # Use snapshot for background?
 ##########################################################################
 use_snapshot_for_background: 0
+##########################################################################
+
+# For calculating pairwise velocities
+##########################################################################
+max_pairwise_distance: 50
 ##########################################################################
 
 ##########################################################################
@@ -28,7 +34,7 @@ smoothing_radius: 1 # Mpc/h
 
 ##########################################################################
 use_local_velocity: 1
-radius_local_group: 100 # Mpc/h
+radius_local_group: 30 # Mpc/h
 ##########################################################################
 
 ##########################################################################
@@ -36,22 +42,22 @@ radius_local_group: 100 # Mpc/h
 use_lonely_halo: 0
 cone_centered_on_halo: 1
 use_CoM: 1
-correct_for_peculiar_velocities: 0
-min_dist: 100 # Mpc/h
+correct_for_peculiar_velocities: 1
+min_dist: 30 # Mpc/h
 survey_radius: 866
 ##########################################################################
 
 ##########################################################################
 # Use parallel processing?
 ##########################################################################
-parallel_processing: 0
+parallel_processing: 1
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions, random_halos, or all
 ##########################################################################
-observer_choice: all
+observer_choice: subhalos
 
 # Specify the number of observers you want to use
-number_of_observers: 0
+number_of_observers: 3000
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
@@ -66,7 +72,7 @@ host_max_m: 5e15
 
 # How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
 ##########################################################################
-observed_halos: all
+observed_halos: centered_around_massive_halo
 SN_mass_min: 1e14
 SN_mass_max: 1e15
 
@@ -74,7 +80,7 @@ SN_mass_max: 1e15
 # Choose what to do:
 
 # Calculate Hubble constants and write them to file?
-calculate_hubble_constants: 0
+calculate_hubble_constants: 1
 # Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
 # 0: no
 # 1: Using Hicken+Jha redshiftdistribution
@@ -89,7 +95,7 @@ map_velocityfield: 0
 # Calculate powerspectra for the observers?
 calculate_powerspectra: 0
 # Calculate pairwise velocities?
-calculate_pairwise_velocities: 1
+calculate_pairwise_velocities: 0
 
 ##########################################################################
 # Should the distances be calculated using the perturbed metric?
@@ -147,6 +153,6 @@ test_isotropy: 0
 
 number_of_SNe: 100
 mind: 60
-maxd: 360
-width: 300
+maxd: 160
+width: 100
 

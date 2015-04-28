@@ -2,10 +2,10 @@
 path: ../cases/Planck512/
 halocatalogue_file: parents_11
 CoDECShosts_file: 
-hubblefile: Hubbleconstants
+hubblefile: Hubbleconstants_withcorrections
 powerspectrafile: powerspectra.txt
 snapshot_file: snapshot_011 
-gridfile: grid_Ng200.txt
+gridfile: grid.txt
 
 # ROCKSTAR halocatalogue (default) or snapshot?
 ##########################################################################
@@ -44,11 +44,11 @@ cone_centered_on_halo: 1
 
 # Use parallel processing?
 ##########################################################################
-parallel_processing: 0
+parallel_processing: 1
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions or random_halos
 ##########################################################################
-observer_choice: subhalos
+observer_choice: random_halos
 
 # Specify the number of observers you want to use
 number_of_observers: 1
