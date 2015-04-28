@@ -12,6 +12,7 @@ import gravitational_instability as gi
 import copy
 import gc
 import matplotlib.pyplot as plt
+import sys
 
 
 plot_field = 0
@@ -81,9 +82,10 @@ def initiate_observers_CoDECSsubhalos(parameters):
     for ob_number, ob_index in enumerate(observer_indices):
         halo = parameters.halos[ob_index]
         position = halo.position
-        observers[ob_number] = hc.Observer(ob_number,position)
+        velocity = halo.velocity
+        mass = halo.mass
+        observers[ob_number] = hc.Observer(ob_index,position,velocity,mass)
         
-#    pdb.set_trace()
     return observers[0:parameters.number_of_observers]
 
 
@@ -121,16 +123,21 @@ def initiate_halos(parameters, halocatalogue):
     halos = [None]*n_halos
 
     if parameters.CoDECS:
+
+        halos = []
         
         massunit = 1e10 # Msun/h 
         for h in range(n_halos):
             position = halocatalogue[h,[9,10,11]]/1000.
-            velocity = halocatalogue[h,[12,13,14]]
             mass = halocatalogue[h,4]*massunit
+            if mass == 0:
+                continue
+            velocity = halocatalogue[h,[12,13,14]]
             ID = int(halocatalogue[h,1])
             ID_host = int(halocatalogue[h,0])
             halo = hc.Halo(position,velocity,mass,ID,ID_host)
-            halos[h] = halo
+            #halos[h] = halo
+            halos.append(halo)
 
  
     elif parameters.use_grid:
@@ -152,18 +159,28 @@ def initiate_halos(parameters, halocatalogue):
         for h in range(n_halos):
             position = halocatalogue[h,[8,9,10]]
             velocity = halocatalogue[h,[11,12,13]]
-            mass = halocatalogue[h,2]
+            if parameters.calculate_pairwise_velocities:
+                mass = halocatalogue[h,20]
+                if (mass < 1e14) | (mass > 1e15):
+                    continue
+            else:
+                mass = halocatalogue[h,2]
             ID = int(halocatalogue[h,0])
             ID_host = int(halocatalogue[h,33])
             halo = hc.Halo(position,velocity,mass,ID,ID_host)
-            if ID_host == -1:
+            if parameters.calculate_pairwise_velocities:
                 halos.append(halo)
             else:
-			    subhalos.append(halo)
+                if ID_host == -1:
+                    halos.append(halo)
+                else:
+			        subhalos.append(halo)
         
         parameters.subhalos = sp.array(subhalos)
     
     parameters.halos = sp.array(halos)    
+    print "The number of saved halos is", len(parameters.halos)
+#    sys.exit("Now you know about the halos!")
     return 1
     
 
@@ -196,7 +213,7 @@ def initiate_observers(parameters):
         if parameters.observer_choice == 'all':
             observers = initiate_observers_all(parameters)
     
-    
+    print "from initiate_observer, observers = ", observers 
     return observers
     
 def initiate_observers_all(parameters):
@@ -204,8 +221,12 @@ def initiate_observers_all(parameters):
     observers = sp.empty(len(parameters.halos),dtype=object)
     for observer_number,halo in enumerate(parameters.halos):
         position = halo.position
-        observers[observer_number] = hc.Observer(observer_number,position)
-        
+        velocity = halo.velocity
+        mass = halo.mass
+        print "observer_mass = ", mass
+        observers[observer_number] = hc.Observer(observer_number,position,velocity,mass)
+
+#    sys.exit("Have initialized observers. Exiting.")    
     return observers
     
 def initiate_observers_from_file(parameters):
@@ -215,7 +236,9 @@ def initiate_observers_from_file(parameters):
     for ob in range(len([observer_positions])):
         
         position = observer_positions[ob,[0,1,2]]/1000
-        observers[ob] = hc.Observer(ob,position)
+        velocity = sp.array([0,0,0])
+        mass = 0
+        observers[ob] = hc.Observer(ob,position,velocity,0)
         
     return observers[0:parameters.number_of_observers]
     
@@ -229,8 +252,10 @@ def initiate_observers_random_halos(parameters):
     for ob_index, ob_number in zip(random_indices,range(len(random_indices))):
         halo = parameters.halos[ob_index]
         position = halo.position
+        velocity = halo.velocity
+        mass = halo.mass
         
-        observers[ob_number] = hc.Observer(ob_number,position)
+        observers[ob_number] = hc.Observer(ob_index,position,velocity,mass)
         
     return observers[0:parameters.number_of_observers]
     
@@ -238,6 +263,9 @@ def initiate_observers_subhalos(parameters):
 
     localgroup_halos = sp.array([halo for halo in parameters.subhalos\
             if (parameters.sub_min_m < halo.mass) & (halo.mass < parameters.sub_max_m)])
+    localgroup_halo_numbers = sp.array([halo_number for halo,halo_number in zip(localgroup_halos,range(len(parameters.subhalos)))\
+            if (parameters.sub_min_m < halo.mass) & (halo.mass < parameters.sub_max_m)])
+
     virgo_halos = sp.array([halo for halo in parameters.halos\
             if (parameters.host_min_m < halo.mass) & (halo.mass < parameters.host_max_m)])
 
@@ -245,21 +273,32 @@ def initiate_observers_subhalos(parameters):
     observer_halos = sp.array([halo for halo in localgroup_halos\
             if halo.ID_host in virgo_IDs])
 
+    observer_halo_numbers = sp.array([halo_number for halo,halo_number in zip(localgroup_halos,localgroup_halo_numbers)\
+            if halo.ID_host in virgo_IDs])
+
     observers = sp.empty(len(observer_halos),dtype=object)    
-    for observer_number, observer_halo in enumerate(observer_halos):
+    print "observer_numbers = ", range(len(observer_halos))
+    print "observer_halos = ", observer_halos
+    print "observer_halo_numbers = ", observer_halo_numbers
+    for observer_number, observer_halo, observer_halo_number in zip(range(len(observer_halos)),observer_halos,observer_halo_numbers):
         position = observer_halo.position
-        observers[observer_number] = hc.Observer(observer_number,position)
+        velocity = observer_halo.velocity
+        mass = observer_halo.mass
+        observers[observer_number] = hc.Observer(observer_halo_number,position,velocity,mass)
+        print "observer_number = ", observer_number
+        print "Here is an observer:", observers[observer_number]
 
     submasses = sp.array([halo.mass for halo in parameters.subhalos])
     hostmasses = sp.array([halo.mass for halo in parameters.halos])
     print "The number of halos is", len(parameters.halos)
     print "The number of subhalos is", len(parameters.subhalos)
 
-    print "The mass range of the subhalos is:", sp.amin(submasses), sp.amax(submasses)
-    print "The mass range of the hosthalos is:", sp.amin(hostmasses), sp.amax(hostmasses)
+    print("The mass range of the subhalos is %0.2f --> %0.2f" % (sp.amin(submasses), sp.amax(submasses)))
+    print("The mass range of the hosthalos is %0.2f --> %0.2f" % (sp.amin(hostmasses), sp.amax(hostmasses)))
     print "The number of localgroup_halos is", len(localgroup_halos)
     print "The number of virgo_halos is", len(virgo_halos)
     print "The number of potential observers is", len(observers)
+    print "from hubble_functions, observers = ", observers
     
     return observers[0:parameters.number_of_observers]
     
@@ -269,13 +308,14 @@ def initiate_observers_random_positions(parameters):
 
     sp.random.seed(0)
     observer_positions = parameters.boxsize*sp.rand(parameters.number_of_observers,3)
-#    print "shape(observer_positions)", observer_positions
     
     observers = [None]*len(observer_positions)
         
     for ob in range(len(observer_positions)):
         position = observer_positions[ob]
-        observers[ob] = hc.Observer(ob,position)
+        position = sp.array([0,0,])
+        mass = 0
+        observers[ob] = hc.Observer(ob,position,velocity,mass)
     
     
     return observers[0:parameters.number_of_observers]
@@ -290,7 +330,9 @@ def initiate_observers_indices_from_file(parameters):
         ob_index = int(ob_index)
         halo = parameters.halos[ob_index]
         position = halo.position
-        observers[ob_number] = hc.Observer(ob_number,position)
+        velocity = halo.velocity
+        mass = halo.mass
+        observers[ob_number] = hc.Observer(ob_number,position,velocity,mass)
         
     return observers[0:parameters.number_of_observers]
 
@@ -416,7 +458,6 @@ def specified_mass_selection_of_halos(parameters,observed_halos):
     chosen_halos_of_specified_mass = [observed_halo for observed_halo in observed_halos\
                                     if (parameters.SN_mass_min < observed_halo.mass)
                                     & (observed_halo.mass < parameters.SN_mass_max)]
-#    pdb.set_trace()
     random.seed(0)
     if len(chosen_halos_of_specified_mass) == 0:
         print "No halos to observe"
@@ -570,7 +611,6 @@ def calculate_Hs_for_these_observed_halos(parameters,list_of_halos):
             r2sum[b] = r2sum[b]+r**2
             halo_counts[b] = halo_counts[b]+1
             b = b-1
-#            pdb.set_trace()
             rb = parameters.bindistances[b]
             
     
@@ -698,7 +738,6 @@ def read_snapshot(parameters):
         N = int(Npart[particle_type])
         massunit = 1e10 #Msun/h
         M = sp.double(Massarr[particle_type])*massunit
-    #    print M
         
         pos = sp.fromfile(f,sp.single,count=N*3)
     
@@ -729,10 +768,6 @@ def read_snapshot(parameters):
             halo = hc.Halo(position,velocity,M,ID,ID_host)
             halos[p] = halo
     
-#    position = sp.array([0,0,0])
-#    velocity = sp.array([0,0,0])
-#    M = N*M*1e16    
-#    halos[p] = hc.Halo(position,velocity,M,ID,ID_host,p)
     parameters.halos = sp.array(halos)    
     return 1
 

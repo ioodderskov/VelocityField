@@ -29,7 +29,6 @@ class Parameters:
         self.parallel_processing = int(param["parallel_processing"])
         
         self.snapshot = int(param["snapshot"])
-#        if self.snapshot:
         self.snapshot_file = self.path+param["snapshot_file"]
 
 
@@ -139,6 +138,8 @@ class Parameters:
         self.halos = []
         self.subhalos = []
 
+        self.max_pairwise_distance = sp.double(param["max_pairwise_distance"])
+
 
 class Halo:
     def __init__(self,position,velocity,mass,ID,ID_host):
@@ -173,9 +174,11 @@ class Cone:
 
 
 class Observer:
-    def __init__(self,observer_number,position):
-        self.observer_number = observer_number
+    def __init__(self,halo_number,position,velocity,mass):
+        self.halo_number = halo_number
         self.position = position
+        self.velocity = velocity 
+        self.mass = mass
         self.local_position = []
         self.local_position_op = []
         self.local_velocity = []
@@ -189,6 +192,8 @@ class Observer:
         self.skyfraction = []
         self.radius_of_greatest_hole = []
         self.observed_radial_peculiar_velocities = []
+        self.radial_distances = []
+        self.pair_masses = []
         
 
  
@@ -287,7 +292,6 @@ class Observer:
             for chosen_halo in chosen_halos:
                 velocity_correction = gi.velocity_from_matterdistribution(parameters,\
                                         chosen_halo.position,survey_positions,survey_masses)
-#                print "Warning! I am sending periodic coordinates to vrm, though I think it should be regular coordinates"
                 chosen_halo.observed_velocity = chosen_halo.velocity
                 chosen_halo.velocity_correction = velocity_correction
                 chosen_halo.velocity = chosen_halo.velocity - velocity_correction
@@ -305,7 +309,6 @@ class Observer:
                 
                 local_velocity_correction = gi.velocity_from_matterdistribution(parameters,\
                                         self.local_position,survey_positions,survey_masses)
-#                print "Warning! I am sending periodic coordinates to vrm, though I think it should be regular coordinates"
                 
                 self.local_velocity_correction = local_velocity_correction
 
@@ -317,42 +320,28 @@ class Observer:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        if parameters.correct_for_peculiar_velocities:
-            
-            if parameters.use_snapshot_for_background:
-                survey_positions,survey_masses = self.survey(parameters,particles)
-
-
-        self.chosen_halos = chosen_halos
-
-        return 1
-
     def calculate_pairwise_velocities(self,parameters):
         
         for halo_number,halo in enumerate(parameters.halos):
-            
-            position_op = hf.periodic_boundaries(parameters,self.position,halo.position)             
-            r, theta, phi = hf.spherical_coordinates(parameters,self.position,
-                                                position_op)
-            if r == 0:
+			
+            if halo_number <= self.halo_number:
                 continue
             
-            vr_peculiar = sp.dot(position_op-self.position,halo.velocity)/r
-            self.observed_radial_peculiar_velocities.append(vr_peculiar)
+            position_op = hf.periodic_boundaries(parameters,self.position,halo.position)             
+            pair_mass = sp.array([self.mass,halo.mass])
+            r, theta, phi = hf.spherical_coordinates(parameters,self.position,
+                                                position_op)
+
+            if r > parameters.max_pairwise_distance:
+                continue
+            
+            relative_velocity = halo.velocity-self.velocity
+            vr_relative = sp.dot(position_op-self.position,relative_velocity)/r
+            #print "vr_relative = ", vr_relative
+            self.observed_radial_peculiar_velocities.append(vr_relative)
+            self.radial_distances.append(r)
+            self.pair_masses.append(pair_mass)
+            #print "pair_mass = ", pair_mass
             
         return 1
             
@@ -426,11 +415,6 @@ class Observer:
         vrs_peculiar = [observed_halo.vr_peculiar for observed_halo in self.chosen]
         
         vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar) 
-#        self.radius_of_largest_hole = pf.find_largest_hole(parameters,vrmap)
-#        outputfile = 'outputfile.txt'
-#        f = open(outputfile,'w')
-#        f.write("radius of largest hole = %s" % self.radius_of_largest_hole)
-#        f.close()
         vrmap = pf.fill_empty_entries(parameters,vrmap)
         
         if parameters.smooth_map:

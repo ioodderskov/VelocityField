@@ -19,6 +19,11 @@ use_grid: 0
 use_snapshot_for_background: 0
 ##########################################################################
 
+# For calculating pairwise velocities
+##########################################################################
+max_pairwise_distance: 50
+##########################################################################
+
 ##########################################################################
 # Should positions, velocities and masses be assigned to a grid?
 assign_to_grid: 0
@@ -52,7 +57,7 @@ parallel_processing: 1
 observer_choice: subhalos
 
 # Specify the number of observers you want to use
-number_of_observers: 100
+number_of_observers: 3000
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
