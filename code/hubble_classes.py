@@ -132,6 +132,7 @@ class Parameters:
         self.directions = hp.pix2ang(nside,range(self.number_of_directions))
 
         self.assign_to_grid = int(param["assign_to_grid"])
+        self.velocities_on_grid = int(param["velocities_on_grid"])
         self.Ng = int(param["Ng"])
         self.smoothing = int(param["smoothing"])    
         self.smoothing_radius = sp.double(param["smoothing_radius"])

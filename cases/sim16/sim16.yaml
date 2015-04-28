@@ -24,9 +24,10 @@ use_snapshot_for_background: 0
 ##########################################################################
 # Should positions, velocities and masses be assigned to a grid?
 assign_to_grid: 0
+velocities_on_grid: 0
 Ng: 10
 smoothing: 1
-smoothing_radius: 1 # Mpc/h
+smoothing_radius: 3 # Mpc/h
 ##########################################################################
 
 ##########################################################################
@@ -66,7 +67,7 @@ sub_max_m: 2.8e12
 
 # How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
 ##########################################################################
-observed_halos: centered_around_massive_halo
+observed_halos: all
 SN_mass_min: 0
 SN_mass_max: 0
 

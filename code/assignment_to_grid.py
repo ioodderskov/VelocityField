@@ -199,16 +199,21 @@ def write_grid_to_file(parameters,gridpoint_positions,gridpoint_rho,gridpoint_ve
                 
     f.close()
     
-def create_density_and_velocity_grid(parameters,halos):
-    positions = sp.array([halo.position for halo in halos])
-    masses = sp.array([halo.mass for halo in halos])
-    velocities = sp.array([halo.velocity for halo in halos])
+def create_density_and_velocity_grid(parameters):
+    positions = sp.array([halo.position for halo in parameters.halos])
+    masses = sp.array([halo.mass for halo in parameters.halos])
+
 
     rho_tsc = tsc(parameters,positions,masses)
     gridpoint_positions, gridpoint_rho = positions_and_values_from_grid(parameters,rho_tsc)
 
-    gridpoint_positions, gridpoint_velocities = velocity_field(parameters,positions,velocities)
+    if parameters.velocities_on_grid:
+        velocities = sp.array([halo.velocity for halo in parameters.halos])
+        gridpoint_positions, gridpoint_velocities = velocity_field(parameters,positions,velocities)
+    else:
+        gridpoint_velocities = sp.zeros_like(gridpoint_positions)
 
     write_grid_to_file(parameters,gridpoint_positions,gridpoint_rho,gridpoint_velocities)    
 
+    
     
