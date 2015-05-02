@@ -51,6 +51,7 @@ class Parameters:
         self.host_max_m = sp.double(param["host_max_m"])
         self.sub_min_m = sp.double(param["sub_min_m"])
         self.sub_max_m = sp.double(param["sub_max_m"])
+
         
         self.observed_halos = param["observed_halos"]
         self.SN_mass_min = sp.double(param["SN_mass_min"])
@@ -140,6 +141,8 @@ class Parameters:
         self.subhalos = []
 
         self.max_pairwise_distance = sp.double(param["max_pairwise_distance"])
+        self.min_halo_mass = sp.double(param["min_halo_mass"])
+        self.max_halo_mass = sp.double(param["max_halo_mass"])
 
 
 class Halo:

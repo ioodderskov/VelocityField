@@ -79,10 +79,18 @@ if parameters.calculate_pairwise_velocities:
             pairwise_velocities.append(velocity)
             radial_distances.append(radial_distance)
             pair_masses.append(pair_mass)
-    
-    sp.save(parameters.path+'pairwise_velocities.npy',sp.array(pairwise_velocities))
-    sp.save(parameters.path+'radial_distances.npy',sp.array(radial_distances))
-    sp.save(parameters.path+'pair_masses.npy',sp.array(pair_masses))
+
+    central_halo_mass = (parameters.min_halo_mass+parameters.max_halo_mass)/2
+
+    if parameters.CoDECS:
+        sp.save(parameters.path+'pairwise_velocities_%0.2e' %central_halo_mass,sp.array(pairwise_velocities))
+        sp.save(parameters.path+'radial_distances_%0.2e' %central_halo_mass,sp.array(radial_distances))
+        sp.save(parameters.path+'pair_masses_%0.2e' %central_halo_mass,sp.array(pair_masses))
+
+    else:
+        sp.save(parameters.path+'ROCKSTAR_pairwise_velocities_%0.2e' %central_halo_mass,sp.array(pairwise_velocities))
+        sp.save(parameters.path+'ROCKSTAR_radial_distances_%0.2e' %central_halo_mass,sp.array(radial_distances))
+        sp.save(parameters.path+'ROCKSTAR_pair_masses_%0.2e' %central_halo_mass,sp.array(pair_masses))
 
 if parameters.correct_for_peculiar_velocities:
 

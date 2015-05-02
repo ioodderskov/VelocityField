@@ -22,6 +22,8 @@ use_snapshot_for_background: 0
 # For calculating pairwise velocities
 ##########################################################################
 max_pairwise_distance: 50
+min_halo_mass: 0
+max_halo_mass: 0
 ##########################################################################
 
 ##########################################################################
@@ -34,7 +36,7 @@ smoothing_radius: 1 # Mpc/h
 
 ##########################################################################
 use_local_velocity: 1
-radius_local_group: 30 # Mpc/h
+radius_local_group: 10 # Mpc/h
 ##########################################################################
 
 ##########################################################################
@@ -43,8 +45,8 @@ use_lonely_halo: 0
 cone_centered_on_halo: 1
 use_CoM: 1
 correct_for_peculiar_velocities: 1
-min_dist: 30 # Mpc/h
-survey_radius: 866
+min_dist: 10 # Mpc/h
+survey_radius: 500
 ##########################################################################
 
 ##########################################################################
@@ -57,7 +59,7 @@ parallel_processing: 1
 observer_choice: subhalos
 
 # Specify the number of observers you want to use
-number_of_observers: 1
+number_of_observers: 1000
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
@@ -153,6 +155,6 @@ test_isotropy: 0
 
 number_of_SNe: 100
 mind: 60
-maxd: 160
-width: 100
+maxd: 100
+width: 40
 
