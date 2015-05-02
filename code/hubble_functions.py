@@ -88,7 +88,6 @@ def load_halocatalogue(parameters,halocatalogue_file):
     if parameters.CoDECS:
         print "Loading CoDECS halocatalogue, file:", halocatalogue_file
         halocatalogue_unsorted = load_CoDECS_catalogue(halocatalogue_file)
-#        halocatalogue_unsorted = load_CoDECS_catalogue(halocatalogue_file)
         halocatalogue = sp.array(sorted(halocatalogue_unsorted,
                                         key=lambda halocatalogue_unsorted: halocatalogue_unsorted[3]))
 
@@ -137,9 +136,12 @@ def initiate_halos(parameters, halocatalogue):
         massunit = 1e10 # Msun/h 
         for h in range(n_halos):
             position = halocatalogue[h,[9,10,11]]/1000.
-            mass = halocatalogue[h,4]*massunit
-            if mass == 0:
-                continue
+            if parameters.calculate_pairwise_velocities:
+                mass = halocatalogue[h,4]*massunit
+                if (mass < parameters.min_halo_mass) | (parameters.max_halo_mass < mass):
+                    continue
+            else:
+                mass = halocatalogue[h,3]*massunit
             velocity = halocatalogue[h,[12,13,14]]
             ID = int(halocatalogue[h,1])
             ID_host = int(halocatalogue[h,0])
@@ -169,7 +171,7 @@ def initiate_halos(parameters, halocatalogue):
             velocity = halocatalogue[h,[11,12,13]]
             if parameters.calculate_pairwise_velocities:
                 mass = halocatalogue[h,20]
-                if (mass < 1e14) | (mass > 1e15):
+                if (mass < parameters.min_halo_mass) | (parameters.max_halo_mass < mass):
                     continue
             else:
                 mass = halocatalogue[h,2]
@@ -187,7 +189,11 @@ def initiate_halos(parameters, halocatalogue):
         parameters.subhalos = sp.array(subhalos)
     
     parameters.halos = sp.array(halos)    
+    masses = sp.array([halo.mass for halo in parameters.halos])
     print "The number of saved halos is", len(parameters.halos)
+    print "min_halo_mass, max_halo_mass = ", parameters.min_halo_mass, parameters.max_halo_mass
+    print "min_mass, max_mass in catalogue = ", sp.amin(masses), sp.amax(masses)  
+
 #    sys.exit("Now you know about the halos!")
     return 1
     
@@ -231,7 +237,6 @@ def initiate_observers_all(parameters):
         position = halo.position
         velocity = halo.velocity
         mass = halo.mass
-        print "observer_mass = ", mass
         observers[observer_number] = hc.Observer(observer_number,position,velocity,mass)
 
 #    sys.exit("Have initialized observers. Exiting.")    
@@ -285,16 +290,11 @@ def initiate_observers_subhalos(parameters):
             if halo.ID_host in virgo_IDs])
 
     observers = sp.empty(len(observer_halos),dtype=object)    
-    print "observer_numbers = ", range(len(observer_halos))
-    print "observer_halos = ", observer_halos
-    print "observer_halo_numbers = ", observer_halo_numbers
     for observer_number, observer_halo, observer_halo_number in zip(range(len(observer_halos)),observer_halos,observer_halo_numbers):
         position = observer_halo.position
         velocity = observer_halo.velocity
         mass = observer_halo.mass
         observers[observer_number] = hc.Observer(observer_halo_number,position,velocity,mass)
-        print "observer_number = ", observer_number
-        print "Here is an observer:", observers[observer_number]
 
     submasses = sp.array([halo.mass for halo in parameters.subhalos])
     hostmasses = sp.array([halo.mass for halo in parameters.halos])

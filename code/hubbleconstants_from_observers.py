@@ -56,6 +56,8 @@ print "The ratios ranges from", sp.amin(observed_velocity_norms/velocity_correct
 factor = sp.mean(observed_velocity_norms/velocity_correction_norms)
 print "The mean of the ratios is", factor
 #print "abs(observed_velocities)/abs(velocity_corrections) = ",sp.mean(sp.absolute(observed_velocities),axis=0)/sp.mean(sp.absolute(velocity_corrections),axis=0)
+factor = 1
+print "I have set factor =" , factor
 
 Hubbleconstants_notcorrected = vrs_plus_hubbleflow/rs
 Hubbleconstants_corrected = (vrs_plus_hubbleflow-factor*vrs_correction)/rs
