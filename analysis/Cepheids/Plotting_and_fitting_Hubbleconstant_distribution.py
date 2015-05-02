@@ -11,7 +11,7 @@ import scipy.integrate as integrate
 os.chdir('/home/io/Dropbox/Projekter/Hubble/VelocityField/code/')
 #model = 'EXP008e3'
 #case = 'CoDECS_'+model
-case = 'CoDECS_LCDM'
+case = 'CoDECS_EXP003'
 path = '../cases/'+case+'/'
 data = sp.loadtxt(path+'Hubbleconstants.txt')
 H_notcorrected = data[:,1]/100
