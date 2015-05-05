@@ -2,6 +2,8 @@
 #PBS -l  nodes=1:ppn=32 -q qcap
 #PBS -l walltime=1000:00:00
 #PBS -N hubvar
+#PBS -m e
+#PBS -M io.odderskov@gmail.com
 export PATH=/com/openmpi-1.2.5/bin:$PATH
 export LD_LIBRARY_PATH=/com/intel/mkl/10.0.1.014/lib/em64t:/com/openmpi-1.2.5/lib:/com/intel/fce/10.1.017/lib:/com/gsl/1.15/lib
 
@@ -12,7 +14,31 @@ export LD_LIBRARY_PATH=${opmpi}:${intel}:$LD_LIBRARY_PATH
 cd $PBS_O_WORKDIR
 export OMP_NUM_THREADS=32
 
-python moments_of_pairwise_velocities.py
+#python hubbleconstants_from_observers.py CoDECS_LCDM 5.0
+#python hubbleconstants_from_observers.py CoDECS_LCDM 10.0
+#python hubbleconstants_from_observers.py CoDECS_LCDM 20.0
+#python hubbleconstants_from_observers.py CoDECS_LCDM 30.0
+#
+#python hubbleconstants_from_observers.py CoDECS_EXP003 5.0
+#python hubbleconstants_from_observers.py CoDECS_EXP003 10.0
+#python hubbleconstants_from_observers.py CoDECS_EXP003 20.0
+#python hubbleconstants_from_observers.py CoDECS_EXP003 30.0
+#python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_5Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_10Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_20Mpch-1.yaml
+python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_30Mpch-1.yaml
+
+#python hubble.py ../cases/CoDECS_EXP003/EXP003_min_dist_5Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_EXP003/EXP003_min_dist_10Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_EXP003/EXP003_min_dist_20Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_EXP003/EXP003_min_dist_30Mpch-1.yaml
+
+#python hubble.py ../cases/CoDECS_EXP001/EXP001_min_dist_5Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_EXP001/EXP001_min_dist_10Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_EXP001/EXP001_min_dist_20Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_EXP001/EXP001_min_dist_30Mpch-1.yaml
+
+#python moments_of_pairwise_velocities.py
 
 #python hubble.py ../cases/Planck512/Planck512_withcorrections.yaml
 #python hubble.py ../cases/Planck512/Planck512.yaml

@@ -10,6 +10,7 @@ def observe_and_analyse(observer,parameters,particles):
         observer.calculate_pairwise_velocities(parameters)
     else:
         observer.observe(parameters,particles)
+
     
     if parameters.calculate_hubble_constants:
         observer.do_hubble_analysis(parameters)
