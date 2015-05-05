@@ -8,14 +8,7 @@ import scipy as sp
 import scipy.integrate as integrate
 #import pdb
 
-os.chdir('/home/io/Dropbox/Projekter/Hubble/VelocityField/code/')
-#model = 'EXP008e3'
-#case = 'CoDECS_'+model
-case = 'CoDECS_EXP003'
-path = '../cases/'+case+'/'
-data = sp.loadtxt(path+'Hubbleconstants.txt')
-H_notcorrected = data[:,1]/100
-H_corrected = data[:,2]/100
+
 
 
 
@@ -127,7 +120,14 @@ def make_histogram(ax1,H,color,alpha):
     #plt.savefig(path+'H_distribution_coma_'+case+'.pdf')
     #plt.savefig('/home/io/Desktop/H_distribution_nocorrections.pdf')
     
+    return mu, sigma
     
+
+os.chdir('/home/io/Dropbox/Projekter/Hubble/VelocityField/code/')
+#model = 'EXP008e3'
+#case = 'CoDECS_'+model
+case = 'CoDECS_EXP003'
+path = '../cases/'+case+'/'
     
 
 plt.figure(figsize=(6,5))
@@ -140,8 +140,32 @@ plt.title(case)
 plt.axis([0.9,1.1,0,0.4])
 plt.plot([1,1],[0,0.4],'k--',linewidth=1.5)
 
-    
-make_histogram(ax1,H_notcorrected,'g',0.4)
-make_histogram(ax1,H_corrected,'b',0.4)
+#min_dists = ['5.0','10.0','20.0','30.0']
+min_dists = ['30.0']
+mus_notcorrected = sp.empty(len(min_dists))
+sigmas_notcorrected = sp.empty(len(min_dists))
+mus_corrected = sp.empty(len(min_dists))
+sigmas_corrected = sp.empty(len(min_dists))
 
-plt.savefig("/home/io/Desktop/distribution_of_hubbleconstants"+case+".pdf")
+for i, min_dist in enumerate(min_dists):
+    data = sp.loadtxt(path+min_dist+'Hubbleconstants.txt')
+    H_notcorrected = data[:,1]/100
+    H_corrected = data[:,2]/100
+        
+    mu_notcorrected, sigma_notcorrected = make_histogram(ax1,H_notcorrected,'g',0.4)
+    mu_corrected, sigma_corrected = make_histogram(ax1,H_corrected,'b',0.4)
+
+    mus_notcorrected[i] = mu_notcorrected
+    sigmas_notcorrected[i] = sigma_notcorrected
+
+    mus_corrected[i] = mu_corrected
+    sigmas_corrected[i] = sigma_corrected
+
+plt.savefig("/home/io/Desktop/distribution_of_hubbleconstants"+case+str(min_dist)+".pdf")
+
+plt.figure()
+
+plt.plot(min_dists, sp.exp(mus_notcorrected),'g')
+plt.plot(min_dists, sp.exp(sigmas_notcorrected),'g')
+plt.plot(min_dists, sp.exp(mus_notcorrected),'b')
+plt.plot(min_dists, sp.exp(sigmas_notcorrected),'b')
