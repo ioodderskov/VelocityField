@@ -1,0 +1,160 @@
+---
+path: ../cases/CoDECS_LCDM/
+halocatalogue_file: parents_CoDECS_LCDM
+#halocatalogue_file: LCDM_CoDECS_SubGroups_092.tar
+CoDECShosts_file: LCDM_CoDECS_Groups_092.tar
+hubblefile: Hubbleconstants_withcorrections
+powerspectrafile: powerspectra.txt
+snapshot_file: LCDM_CoDECS_snap_092.tar
+gridfile: grid.txt
+
+# ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
+##########################################################################
+snapshot: 0
+CoDECS: 0
+use_grid: 0
+
+# Use snapshot for background?
+##########################################################################
+use_snapshot_for_background: 0
+##########################################################################
+
+# For calculating pairwise velocities
+##########################################################################
+max_pairwise_distance: 100
+min_halo_mass: 4.00E+13
+max_halo_mass: 1.00E+15
+##########################################################################
+
+##########################################################################
+# Should positions, velocities and masses be assigned to a grid?
+assign_to_grid: 0
+Ng: 10
+smoothing: 1
+smoothing_radius: 1 # Mpc/h
+##########################################################################
+
+##########################################################################
+use_local_velocity: 1
+radius_local_group: 30 # Mpc/h
+##########################################################################
+
+##########################################################################
+# Correct for the velocity from the matter distribution?
+use_lonely_halo: 0
+cone_centered_on_halo: 1
+use_CoM: 1
+correct_for_peculiar_velocities: 0
+min_dist: 30 # Mpc/h
+survey_radius: 866
+##########################################################################
+
+##########################################################################
+# Use parallel processing?
+##########################################################################
+parallel_processing: 1
+
+# Observer selection: indices_from_file, from_file, subhalos, random_positions, random_halos, or all
+##########################################################################
+observer_choice: all
+
+# Specify the number of observers you want to use
+number_of_observers: 0
+
+# If from_file, specify the file here
+observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
+# If indices_from_file, specify the file here
+observer_indices_file: observer_indices.txt
+
+# If subhalos, specify the mass-requirements here
+sub_min_m: 1e12
+sub_max_m: 1e13
+host_min_m: 5e14
+host_max_m: 5e15
+
+# How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
+##########################################################################
+observed_halos: all
+SN_mass_min: 1e14
+SN_mass_max: 1e15
+
+##########################################################################
+# Choose what to do:
+
+# Calculate Hubble constants and write them to file?
+calculate_hubble_constants: 0
+# Calculate the standard deviation of the probability distribution of the deviation in the Hubble constant?
+# 0: no
+# 1: Using Hicken+Jha redshiftdistribution
+# 2: Using mock redshiftdestribution
+calculate_std_of_deviation: 0
+# Calculate the redshiftdistribution for a specific observer and compare it to a real one?
+calculate_redshiftdistribution: 0
+# Make Hubble diagram for one observer?
+make_hubblediagram: 0
+# Create a map of the velocityfield?
+map_velocityfield: 0
+# Calculate powerspectra for the observers?
+calculate_powerspectra: 0
+# Calculate pairwise velocities?
+calculate_pairwise_velocities: 1
+
+##########################################################################
+# Should the distances be calculated using the perturbed metric?
+distances_from_perturbed_metric: 0
+# In that case, which file describes the potential?
+potential_file: ../cases/Planck1024_box1024/potential.txt
+
+# Choose whether we should vary the number of supernovae (in that case, the distance aren't varied)
+##########################################################################
+vary_number_of_SNe: 0
+# If the number of SNe is varied, specify the details below 
+min_number_of_SNe: 2
+max_number_of_SNe: 240
+step_number_of_SNe: 10
+##########################################################################
+
+
+# For the powerspectra calculation
+##########################################################################
+nside: 32
+lmax: 64
+smooth_map: 1
+smooth_largest_hole: 0
+preset_smoothinglength: 1
+smoothing_fwhm: 0.1 # rad
+##########################################################################
+
+# Choose whether to vary the skyfraction 
+##########################################################################
+vary_skyfraction: 0
+number_of_cones: 2
+fraction_start: 0.1
+fraction_stop: 1
+fraction_step: 0.1
+##########################################################################
+
+# Choose whether to use lightcone snapshots
+##########################################################################
+use_lightcone: 0
+halocatalogue_filebase:
+##########################################################################
+
+
+
+skyfraction: 1
+boxsize: 1000
+# WMAP 7 parameters
+omegam: 0.272
+h: 0.702
+
+##########################################################################
+# Should the direction of the cone be varied?
+test_isotropy: 0
+##########################################################################
+
+number_of_SNe: 100
+mind: 60
+maxd: 160
+width: 100
+
