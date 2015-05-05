@@ -67,7 +67,7 @@ if parameters.calculate_powerspectra:
 if parameters.observer_choice == 'all':
     print "Not saving the observers - there are too many!"
 else:
-    sp.save(parameters.path+'observers.npy',observers)
+    sp.save(parameters.path+str(parameters.min_dist)+'observers.npy',observers)
 
 if parameters.calculate_pairwise_velocities:
 

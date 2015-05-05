@@ -4,14 +4,16 @@ from scipy.optimize import leastsq
 import sys
 from scipy import linalg
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 3:
     print "Wrong number of arguments"
 
 case = sys.argv[1]
+min_dist = sys.argv[2]
 path = '../cases/'+case+'/'
+#min_dist  = '5.0'
 
 
-observers_file = path+'observers.npy'
+observers_file = path+min_dist+'observers.npy'
 observers = sp.load(observers_file)
 
 N = len(observers)
@@ -23,7 +25,11 @@ rs = sp.zeros(N)
 observed_velocities = []
 velocity_corrections = []
 
+print "len(observers) = ", len(observers)
+
 for index,observer in enumerate(observers):
+    if len(observer.chosen_halos) == 0:
+        continue
     position_op = observer.chosen_halos[0].position_op
     r = observer.chosen_halos[0].r
     v_peculiar_observed = observer.chosen_halos[0].observed_velocity
@@ -56,8 +62,8 @@ print "The ratios ranges from", sp.amin(observed_velocity_norms/velocity_correct
 factor = sp.mean(observed_velocity_norms/velocity_correction_norms)
 print "The mean of the ratios is", factor
 #print "abs(observed_velocities)/abs(velocity_corrections) = ",sp.mean(sp.absolute(observed_velocities),axis=0)/sp.mean(sp.absolute(velocity_corrections),axis=0)
-factor = 1
-print "I have set factor =" , factor
+#factor = 1
+#print "I have set factor =" , factor
 
 Hubbleconstants_notcorrected = vrs_plus_hubbleflow/rs
 Hubbleconstants_corrected = (vrs_plus_hubbleflow-factor*vrs_correction)/rs
@@ -65,7 +71,7 @@ Hubbleconstants_corrected = (vrs_plus_hubbleflow-factor*vrs_correction)/rs
 print "The mean and variance of the non-corrected Hubbleconstants are", sp.mean(Hubbleconstants_notcorrected), sp.std(Hubbleconstants_notcorrected)
 print "The mean and variance of the corrected Hubbleconstants are", sp.mean(Hubbleconstants_corrected), sp.std(Hubbleconstants_corrected)
 
-f = open(path+'Hubbleconstants.txt','w')
+f = open(path+min_dist+'Hubbleconstants.txt','w')
 f.write("#observer\t not corrected\t corrected\n")
 for obs,H_notcorr,H_corr in zip(range(len(observers)),Hubbleconstants_notcorrected,Hubbleconstants_corrected):
     f.write("%s\t%0.3f\t%0.3f\n" % (obs,H_notcorr,H_corr))

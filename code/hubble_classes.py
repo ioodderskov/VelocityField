@@ -183,11 +183,11 @@ class Observer:
         self.position = position
         self.velocity = velocity 
         self.mass = mass
+        self.chosen_halos = []
         self.local_position = []
         self.local_position_op = []
         self.local_velocity = []
         self.local_velocity_correction = []
-        self.chosen_halos = []
         self.cones = []
         self.Hubbleconstants = []
         self.ls = []
@@ -242,6 +242,7 @@ class Observer:
             if (parameters.vary_skyfraction == 0) & (parameters.test_isotropy == 0):
                 theta_max = sp.arccos(1-2*parameters.skyfraction)
                 if theta > theta_max:
+                    print "theta = ", theta, "and theta_max =", theta_max
                     continue
             
 
@@ -257,7 +258,7 @@ class Observer:
 
 
         if len(observed_halos) == 0:
-            print "No observed halos for this observer"
+            print "(observer.observe): No observed halos for this observer"
             return 0
 
         chosen_halos = hf.choose_halos(parameters,observed_halos)
@@ -316,10 +317,18 @@ class Observer:
                 
                 self.local_velocity_correction = local_velocity_correction
 
+
      
-	    self.chosen_halos = chosen_halos
-
-
+        self.chosen_halos = chosen_halos
+        #print "chosen_halos = ", chosen_halos
+        #print "self.chosen_halos = ", self.chosen_halos
+        #print "finishing observe. len(self.chosen_halos) = ", len(self.chosen_halos)
+        #print "finishing observe. len(chosen_halos) = ", len(chosen_halos)
+        #print "type(self.chosen_halos) = ", type(self.chosen_halos)
+        #print "type(chosen_halos) = ", type(chosen_halos)  
+                
+        
+        
         return 1
 
 
@@ -392,7 +401,7 @@ class Observer:
     def do_hubble_analysis(self,parameters):
         
         if len(self.chosen_halos) == 0:
-            print "No observed halos for this observer"
+            print "(do_hubble_analysis): No observed halos for this observer"
             self.Hubbleconstants = sp.ones_like(parameters.bindistances)*sp.nan
             return 0
                 

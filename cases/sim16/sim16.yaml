@@ -1,6 +1,6 @@
 ---
 path: ../cases/sim16/
-halocatalogue_file: parents_11_fake
+halocatalogue_file: parents_11
 CoDECShosts_file:
 hubblefile: Hubbleconstants.txt
 powerspectrafile: powerspectra.txt
@@ -24,6 +24,8 @@ use_snapshot_for_background: 0
 # For calculating pairwise velocities
 ##########################################################################
 max_pairwise_distance: 10
+min_halo_mass: 0
+max_halo_mass: 0
 ##########################################################################
 
 ##########################################################################
@@ -36,7 +38,7 @@ smoothing_radius: 3 # Mpc/h
 ##########################################################################
 
 ##########################################################################
-use_local_velocity: 1
+use_local_velocity: 0
 radius_local_group: 3 # Mpc/h
 ##########################################################################
 
@@ -50,14 +52,14 @@ survey_radius: 12
 
 # Use parallel processing?
 ##########################################################################
-parallel_processing: 1
+parallel_processing: 0
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions, random_halos, all
 ##########################################################################
-observer_choice: subhalos
+observer_choice: random_halos
 
 # Specify the number of observers you want to use
-number_of_observers: 3
+number_of_observers: 10
 
 # If from_file, specify the file here
 observerfile: ../cases/sim16/howdy16.txt
@@ -72,7 +74,7 @@ sub_max_m: 2.8e12
 
 # How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
 ##########################################################################
-observed_halos: all
+observed_halos: centered_around_massive_halo
 SN_mass_min: 0
 SN_mass_max: 0
 

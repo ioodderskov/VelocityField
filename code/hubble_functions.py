@@ -227,7 +227,6 @@ def initiate_observers(parameters):
         if parameters.observer_choice == 'all':
             observers = initiate_observers_all(parameters)
     
-    print "from initiate_observer, observers = ", observers 
     return observers
     
 def initiate_observers_all(parameters):
@@ -451,9 +450,14 @@ def find_halos_around_massive_halo(parameters,observed_halos):
     # Since the halos are sorted according to mass, this should be the most massive halo                    
     center_halo = central_strip_halos[-1]
 
+    assert center_halo.mass >= central_strip_halos[0].mass
+
     for central_strip_halo in central_strip_halos:   
-        if linalg.norm(center_halo.position_op-central_strip_halo.position_op)< parameters.min_dist:
+        if linalg.norm(center_halo.position_op-central_strip_halo.position_op) <= parameters.min_dist:
             halos_around_halo.append(central_strip_halo)
+
+    print "len(central_strip_halos) = ", len(central_strip_halos)
+    print "len(halos_around_halo) = ", len(halos_around_halo)
 
 
     return halos_around_halo
