@@ -26,7 +26,7 @@ parameterfile = sys.argv[1]
 parameters = hc.Parameters(parameterfile)
 
 
-if parameters.snapshot:
+if parameters.data_type == "snapshot":
     hf.read_snapshot(parameters) # technically, its particles, not halos, in this case. But never mind.
     observers = hf.initiate_observers(parameters)
 
@@ -82,7 +82,7 @@ if parameters.calculate_pairwise_velocities:
 
     central_halo_mass = (parameters.min_halo_mass+parameters.max_halo_mass)/2
 
-    if parameters.CoDECS:
+    if parameters.data_type == "CoDECS":
         sp.save(parameters.path+'pairwise_velocities_%0.2e' %central_halo_mass,sp.array(pairwise_velocities))
         sp.save(parameters.path+'radial_distances_%0.2e' %central_halo_mass,sp.array(radial_distances))
         sp.save(parameters.path+'pair_masses_%0.2e' %central_halo_mass,sp.array(pair_masses))

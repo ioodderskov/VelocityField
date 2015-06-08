@@ -1,0 +1,118 @@
+---
+##########################################################################
+        # Path and choices for how and what to run        
+##########################################################################
+path: ../cases/sim16/
+parallel_processing: 0
+data_type: ROCKSTAR # ROCKSTAR (default), CoDECS, snapshot or grid
+##########################################################################
+
+        
+        
+##########################################################################
+        # Halo catalogues
+##########################################################################
+halocatalogue_file: parents_11
+CoDECShosts_file:
+##########################################################################
+
+        
+        
+##########################################################################
+        # Parameters for the simulation/catalogue
+##########################################################################
+boxsize: 16
+omegam: 0.306843
+h: 0.678
+##########################################################################
+
+        
+        
+##########################################################################
+        # Division in bins
+##########################################################################
+mind: 2
+maxd: 10
+width: 8
+##########################################################################
+
+        
+        
+##########################################################################
+        # Snapshots
+##########################################################################
+snapshot_file: snapshot_011
+##########################################################################
+
+        
+        
+##########################################################################
+        # Grid file (both read and write)
+##########################################################################
+#The gridfile is both the one that will be written if assign_to_grid = 1, 
+#and the one that will be read if use_grid = 1
+gridfile: grid.txt
+##########################################################################
+
+        
+        
+##########################################################################
+        # Outputfiles
+##########################################################################
+powerspectrafile: powerspectra.txt
+##########################################################################
+
+        
+        
+##########################################################################
+        # Choices for the observers        
+##########################################################################
+#indices_from_file, from_file, subhalos, random_positions, random_halos, all
+observer_choice: random_halos 
+observerfile: ../cases/sim16/howdy16.txt # If from_file, specify the file here
+observer_indices_file: observer_indices.txt # If indices_from_file, specify the file here
+number_of_observers: 1 # Specify the number of observers you want to use
+# If subhalos, specify the mass-requirements here
+host_min_m: 1.1e13 
+host_max_m: 2.3e13
+sub_min_m: 1.6e12
+sub_max_m: 2.8e12
+##########################################################################
+
+        
+        
+##########################################################################
+        # Choices for the observed halos
+##########################################################################
+use_CoM: 1
+number_of_SNe: 10
+# How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
+observed_halos: centered_around_massive_halo
+SN_mass_min: 0
+SN_mass_max: 0
+##########################################################################
+
+        
+        
+##########################################################################
+        # Assigning values to a grid
+##########################################################################
+# Should positions, velocities and masses be assigned to a grid?
+assign_to_grid: 0
+#velocities_on_grid: 0
+Ng: 10
+smoothing: 1
+smoothing_radius: 3 # Mpc/h
+##########################################################################
+
+        
+        
+##########################################################################
+        # Angular powerspectra for the radial peculiar velocities
+##########################################################################
+# Create a map of the velocityfield?
+map_velocityfield: 0
+calculate_powerspectra: 0
+nside: 4
+lmax: 8
+##########################################################################

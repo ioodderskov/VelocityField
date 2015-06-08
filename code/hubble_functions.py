@@ -85,7 +85,7 @@ def load_grid(gridfile):
 # Load the halo catalogue
 def load_halocatalogue(parameters,halocatalogue_file):
     
-    if parameters.CoDECS:
+    if parameters.datatype == "CoDECS":
         print "Loading CoDECS halocatalogue, file:", halocatalogue_file
         halocatalogue_unsorted = load_CoDECS_catalogue(halocatalogue_file)
         halocatalogue = sp.array(sorted(halocatalogue_unsorted,
@@ -129,7 +129,7 @@ def initiate_halos(parameters, halocatalogue):
     n_halos = len(halocatalogue)
     halos = [None]*n_halos
 
-    if parameters.CoDECS:
+    if parameters.data_type == "CoDECS":
 
         halos = []
         
@@ -210,7 +210,7 @@ def initiate_observers(parameters):
     
         if parameters.observer_choice == 'subhalos':
             
-            if parameters.CoDECS:
+            if parameters.data_type == "CoDECS":
                 observers = initiate_observers_CoDECSsubhalos(parameters)
                 
             else:
@@ -412,6 +412,24 @@ def distance_correction_from_perturbed_metric(parameters,xobs,yobs,zobs,xop,yop,
         center_of_mass(parameters,observer_position,chosen_halos)        
                  
     r_CoM, theta_CoM, phi_CoM = spherical_coordinates(parameters,observer_position,position_CoM)
+    
+    
+def potential_on_grid(distances_from_perturbed_metric,potential_file):
+    if distances_from_perturbed_metric:
+        potential_from_file = sp.loadtxt(potential_file)
+        grid = int(sp.ceil(len(potential_from_file)**(1/3)))
+        potential = sp.zeros((grid,grid,grid))
+        row = 0
+        for i in range(grid):
+            for j in range(grid):
+                for k in range(grid):
+                    potential[i][j][k] = potential_from_file[row][3]
+                    row = row+1
+    
+        potential_min = potential.min()
+        potential_max = potential.max()
+    
+    return potential, potential_min, potential_max
 
 
 
@@ -699,7 +717,7 @@ def calculate_Hs_for_varying_number_of_SNe(parameters,observed_halos):
 
 def read_snapshot(parameters):
 
-    if parameters.CoDECS:
+    if parameters.data_type == "CoDECS":
         tar = tarfile.open(parameters.snapshot_file,mode='r')
         for i,snapshot in enumerate(tar.getmembers()):
             f=tar.extractfile(snapshot)
@@ -768,7 +786,7 @@ def read_snapshot(parameters):
             particle = hc.Halo(position,velocity,M,ID,ID_host)
             particles[p] = particle
     
-    if parameters.snapshot:
+    if parameters.data_type == "snapshot":
         parameters.halos = sp.array(particles)    
     return sp.array(particles)
 

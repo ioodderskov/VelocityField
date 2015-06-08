@@ -1,0 +1,100 @@
+---
+##########################################################################
+        # Path and choices for how and what to run        
+##########################################################################
+path: ../cases/sim16/
+parallel_processing: 0
+data_type: ROCKSTAR # ROCKSTAR (default), CoDECS, snapshot or grid
+##########################################################################
+
+        
+        
+##########################################################################
+        # Halo catalogues
+##########################################################################
+halocatalogue_file: parents_11
+##########################################################################
+
+        
+        
+##########################################################################
+        # Parameters for the simulation/catalogue
+##########################################################################
+boxsize: 16
+omegam: 0.306843
+h: 0.678
+##########################################################################
+
+        
+        
+##########################################################################
+        # Division in bins
+##########################################################################
+mind: 2
+maxd: 10
+width: 8
+##########################################################################
+
+
+        
+##########################################################################
+        # Snapshots
+##########################################################################
+snapshot_file: snapshot_011
+##########################################################################
+
+        
+        
+##########################################################################
+        # Outputfiles
+##########################################################################
+hubblefile: Hubbleconstants.txt
+##########################################################################
+
+        
+        
+##########################################################################
+        # Correction for peculiar velocities (using first order pertubation theory)
+##########################################################################
+use_snapshot_for_background: 0
+correct_for_peculiar_velocities: 1
+survey_radius: 12
+min_dist: 3 # Mpc/h
+plot_velocity_field: 3 # The velocity field will be plottet for the first [number] observers
+##########################################################################
+
+        
+        
+##########################################################################
+        # Cepheids, tracking of local motion        
+##########################################################################
+use_local_velocity: 0
+radius_local_group: 3 # Mpc/h
+##########################################################################
+        
+        
+        
+##########################################################################
+        # Choices for the observers        
+##########################################################################
+#indices_from_file, from_file, subhalos, random_positions, random_halos, all
+observer_choice: random_halos 
+observerfile: ../cases/sim16/howdy16.txt # If from_file, specify the file here
+observer_indices_file: observer_indices.txt # If indices_from_file, specify the file here
+number_of_observers: 1 # Specify the number of observers you want to use
+# If subhalos, specify the mass-requirements here
+host_min_m: 1.1e13 
+host_max_m: 2.3e13
+sub_min_m: 1.6e12
+sub_max_m: 2.8e12
+##########################################################################
+
+        
+        
+##########################################################################
+        # Choices for the observed halos
+##########################################################################
+use_CoM: 1
+# How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
+observed_halos: centered_around_massive_halo
+##########################################################################
