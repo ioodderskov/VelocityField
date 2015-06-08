@@ -174,7 +174,7 @@ def initiate_halos(parameters, halocatalogue):
                 if (mass < parameters.min_halo_mass) | (parameters.max_halo_mass < mass):
                     continue
             else:
-                mass = halocatalogue[h,2]
+                mass = halocatalogue[h,20]
             ID = int(halocatalogue[h,0])
             ID_host = int(halocatalogue[h,33])
             halo = hc.Halo(position,velocity,mass,ID,ID_host)

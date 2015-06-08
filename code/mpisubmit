@@ -1,7 +1,7 @@
 #!/bin/sh
 #PBS -l  nodes=1:ppn=32 -q qcap
 #PBS -l walltime=1000:00:00
-#PBS -N hubvar
+#PBS -N hubvar_SUGRA003
 #PBS -m e
 #PBS -M io.odderskov@gmail.com
 export PATH=/com/openmpi-1.2.5/bin:$PATH
@@ -23,15 +23,27 @@ export OMP_NUM_THREADS=32
 #python hubbleconstants_from_observers.py CoDECS_EXP003 10.0
 #python hubbleconstants_from_observers.py CoDECS_EXP003 20.0
 #python hubbleconstants_from_observers.py CoDECS_EXP003 30.0
+
+#python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_0Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_0.05Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_0.1Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_1Mpch-1.yaml
 #python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_5Mpch-1.yaml
 #python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_10Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_15Mpch-1.yaml
 #python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_20Mpch-1.yaml
-python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_30Mpch-1.yaml
 
+#python hubble.py ../cases/CoDECS_EXP003/EXP003_min_dist_0.0Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_EXP003/EXP003_min_dist_0.1Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_EXP003/EXP003_min_dist_1Mpch-1.yaml
 #python hubble.py ../cases/CoDECS_EXP003/EXP003_min_dist_5Mpch-1.yaml
 #python hubble.py ../cases/CoDECS_EXP003/EXP003_min_dist_10Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_EXP003/EXP003_min_dist_15Mpch-1.yaml
 #python hubble.py ../cases/CoDECS_EXP003/EXP003_min_dist_20Mpch-1.yaml
-#python hubble.py ../cases/CoDECS_EXP003/EXP003_min_dist_30Mpch-1.yaml
+
+#python hubble.py ../cases/CoDECS_EXP001/EXP001_min_dist_5Mpch-1.yaml
+#python hubble.py ../cases/CoDECS_EXP008e3/EXP008e3_min_dist_5Mpch-1.yaml
+python hubble.py ../cases/CoDECS_SUGRA003/SUGRA003_min_dist_5Mpch-1.yaml
 
 #python hubble.py ../cases/CoDECS_EXP001/EXP001_min_dist_5Mpch-1.yaml
 #python hubble.py ../cases/CoDECS_EXP001/EXP001_min_dist_10Mpch-1.yaml
