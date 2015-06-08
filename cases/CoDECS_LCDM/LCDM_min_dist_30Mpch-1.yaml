@@ -1,7 +1,7 @@
 ---
 path: ../cases/CoDECS_LCDM/
-halocatalogue_file: parents_CoDECS_LCDM
-#halocatalogue_file: LCDM_CoDECS_SubGroups_092.tar
+#halocatalogue_file: parents_CoDECS_LCDM
+halocatalogue_file: LCDM_CoDECS_SubGroups_092.tar
 CoDECShosts_file: LCDM_CoDECS_Groups_092.tar
 hubblefile: Hubbleconstants_withcorrections
 powerspectrafile: powerspectra.txt
@@ -11,7 +11,7 @@ gridfile: grid.txt
 # ROCKSTAR halocatalogue (default), snapshot, or CoDECS catalogue?
 ##########################################################################
 snapshot: 0
-CoDECS: 0
+CoDECS: 1
 use_grid: 0
 
 # Use snapshot for background?
@@ -52,14 +52,14 @@ survey_radius: 500
 ##########################################################################
 # Use parallel processing?
 ##########################################################################
-parallel_processing: 1
+parallel_processing: 0
 
 # Observer selection: indices_from_file, from_file, subhalos, random_positions, random_halos, or all
 ##########################################################################
 observer_choice: subhalos
 
 # Specify the number of observers you want to use
-number_of_observers: 1000
+number_of_observers: 3
 
 # If from_file, specify the file here
 observerfile: ../cases/Planck1024_box1024/observer_positions_Planck1024_box1024.txt
