@@ -7,6 +7,7 @@ import healpy as hp
 import gravitational_instability as gi
 import resource
 import pdb
+import copy
 
 
 
@@ -17,23 +18,34 @@ class Parameters:
         # Loads parameters
         with open(parameterfile, 'r') as f:
             param = yaml.load(f)
-        
+            
+
+        print "Jeg er i gang med at aendre paa den maade parametrene bliver loadet paa!"            
+        # The code will stop if an essential parameter is missing from the parameter file.
+        # If a non-essential parameter is missing, it will be loaded as "default"
+        default = "default"
+
+        # Path and choices for how and what to run        
         self.path = param["path"]
-        self.halocatalogue_file = self.path+param["halocatalogue_file"]
-        self.hubblefile = self.path+param["hubblefile"]
-        self.CoDECS = int(param["CoDECS"])
-        if self.CoDECS:
-            self.CoDECShosts_file = self.path+param["CoDECShosts_file"]
-        self.gridfile = self.path+param["gridfile"]
-        
         self.parallel_processing = int(param["parallel_processing"])
-        
+
+        self.CoDECS = int(param["CoDECS"])
         self.snapshot = int(param["snapshot"])
-        self.snapshot_file = self.path+param["snapshot_file"]
-
-
         self.use_snapshot_for_background = int(param["use_snapshot_for_background"])
         self.use_grid = int(param["use_grid"])        
+
+        
+        # Halo catalogues
+        self.halocatalogue_file = self.path+param["halocatalogue_file"]
+        self.CoDECShosts_file = self.path+param.get("CoDECShosts_file",default)
+        
+        # Snapshots
+        self.snapshot_file = self.path+param["snapshot_file"]
+
+        # Grid file (both read and write)
+        self.gridfile = self.path+param["gridfile"]
+
+        self.hubblefile = self.path+param.get("hubblefile",default)
 
         self.use_CoM = int(param["use_CoM"])
         self.correct_for_peculiar_velocities = int(param["correct_for_peculiar_velocities"])
@@ -143,6 +155,8 @@ class Parameters:
         self.max_pairwise_distance = sp.double(param["max_pairwise_distance"])
         self.min_halo_mass = sp.double(param["min_halo_mass"])
         self.max_halo_mass = sp.double(param["max_halo_mass"])
+        
+        self.plot_velocity_field = int(param["plot_velocity_field"])
 
 
 class Halo:
@@ -229,10 +243,14 @@ class Observer:
                 if r < parameters.radius_local_group:
                     local_halo = Observed_halo(h.position,position_op,h.velocity,r,theta,phi,[],[],h.ID,h.mass)
                     local_halos.append(local_halo)
-                    
+            
+#            print "the mass of this observer is", self.mass
             if parameters.correct_for_peculiar_velocities:
                 if not parameters.use_snapshot_for_background:
                     if r < parameters.survey_radius:
+#                        print "survey. r = ", r, "mass = ", h.mass
+#                        if r < 1e-10:
+#                            print "this is the observer halo, included in the survey"
                         survey_positions.append(h.position)
                         survey_masses.append(h.mass)
             
@@ -262,17 +280,21 @@ class Observer:
             return 0
 
         chosen_halos = hf.choose_halos(parameters,observed_halos)
+        
 
         if parameters.use_CoM:
             
             position_CoM,position_CoM_op,velocity_CoM,r_CoM,theta_CoM,phi_CoM,vr_peculiar_CoM,vr_CoM,total_mass\
-            = gi.determine_CoM_for_these_halos(parameters,self.position,chosen_halos)    
+            = gi.determine_CoM_for_these_halos(parameters,self.position,chosen_halos) 
             
             #Overwriting the chosen halos with their center of mass motion
+            halos_around_massive_halo = copy.copy(chosen_halos)
+            
             chosen_halos = []
             CoM_halo = Observed_halo(position_CoM,position_CoM_op,velocity_CoM,r_CoM,theta_CoM,phi_CoM,
                                      vr_peculiar_CoM,vr_CoM,-1,total_mass)
             chosen_halos.append(CoM_halo)
+            print "the distance to the observed CoM-halo is r_CoM = ", r_CoM
     
         # If distances are to be calculated from the perturbed metric, this is only done for
         # the chosen halos.
@@ -300,6 +322,14 @@ class Observer:
                 chosen_halo.observed_velocity = chosen_halo.velocity
                 chosen_halo.velocity_correction = velocity_correction
                 chosen_halo.velocity = chosen_halo.velocity - velocity_correction
+
+            if parameters.plot_velocity_field:
+                gi.plot_velocity_field(parameters,self,chosen_halos,
+                                       halos_around_massive_halo,survey_positions,
+                                       survey_masses)
+                
+                parameters.plot_velocity_field -= 1
+
 
         if parameters.use_local_velocity:
             local_position_CoM, local_position_CoM_op,local_velocity_CoM,\

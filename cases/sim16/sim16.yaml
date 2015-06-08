@@ -1,7 +1,7 @@
 ---
 path: ../cases/sim16/
 halocatalogue_file: parents_11
-CoDECShosts_file:
+#CoDECShosts_file:
 hubblefile: Hubbleconstants.txt
 powerspectrafile: powerspectra.txt
 snapshot_file: snapshot_011
@@ -44,10 +44,13 @@ radius_local_group: 3 # Mpc/h
 
 ##########################################################################
 # Correct for the velocity from the matter distribution?
+use_lonely_halo: 0
+cone_centered_on_halo: 1
 use_CoM: 1
 correct_for_peculiar_velocities: 1
 min_dist: 3 # Mpc/h
 survey_radius: 12
+plot_velocity_field: 3 # The velocity field will be plottet for the first [number] observers
 ##########################################################################
 
 # Use parallel processing?
@@ -59,7 +62,7 @@ parallel_processing: 0
 observer_choice: random_halos
 
 # Specify the number of observers you want to use
-number_of_observers: 10
+number_of_observers: 1
 
 # If from_file, specify the file here
 observerfile: ../cases/sim16/howdy16.txt

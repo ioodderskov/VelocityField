@@ -460,6 +460,7 @@ def find_halos_around_massive_halo(parameters,observed_halos):
     print "len(halos_around_halo) = ", len(halos_around_halo)
 
 
+#    pdb.set_trace()
     return halos_around_halo
 
 
@@ -732,7 +733,7 @@ def read_snapshot(parameters):
     f.seek(size_header+256+size_fortranstuff)
 
 
-    halos = [None]*sp.sum(Npart)
+    particles = [None]*sp.sum(Npart)
     for particle_type in [0,1]:
         N = int(Npart[particle_type])
         massunit = 1e10 #Msun/h
@@ -764,11 +765,12 @@ def read_snapshot(parameters):
             ID = p
             ID_host = -1
             
-            halo = hc.Halo(position,velocity,M,ID,ID_host)
-            halos[p] = halo
+            particle = hc.Halo(position,velocity,M,ID,ID_host)
+            particles[p] = particle
     
-    parameters.halos = sp.array(halos)    
-    return 1
+    if parameters.snapshot:
+        parameters.halos = sp.array(particles)    
+    return sp.array(particles)
 
     
     
