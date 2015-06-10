@@ -46,6 +46,7 @@ def calculate_H(rvsum,r2sum,halo_count):
 
     
 def initiate_observers_CoDECSsubhalos(parameters):
+
     groups = load_CoDECS_catalogue(parameters.CoDECShosts_file)
 
     massunit = 1e10 # Msun/h
@@ -65,12 +66,15 @@ def initiate_observers_CoDECSsubhalos(parameters):
 
 
     observers = [None]*len(observer_indices)
+
     for ob_number, ob_index in enumerate(observer_indices):
         halo = parameters.halos[ob_index]
         position = halo.position
         velocity = halo.velocity
         mass = halo.mass
         observers[ob_number] = hc.Observer(ob_index,position,velocity,mass)
+      
+    "I'm in initiate_observers_CoDECSsubhalos, and the number of potential observers is", len(observers)
         
     return observers[0:parameters.number_of_observers]
 
@@ -85,13 +89,13 @@ def load_grid(gridfile):
 # Load the halo catalogue
 def load_halocatalogue(parameters,halocatalogue_file):
     
-    if parameters.datatype == "CoDECS":
+    if parameters.data_type == "CoDECS":
         print "Loading CoDECS halocatalogue, file:", halocatalogue_file
         halocatalogue_unsorted = load_CoDECS_catalogue(halocatalogue_file)
         halocatalogue = sp.array(sorted(halocatalogue_unsorted,
                                         key=lambda halocatalogue_unsorted: halocatalogue_unsorted[3]))
 
-    elif parameters.use_grid:
+    elif parameters.data_type == "grid":
         halocatalogue_unsorted = load_grid(parameters.gridfile)
         halocatalogue = sp.array(sorted(halocatalogue_unsorted, 
                                         key=lambda halocatalogue_unsorted: halocatalogue_unsorted[3]))            
@@ -112,12 +116,12 @@ def load_CoDECS_catalogue(halocatalogue_file):
         content = sp.loadtxt(f)
         if not 'halocatalogue' in locals():
             halocatalogue = content
-#            pdb.set_trace()
+
         else:
             halocatalogue = sp.vstack((halocatalogue,content))
-#            pdb.set_trace()
 
-#    pdb.set_trace()    
+
+   
     tar.close()
 
     print "len(halocatalogue) = ", len(halocatalogue)
@@ -150,7 +154,7 @@ def initiate_halos(parameters, halocatalogue):
             halos.append(halo)
 
  
-    elif parameters.use_grid:
+    elif parameters.data_type == "grid":
 
         for h in range(n_halos):
             position = halocatalogue[h,[0,1,2]]
@@ -190,15 +194,16 @@ def initiate_halos(parameters, halocatalogue):
     
     parameters.halos = sp.array(halos)    
     masses = sp.array([halo.mass for halo in parameters.halos])
-    print "The number of saved halos is", len(parameters.halos)
-    print "min_halo_mass, max_halo_mass = ", parameters.min_halo_mass, parameters.max_halo_mass
-    print "min_mass, max_mass in catalogue = ", sp.amin(masses), sp.amax(masses)  
+#    print "The number of saved halos is", len(parameters.halos)
+#    print "min_halo_mass, max_halo_mass = ", parameters.min_halo_mass, parameters.max_halo_mass
+#    print "min_mass, max_mass in catalogue = ", sp.amin(masses), sp.amax(masses)  
 
 #    sys.exit("Now you know about the halos!")
     return 1
     
 
 def initiate_observers(parameters):
+
     
     if parameters.use_lightcone:
         observers = initiate_observers_from_file(parameters)
@@ -210,7 +215,10 @@ def initiate_observers(parameters):
     
         if parameters.observer_choice == 'subhalos':
             
+
+            
             if parameters.data_type == "CoDECS":
+
                 observers = initiate_observers_CoDECSsubhalos(parameters)
                 
             else:
@@ -415,6 +423,7 @@ def distance_correction_from_perturbed_metric(parameters,xobs,yobs,zobs,xop,yop,
     
     
 def potential_on_grid(distances_from_perturbed_metric,potential_file):
+
     if distances_from_perturbed_metric:
         potential_from_file = sp.loadtxt(potential_file)
         grid = int(sp.ceil(len(potential_from_file)**(1/3)))
@@ -429,8 +438,10 @@ def potential_on_grid(distances_from_perturbed_metric,potential_file):
         potential_min = potential.min()
         potential_max = potential.max()
     
-    return potential, potential_min, potential_max
+        return potential, potential_min, potential_max
 
+    else:
+        return 0,0,0
 
 
         
@@ -478,7 +489,6 @@ def find_halos_around_massive_halo(parameters,observed_halos):
     print "len(halos_around_halo) = ", len(halos_around_halo)
 
 
-#    pdb.set_trace()
     return halos_around_halo
 
 

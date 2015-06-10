@@ -23,7 +23,9 @@ CoDECShosts_file:
 ##########################################################################
 boxsize: 16
 omegam: 0.306843
+omega_b: 0
 h: 0.678
+beta_c: 0
 ##########################################################################
 
         
@@ -34,6 +36,7 @@ h: 0.678
 mind: 2
 maxd: 10
 width: 8
+skyfraction: 1
 ##########################################################################
 
         
@@ -73,10 +76,10 @@ observerfile: ../cases/sim16/howdy16.txt # If from_file, specify the file here
 observer_indices_file: observer_indices.txt # If indices_from_file, specify the file here
 number_of_observers: 1 # Specify the number of observers you want to use
 # If subhalos, specify the mass-requirements here
-host_min_m: 1.1e13 
-host_max_m: 2.3e13
 sub_min_m: 1.6e12
 sub_max_m: 2.8e12
+host_min_m: 1.1e13 
+host_max_m: 2.3e13
 ##########################################################################
 
         

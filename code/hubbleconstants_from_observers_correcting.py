@@ -65,7 +65,34 @@ print "The ratios ranges from", sp.amin(observed_velocity_norms/velocity_correct
 #print "The mean of the ratios is", factor
 print "abs(observed_velocities)/abs(velocity_corrections) = ",sp.mean(sp.absolute(observed_velocities),axis=0)/sp.mean(sp.absolute(velocity_corrections),axis=0)
 
-factor = 1
+# Correction factor:
+omega_m_false = 0.272
+omega_m_true = 0.2711
+
+h_false = 0.702
+h_true = 0.703
+
+omega_cdm = 0.226
+gamma = 0.56
+epsilon_c = 2.4
+
+beta_c_dict = {}
+beta_c_dict['CoDECS_LCDM'] = 0
+beta_c_dict['CoDECS_EXP001'] = 0.05
+beta_c_dict['CoDECS_EXP003'] = 0.15
+beta_c_dict['CoDECS_EXP008e3'] = 0.4
+beta_c_dict['CoDECS_SUGRA003'] = -0.15
+
+beta_c = beta_c_dict[case]
+print "beta_c = ", beta_c
+
+growth_false = omega_m_false**0.55
+growth_true = omega_m_true**gamma*(1+gamma*omega_cdm/omega_m_true*epsilon_c*beta_c**2)
+
+corr_cosm_param = omega_m_false/omega_m_true*(h_false/h_true)**5
+corr_growth = growth_true/growth_false
+
+factor = corr_cosm_param*corr_growth
 
 print "I have set factor =" , factor
 

@@ -34,14 +34,17 @@ class Parameters:
 
         
         # Parameters for the simulation/catalogue
-        self.boxsize = sp.double(param.get("boxsize"],default))
+        self.boxsize = sp.double(param.get("boxsize",default))
         self.omegam = sp.double(param.get("omegam",default))
-        self.h = sp.double(param.get("h"],default))
+        self.omega_b = sp.double(param.get("omega_b",default))
+        self.h = sp.double(param.get("h",default))
+        self.beta_c = sp.double(param.get("beta_c",default))
 
         # Division in bins
         self.mind = sp.double(param["mind"])
         self.maxd = sp.double(param["maxd"])
         self.width = sp.double(param["width"])
+        self.skyfraction = sp.double(param.get("skyfraction",default))
         self.bindistances = hf.calculate_bindistances(self.mind,self.maxd,self.width)
 
 
@@ -65,6 +68,8 @@ class Parameters:
         self.survey_radius = sp.double(param.get("survey_radius",default))
         self.min_dist = sp.double(param.get("min_dist",default))
         self.plot_velocity_field = int(param.get("plot_velocity_field",default))
+        self.plottet_velocity_field_file = self.path+str(param.get("plottet_velocity_field_file",default))
+        self.plot_velocity_field_n = 0
 
         # Cepheids, tracking of local motion        
         self.use_local_velocity = int(param.get("use_local_velocity",default))
@@ -103,13 +108,14 @@ class Parameters:
         self.number_of_directions = hp.nside2npix(nside)
         self.directions = hp.pix2ang(nside,range(self.number_of_directions))
         self.number_of_cones = int(param.get("number_of_cones",default))
-        self.skyfraction = sp.double(param.get("skyfraction",default))
         self.max_angular_distance = sp.arccos(1-2*self.skyfraction)
         self.vary_skyfraction = int(param.get("vary_skyfraction",default))
         self.fraction_start = sp.double(param.get("fraction_start",default))
         self.fraction_stop = sp.double(param.get("fraction_stop",default))
         self.fraction_step = sp.double(param.get("fraction_step",default))
-        self.skyfractions = sp.linspace(self.fraction_start,self.fraction_stop,1/self.fraction_step)
+
+        if self.vary_skyfraction:
+            self.skyfractions = sp.linspace(self.fraction_start,self.fraction_stop,1/self.fraction_step)
         
         # Stuff from the Hubble2013 project
         self.calculate_hubble_constants = int(param.get("calculate_hubble_constants",default))
@@ -145,9 +151,10 @@ class Parameters:
         # For varying the number of observed halos
         self.vary_number_of_SNe = int(param.get("vary_number_of_SNe",default))
         self.min_number_of_SNe = int(param.get("min_number_of_SNe",default))
-        self.max_number_of_SNe = int(param.get("max_number_of_SNe"],default))
+        self.max_number_of_SNe = int(param.get("max_number_of_SNe",default))
         self.step_number_of_SNe = int(param.get("step_number_of_SNe",default))
-        self.numbers_of_SNe = range(self.min_number_of_SNe,self.max_number_of_SNe+1,self.step_number_of_SNe)
+        if self.vary_number_of_SNe:
+            self.numbers_of_SNe = range(self.min_number_of_SNe,self.max_number_of_SNe+1,self.step_number_of_SNe)
 
         # Initiating the list for halos and subhalos
         self.halos = []
@@ -233,7 +240,7 @@ class Observer:
              
             r, theta, phi = hf.spherical_coordinates(parameters,self.position,
                                                 position_op)
-     
+                                        
 
             if parameters.use_local_velocity:
                 if r < parameters.radius_local_group:
@@ -252,11 +259,12 @@ class Observer:
             
             if r < parameters.mind or r > parameters.maxd:
                 continue
+
             
             if (parameters.vary_skyfraction == 0) & (parameters.test_isotropy == 0):
                 theta_max = sp.arccos(1-2*parameters.skyfraction)
                 if theta > theta_max:
-                    print "theta = ", theta, "and theta_max =", theta_max
+#                    print "theta = ", theta, "and theta_max =", theta_max
                     continue
             
 
@@ -320,6 +328,7 @@ class Observer:
                 chosen_halo.velocity = chosen_halo.velocity - velocity_correction
 
             if parameters.plot_velocity_field:
+                parameters.plot_velocity_field_n += 1
                 gi.plot_velocity_field(parameters,self,chosen_halos,
                                        halos_around_massive_halo,survey_positions,
                                        survey_masses)
