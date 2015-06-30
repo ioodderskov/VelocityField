@@ -1,3 +1,119 @@
 The main program is found in hubble.py. 
 Parameters are read from parameterfiles using yaml.
-Functions are defined in hubble_functions.
+
+An outline of what is done at different steps during the program:
+
+1) Read parameterfile, save relevant parameters for use throughout the program
+2) Read either snapshot or halo catalogue, and save the particles/halos
+3) (Option) Assign density and velocity values to a grid
+	3.1) Calculate tsc (triangular shaped cloud) positions and densities
+		3.1.1) ...
+	3.2) Get the positions and densities on a grid
+	3.3) (Option) Get the halo velocities, and interpolate the velocities to the grid
+             Note: If this option is not chosen, the velocities on the grid will be set to zero
+		3.3.1) For the x,y and z components of the velocities: Calculate ngp (nearest grid point) velocities on the grid
+			3.3.1.1) Create a Ng**3-grid
+			3.3.1.2) Calculate the cell-size of the grid
+           		3.3.1.3) For each velocity, find the nearest gridpoint
+			3.3.1.4) For each gridpoint, calculate the mean of all the assigned velocities
+		3.3.2) (Option: if parameters.smoothing) Smooth the velocities on the grid
+			3.3.2.1) Calculate the cellsize of the grid
+			3.3.2.2) Calculate the smoothing radius (parameters.smoothing_radius) in cellsize-units
+			3.3.2.3) Set the kernel resolution to 3 
+				(that means that only the 8 nearest neighbour cells are used. See astropy_make_kernel.py) 
+			3.3.2.3) Create the smoothing kernel (see astropy_make_kernel.py)
+			3.3.2.4) While there are any nan-values in the smoothed grid:
+				3.3.2.4.1) Convolve the x,y and z grid-values with the smoothing kernel.
+		3.3.3) Return either the pure npg or the smoothed ngp values of the velocities on the grid
+	3.4) Write the positions, densities and velocities on the grid to a file
+			
+4) Select the observers
+	4.1) ...
+5) (Option) Read snapshot, if you need this for the background mass distribution
+
+Observe and analyse (can be done in parallel or on a single processor):
+	This branches out in two directions (the lightcone option is actually chosen later, I think).
+	You need to choose either 6 or 7:
+
+6) (Either) (Pairwise velocities) For each observer, calculate the distances and relative radial velocities for a subset of the other halos
+	6.1) ...
+	
+7) (Or) Make observations for each observer:
+	7.1) (Option) Read in the lightcone halo catalogues for the given observer, and save the halos it contains
+	7.2) For each halo in the halo catalogue:
+		7.2.1) Calculate the position relative to the observer with periodic boundary conditions
+		7.2.2) Calculate the coresponding spherical coordinates
+		7.2.3) (Option) Save the halo, if it is within the radius of the local group
+		7.2.4) (Option) Save the halo position and mass in a "survey", to be used to correct the peculiar velocities
+		7.2.5) Check if the halo is in the distance range between mind and maxd. Otherwise, continue
+		7.2.6) Check if the halo is within the observered fraction of the sky 
+		7.2.7) Calculate the radial part of the peculiar velocity of the halo
+ 		7.2.8) Calculate the total radial (peculiar + Hubble) velocity of the halo
+		7.2.9) Save the ID, mass, position, and (total) peculiar velocity as an "Observed_halo"
+		7.2.10) Choose the halos you want to save from the "observed_halos"
+			7.2.10.1) (Either) Use all the observed halos
+			7.2.10.2) (Or) Use a simple mass-weighted selection of of halos (number given in the parameter file)
+			7.2.10.3) (Or) Use a random selection of halos (number given in the parameter file)
+			7.2.10.4) (Or) Use only halos in a mass range specified in the parameter file
+			7.2.10.5) (Or) Find the most massive of the observed halos, and keep halos in a sphere (radius specified in the
+				  parameter file) around this halo
+			7.2.10.6) (Or) Distribute galaxies in the observed halos according to a HOD (parameters given in the parameter file)
+		7.2.11) (Option) From the chosen halos, calculate the center of mass position and velocity, and replace the chosen halos
+			with the CoM values.
+			7.2.11.1)
+		7.2.12) (Option) Recalculate the distance to the chosen halos using the perturbed metric
+		7.2.13) (Option) Correct for the peculiar velocities calculated from the matter distribution
+			7.2.13.1) (Option) Calculate the matter distribution from the snapshot
+			7.2.13.2) For each of the chosen halos:
+				7.2.13.2.1) Calculate the velocity correction from the matter distribution
+				7.2.13.2.2) Save the observed velocity and the velocity correction
+				7.2.13.2.3) Replace the velocity of the chosen halo with the corrected velocity
+			7.2.13.3) (Option) Plot the velocity field around the first observers.
+		7.2.14) (Option) Correct the velocity of the local group for the peculiar velocities calculated from the matter distribution
+			...
+		7.2.15) Save the chosen_halos to this observer (that is, to this particular instance of the observer class)
+
+
+These can only be performed if you have chosen 7:
+8) (Option) Calculate Hubble constants for each observer:
+	8.1) Check if there are any chosen halos for this observer. Otherwise print nans to hubblefile.
+	8.2) (Option) Calculate the Hubbleconstants for varying directions
+	8.3) (Option) Calculate the Hubbleconstants for varying skyfractions
+	8.4) (Option) Calculate the Hubbleconstants for varying number of chosen halos
+	8.5) (If non of the above) Calculate the Hubbleconstants with the chosen halos saved to the observer
+9) (Option) Calculate Power spectrum for each observer:
+	9.1) Save the angular coordinates (theta and phi) together with the radial parts of the peculiar velocities for the chosen halos
+	9.2) Create a map of these velocities
+		9.2.1) Find the pixels corresponding to the coordinates, with the value of nside given in the parameterfile
+		9.2.2) Create a template map, with all pixel values set to "badval"
+		9.2.3) For the pixels with multiple values, set the value to the mean
+		9.2.4) Calculate the maximal value of theta for the given skyfraction
+		9.2.5) Set the value of the pixels with a larger theta than theta_max to "unseen"
+		9.2.6) Count how many pixels has a value of either "badval" or "unseen", and print the result
+	9.3) Fill the empty cells in the map
+		9.3.1) As long there are any pixels with the value "badval":
+			9.3.2) For each pixel with the value "badval":
+				9.3.2.1) Calculate the angular coordinates of the pixel
+				9.3.2.2) Find all the neighbours to this pixel
+				9.3.2.3) Throw away the pixels with a value of "badval" or "unseen"
+				9.3.2.4) Check if there are still some neighbours left. Otherwise, continue
+				9.3.2.5) Set the new value of the pixel to be the mean of the values of the neighbours
+	9.4) DISABLED (Option) Smooth the map 
+		9.4.1) (Either) Set the smoothing length to some value given in the parameter file
+		9.4.2) (Or) Dertermine the size of the largest hole in the skycoverage
+			9.4.2.1) ...
+		9.4.3) Perform the smooth of the map
+	9.5) Perform a harmonic analysis of the map
+		9.5.1) Use the healpy "ma"-function (mask) to create a masked map, with the mask being set to the unseen pixels in the map
+		9.5.2) Use the healpy "anafast"-function to calculate the Cls coefficients of the masked map
+		9.5.3) Use sp.arange to get the corresponding ls
+	9.6) Save the ls, Cls and the map to this observer
+
+10) (Option) Print the Hubbleconstants to file
+11) (Option) Print the powerspektra to file
+12) (Option) Collect pairwise velocities
+13) (If there are not too many observers) Save the observers to an npy-file
+14) (Option) Calculate the correlation coefficients between the observed velocities and the velocities calculated from the matter dist.
+
+
+

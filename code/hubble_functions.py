@@ -463,7 +463,12 @@ def choose_halos(parameters,observed_halos):
     if parameters.observed_halos == 'centered_around_massive_halo':    
         chosen_halos = find_halos_around_massive_halo(parameters,observed_halos) 
         
+    if parameters.observed_halos == 'from_HOD':
+        chosen_halos = distribute_galaxies_according_to_HOD(parameters,observed_halos)
+        
     return chosen_halos
+    
+def distribute_galaxies_according_to_HOD(parameters,observed_halos):
 
 
 def find_halos_around_massive_halo(parameters,observed_halos):
@@ -801,7 +806,54 @@ def read_snapshot(parameters):
     return sp.array(particles)
 
     
+def calculate_pairwise_velocities(parameters,observers):
+    pairwise_velocities = []
+    radial_distances = []
+    pair_masses = []
+    for observer in observers:
+        for velocity, radial_distance, pair_mass in zip(observer.observed_radial_peculiar_velocities,observer.radial_distances,observer.pair_masses):
+            pairwise_velocities.append(velocity)
+            radial_distances.append(radial_distance)
+            pair_masses.append(pair_mass)
+
+    central_halo_mass = (parameters.min_halo_mass+parameters.max_halo_mass)/2
+
+
+    sp.save(parameters.path+'pairwise_velocities_%0.2e' %central_halo_mass,sp.array(pairwise_velocities))
+    sp.save(parameters.path+'radial_distances_%0.2e' %central_halo_mass,sp.array(radial_distances))
+    sp.save(parameters.path+'pair_masses_%0.2e' %central_halo_mass,sp.array(pair_masses))
+
+    return 1
+
+
+def calculate_velocity_correlation_coefficients(parameters,observers):
+
+    if parameters.use_local_velocity:
+
+        print "------ observers --------"
+        local_velocities = sp.array([observer.local_velocity for observer in observers if len(observer.local_velocity) != 0] )
+        local_velocity_corrections = sp.array([observer.local_velocity_correction for observer in observers if len(observer.local_velocity) != 0])
+        
+        
+        print "correlation coefficients:"
+        print "x:", sp.corrcoef(local_velocities[:,0],local_velocity_corrections[:,0])
+        print "y:", sp.corrcoef(local_velocities[:,1],local_velocity_corrections[:,1])
+        print "z:", sp.corrcoef(local_velocities[:,2],local_velocity_corrections[:,2])
+        print "abs(local_velocities)/abs(local_velocity_corrections)",\
+        sp.mean(sp.absolute(local_velocities),axis=0)/sp.mean(sp.absolute(local_velocity_corrections),axis=0)
+        
     
+    print "------ observed halos --------"
+    observed_velocities = sp.array([observer.chosen_halos[0].observed_velocity for observer in observers if len(observer.chosen_halos) == 1])
+    velocity_corrections = sp.array([observer.chosen_halos[0].velocity_correction for observer in observers if len(observer.chosen_halos) == 1])
+    print "correlation coefficients:"
+    print "x:", sp.corrcoef(observed_velocities[:,0],velocity_corrections[:,0])
+    print "y:", sp.corrcoef(observed_velocities[:,1],velocity_corrections[:,1])
+    print "z:", sp.corrcoef(observed_velocities[:,2],velocity_corrections[:,2])
+    print "abs(observed_velocities)/abs(velocity_corrections)",\
+    sp.mean(sp.absolute(observed_velocities),axis=0)/sp.mean(sp.absolute(velocity_corrections),axis=0)
+
+    return 1    
    
                     
       

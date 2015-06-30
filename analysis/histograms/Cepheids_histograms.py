@@ -33,14 +33,21 @@ def plot_histogram(bins,bars,color,sub,xlabel,ylabel,text,xtics,yticks):
     ax.bar(bins,bars,align='center',
            width=bin_width,alpha=alpha,color=color)
 
-    ax.plot([1,1],[0,34],'k:')
+    if text == 'EXP001':
+        ax.plot([1,1],[0,30],'k:')
+    else:
+        ax.plot([1,1],[0,50],'k:')
+    
+    if text in ['EXP001','EXP008e3','SUGRA003']:
+        plt.title(text)
+    else:
+        ax.text(0.88,31,text,size=9)
 
-    ax.text(0.93,35,text)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.axis([0.85,1.15,0,40])
+    plt.axis([0.85,1.15,0,50])
     plt.xticks([0.9,1,1.1])
-    plt.yticks(sp.arange(0,41,10))
+    plt.yticks(sp.arange(0,51,10))
     if not xticks:
         plt.setp( ax.get_xticklabels(), visible=False)
 
@@ -54,7 +61,7 @@ os.chdir('/home/io/Dropbox/Projekter/Hubble/VelocityField/code/')
 plotlabel = "otherdists"
 models = ["EXP001", "EXP008e3", "SUGRA003"]
 min_dists = ["5.0","5.0","5.0"]
-texts = ["  EXP001", "EXP008e3", "SUGRA003"]
+texts = ["EXP001", "EXP008e3", "SUGRA003"]
 subs =   [131, 132, 133]
 xtickss = [1,1,1]
 ytickss = [1,0,0]
@@ -69,7 +76,7 @@ plt.figure(figsize=(6,2))
 
 #plotlabel = "EXP003"
 #models = ["EXP003", "EXP003", "EXP003","EXP003"]
-##
+###
 #min_dists = ["0.0", "1.0", "5.0", "10.0"]
 #texts = ["R="+min_dists[0]+"Mpc/h","R="+min_dists[1]+"Mpc/h",
 #         "R="+min_dists[2]+"Mpc/h","R="+min_dists[3]+"Mpc/h"]
@@ -110,7 +117,7 @@ for i in range(len(models)):
     bins, bars = hif.make_normalised_histogram(nbins,H_uncorrected)
     ax = plot_histogram(bins,bars,'b',sub,xlabel,ylabel,text,xticks,yticks)
     fitted_bars = hif.fit_distribution_to_normalised_histogram(bins,bars,func)
-    ax.plot(bins,fitted_bars,'b')
+    ax.plot(bins,fitted_bars,'b',label='Uncorrected')
     
     things_be_crazy = True
     if things_be_crazy:
@@ -127,7 +134,7 @@ for i in range(len(models)):
         bins, bars = hif.make_normalised_histogram(nbins,H_corrected)
         ax = plot_histogram(bins,bars,'g',sub,xlabel,ylabel,text,xticks,yticks)
         fitted_bars = hif.fit_distribution_to_normalised_histogram(bins,bars,func)
-        ax.plot(bins,fitted_bars,'g')
+        ax.plot(bins,fitted_bars,'g',label='Corrected')
 
     if not model == 'LCDM':
         case_LCDM = "CoDECS_LCDM"
@@ -138,15 +145,16 @@ for i in range(len(models)):
         
         bins_LCDM, bars_LCDM = hif.make_normalised_histogram(nbins,H_uncorrected_LCDM)
         fitted_bars_LCDM = hif.fit_distribution_to_normalised_histogram(bins_LCDM, bars_LCDM, func)
-        ax.plot(bins_LCDM,fitted_bars_LCDM,'k--',linewidth=1.5)
+        ax.plot(bins_LCDM,fitted_bars_LCDM,'k--',linewidth=1,label='$\Lambda$CDM')
 
         if not min_dist == '0.0':
             H_corrected_LCDM = sp.loadtxt(fname_LCDM)[:,2]/100        
             bins_LCDM, bars_LCDM = hif.make_normalised_histogram(nbins,H_corrected_LCDM)
             fitted_bars_LCDM = hif.fit_distribution_to_normalised_histogram(bins_LCDM,bars_LCDM,func)
-            ax.plot(bins_LCDM, fitted_bars_LCDM, 'k--',linewidth=1.5)
+            ax.plot(bins_LCDM, fitted_bars_LCDM, 'k--',linewidth=1)
+
+    if text in ['EXP001',"R="+min_dists[1]+"Mpc/h"]:    
+        plt.legend(bbox_to_anchor=(1, 1),prop={'size':8},frameon=False)
 
     
 plt.savefig("/home/io/Dropbox/SharedStuff/Cepheids/Hdists_"+plotlabel+".pdf",bbox_inches='tight')
-#plt.savefig("/home/io/Dropbox/SharedStuff/Cepheids/Hdists_EXP003.pdf",bbox_inches='tight')
-#plt.savefig("/home/io/Dropbox/SharedStuff/Cepheids/Hdists_LCDM.pdf",bbox_inches='tight')       

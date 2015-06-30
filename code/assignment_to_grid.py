@@ -106,7 +106,7 @@ def velocity_field(parameters,positions,velocities):
             vx_ngp_smoothed = convolve(vx_ngp_smoothed,kernel,boundary='wrap') 
             vy_ngp_smoothed = convolve(vy_ngp_smoothed,kernel,boundary='wrap') 
             vz_ngp_smoothed = convolve(vz_ngp_smoothed,kernel,boundary='wrap') 
-        print "Went through the while-loop", n, "times"
+        print "Went through the convolving-loop", n, "times"
 
 
         vx,vy,vz = vx_ngp_smoothed,vy_ngp_smoothed,vz_ngp_smoothed
@@ -195,7 +195,7 @@ def write_grid_to_file(parameters,gridpoint_positions,gridpoint_rho,gridpoint_ve
     for gridpoint_position,rho,gridpoint_velocity in zip(gridpoint_positions,gridpoint_rho,gridpoint_velocities):
         x,y,z = gridpoint_position[0],gridpoint_position[1],gridpoint_position[2]
         vx,vy,vz = gridpoint_velocity[0],gridpoint_velocity[1],gridpoint_velocity[2]        
-        f.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (x,y,z,rho,vx,vy,vz))
+        f.write("%.2f\t%.2f\t%.2f\t%.2e\t%.2f\t%.2f\t%.2f\n" % (x,y,z,rho,vx,vy,vz))
                 
     f.close()
     

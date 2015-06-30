@@ -95,7 +95,7 @@ class Parameters:
 
         # Assigning values to a grid
         self.assign_to_grid = int(param.get("assign_to_grid",default))
-#        self.velocities_on_grid = int(param["velocities_on_grid"])
+        self.velocities_on_grid = int(param.get("velocities_on_grid",default))
         self.Ng = int(param.get("Ng",default))
         self.smoothing = int(param.get("smoothing",default))    
         self.smoothing_radius = sp.double(param.get("smoothing_radius",default))
@@ -287,7 +287,7 @@ class Observer:
         
 
         if parameters.use_CoM:
-            
+                        
             position_CoM,position_CoM_op,velocity_CoM,r_CoM,theta_CoM,phi_CoM,vr_peculiar_CoM,vr_CoM,total_mass\
             = gi.determine_CoM_for_these_halos(parameters,self.position,chosen_halos) 
             
@@ -352,16 +352,8 @@ class Observer:
                 
                 self.local_velocity_correction = local_velocity_correction
 
-
      
-        self.chosen_halos = chosen_halos
-        #print "chosen_halos = ", chosen_halos
-        #print "self.chosen_halos = ", self.chosen_halos
-        #print "finishing observe. len(self.chosen_halos) = ", len(self.chosen_halos)
-        #print "finishing observe. len(chosen_halos) = ", len(chosen_halos)
-        #print "type(self.chosen_halos) = ", type(self.chosen_halos)
-        #print "type(chosen_halos) = ", type(chosen_halos)  
-                
+        self.chosen_halos = chosen_halos 
         
         
         return 1
@@ -458,15 +450,15 @@ class Observer:
                     
     def calculate_powerspectra(self,parameters):
         
-        thetas = [observed_halo.theta for observed_halo in self.chosen]
-        phis = [observed_halo.phi for observed_halo in self.chosen]
-        vrs_peculiar = [observed_halo.vr_peculiar for observed_halo in self.chosen]
+        thetas = [observed_halo.theta for observed_halo in self.chosen_halos]
+        phis = [observed_halo.phi for observed_halo in self.chosen_halos]
+        vrs_peculiar = [observed_halo.vr_peculiar for observed_halo in self.chosen_halos]
         
         vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar) 
         vrmap = pf.fill_empty_entries(parameters,vrmap)
         
-        if parameters.smooth_map:
-            vrmap = pf.smooth_map(parameters,vrmap)
+#        if parameters.smoothing:
+#            vrmap = pf.smooth_map(parameters,vrmap)
         
         self.ls, self.cls = pf.do_harmonic_analysis(parameters,vrmap)
         self.vrmap = vrmap

@@ -13,7 +13,6 @@ data_type: ROCKSTAR # ROCKSTAR (default), CoDECS, snapshot or grid
         # Halo catalogues
 ##########################################################################
 halocatalogue_file: parents_11
-CoDECShosts_file:
 ##########################################################################
 
         
@@ -87,10 +86,11 @@ host_max_m: 2.3e13
 ##########################################################################
         # Choices for the observed halos
 ##########################################################################
-use_CoM: 1
-number_of_SNe: 10
+use_CoM: 0
+min_dist: 2
+number_of_SNe: 0
 # How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
-observed_halos: centered_around_massive_halo
+observed_halos: all
 SN_mass_min: 0
 SN_mass_max: 0
 ##########################################################################
@@ -101,8 +101,8 @@ SN_mass_max: 0
         # Assigning values to a grid
 ##########################################################################
 # Should positions, velocities and masses be assigned to a grid?
-assign_to_grid: 0
-#velocities_on_grid: 0
+assign_to_grid: 1
+velocities_on_grid: 1
 Ng: 10
 smoothing: 1
 smoothing_radius: 3 # Mpc/h
