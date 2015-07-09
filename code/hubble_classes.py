@@ -27,6 +27,20 @@ class Parameters:
         self.path = param["path"]
         self.parallel_processing = int(param["parallel_processing"])
         self.data_type = param["data_type"]
+        self.data_to_observe = param["data_to_observe"]
+        
+        # Identify and save galaxies using a HOD?
+        self.use_HOD = int(param.get("use_HOD",default))
+        self.number_of_particle_files = int(param.get("number_of_particle_files",default))
+        self.particle_file_base = self.path+str(param.get("particle_file_base",default))
+        # Parameters for HOD
+        self.logMmin = sp.double(param.get("logMmin",default))
+        self.sigma_logM = sp.double(param.get("sigma_logM",default))
+        self.logM0 = sp.double(param.get("logM0",default))
+        self.logM1_prime = sp.double(param.get("logM1_prime",default))
+        self.alpha = sp.double(param.get("alpha",default))
+        self.alpha_c = sp.double(param.get("alpha_c",default))
+        self.alpha_s = sp.double(param.get("alpha_s",default))
         
         # Halo catalogues
         self.halocatalogue_file = self.path+str(param.get("halocatalogue_file",default))
@@ -159,16 +173,44 @@ class Parameters:
         # Initiating the list for halos and subhalos
         self.halos = []
         self.subhalos = []
+        # Initiating the list for galaxies
+        self.galaxies = sp.empty((0,1))
+        self.grid = []
+        # Particle files:
+        self.particle_files = []
+
+
+
+
+class Particle_file:
+    def __init__(self,name):
+        self.name = name
+        self.halo_IDs_in_file = []
+
+            
+
+
+class Galaxy:
+    def __init__(self,position,velocity,ID_host):
+        self.position = position
+        self.velocity = velocity
+        self.ID_host = ID_host
+
 
 
 
 class Halo:
-    def __init__(self,position,velocity,mass,ID,ID_host):
+    def __init__(self,position,velocity,mass,vrms,ID,ID_host):
         self.position = position
         self.velocity = velocity
         self.mass = mass
+        self.vrms = vrms
         self.ID = ID
         self.ID_host = ID_host
+        self.particle_file = []
+        self.number_of_particles = []
+        self.central_galaxies = []
+        self.satellite_galaxies = []
 
 
 class Observed_halo:
@@ -232,8 +274,13 @@ class Observer:
         
         survey_positions = []
         survey_masses = []
+        
+        if parameters.data_to_observe == 'halos':
+            halos = parameters.halos
+        if parameters.data_to_observe == 'grid':
+            halos = parameters.grid
           
-        for h in parameters.halos:
+        for h in halos:
         
             position_op = hf.periodic_boundaries(parameters,self.position,h.position)
 

@@ -8,7 +8,7 @@ import parallel_processing as pp
 import multiprocessing
 from functools import partial
 import scipy as sp
-#import cPickle
+import cPickle
 import assignment_to_grid as ag
 import resource
 from scipy import stats # Import the scipy.stats module
@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 import os
 import scipy.integrate as integrate
 import pdb
+#import pickle
 
 # There is one argument, namely the parameterfile
 if len(sys.argv) != 2:
@@ -32,9 +33,15 @@ if parameters.data_type == "snapshot":
 else:
     halocatalogue = hf.load_halocatalogue(parameters,parameters.halocatalogue_file)
     hf.initiate_halos(parameters,halocatalogue)
+    if parameters.use_HOD:
+        hf.identify_galaxies(parameters)
 
-if parameters.assign_to_grid:    
+
+if parameters.assign_to_grid:     
     ag.create_density_and_velocity_grid(parameters)
+    
+if parameters.data_to_observe == 'grid':
+    hf.initiate_grid(parameters)
 
 observers = hf.initiate_observers(parameters)
 
@@ -70,4 +77,8 @@ if len(observers) <= 2000:
 
 if parameters.correct_for_peculiar_velocities:
     hf.calculate_velocity_correlation_coefficients(parameters,observers)
+
+f = open('../cases/sim16/parameters.save','w')    
+cPickle.dump(parameters,f)
+f.close()
     

@@ -5,8 +5,24 @@
 path: ../cases/sim16/
 parallel_processing: 0
 data_type: ROCKSTAR # ROCKSTAR (default), CoDECS, snapshot or grid
+data_to_observe: grid # grid or halos
 ##########################################################################
 
+##########################################################################
+        # Identify and save galaxies using a HOD?
+##########################################################################
+use_HOD: 1
+number_of_particle_files: 48
+particle_file_base: halos_11 
+        # Parameters for HOD
+logMmin: 11.95
+sigma_logM: 0.16
+logM0: 12.10
+logM1_prime: 13.33
+alpha: 1.08
+alpha_c: 0.25
+alpha_s: 0.84
+##########################################################################
         
         
 ##########################################################################

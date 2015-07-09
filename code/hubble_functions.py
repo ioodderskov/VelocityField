@@ -13,9 +13,17 @@ import copy
 import gc
 import matplotlib.pyplot as plt
 import sys
+import inspect
+from scipy.special import erf
+from scipy import stats
+import linecache
+import multiprocessing
+from functools import partial
 
 
 plot_field = 0
+random.seed(0)
+sp.random.seed(0)
 
 
 
@@ -78,6 +86,33 @@ def initiate_observers_CoDECSsubhalos(parameters):
         
     return observers[0:parameters.number_of_observers]
 
+def initiate_grid(parameters):
+
+    # The grid is treated as though it was a halo catalogue
+    # The grid cells are sorted according to their density. This is not strictly necessary,
+    # but it resembles the procedure used for the halos
+    halocatalogue_unsorted = load_grid(parameters.gridfile)
+    halocatalogue = sp.array(sorted(halocatalogue_unsorted, 
+                                    key=lambda halocatalogue_unsorted: halocatalogue_unsorted[3]))            
+
+    n_halos = len(halocatalogue)
+    halos = [None]*n_halos
+
+    for h in range(n_halos):
+        position = halocatalogue[h,[0,1,2]]
+        velocity = halocatalogue[h,[4,5,6]]
+        mass = halocatalogue[h,3]
+        ID = h
+        ID_host = -1
+        vrms = -1
+        
+        halo = hc.Halo(position,velocity,mass,vrms,ID,ID_host)
+        halos[h] = halo
+        
+    parameters.grid = halos
+    return 1
+
+
 
 def load_grid(gridfile):
     # It is not really a halocatalogue...
@@ -95,10 +130,6 @@ def load_halocatalogue(parameters,halocatalogue_file):
         halocatalogue = sp.array(sorted(halocatalogue_unsorted,
                                         key=lambda halocatalogue_unsorted: halocatalogue_unsorted[3]))
 
-    elif parameters.data_type == "grid":
-        halocatalogue_unsorted = load_grid(parameters.gridfile)
-        halocatalogue = sp.array(sorted(halocatalogue_unsorted, 
-                                        key=lambda halocatalogue_unsorted: halocatalogue_unsorted[3]))            
 
     else:
         halocatalogue_unsorted = sp.loadtxt(halocatalogue_file)
@@ -149,30 +180,19 @@ def initiate_halos(parameters, halocatalogue):
             velocity = halocatalogue[h,[12,13,14]]
             ID = int(halocatalogue[h,1])
             ID_host = int(halocatalogue[h,0])
-            halo = hc.Halo(position,velocity,mass,ID,ID_host)
+            vrms = -1
+            halo = hc.Halo(position,velocity,mass,vrms,ID,ID_host)
             #halos[h] = halo
             halos.append(halo)
-
- 
-    elif parameters.data_type == "grid":
-
-        for h in range(n_halos):
-            position = halocatalogue[h,[0,1,2]]
-            velocity = halocatalogue[h,[4,5,6]]
-            mass = halocatalogue[h,3]
-            ID = h
-            ID_host = -1
-            
-            halo = hc.Halo(position,velocity,mass,ID,ID_host)
-            halos[h] = halo
             
 
-    else: 
+    elif parameters.data_type == "ROCKSTAR": 
         halos = []
         subhalos = []
         for h in range(n_halos):
             position = halocatalogue[h,[8,9,10]]
             velocity = halocatalogue[h,[11,12,13]]
+            vrms = halocatalogue[h,4]
             if parameters.calculate_pairwise_velocities:
                 mass = halocatalogue[h,20]
                 if (mass < parameters.min_halo_mass) | (parameters.max_halo_mass < mass):
@@ -181,7 +201,8 @@ def initiate_halos(parameters, halocatalogue):
                 mass = halocatalogue[h,20]
             ID = int(halocatalogue[h,0])
             ID_host = int(halocatalogue[h,33])
-            halo = hc.Halo(position,velocity,mass,ID,ID_host)
+            halo = hc.Halo(position,velocity,mass,vrms,ID,ID_host)
+            halo.number_of_particles = int(halocatalogue[h,7])
             if parameters.calculate_pairwise_velocities:
                 halos.append(halo)
             else:
@@ -191,6 +212,9 @@ def initiate_halos(parameters, halocatalogue):
 			        subhalos.append(halo)
         
         parameters.subhalos = sp.array(subhalos)
+        
+    else:
+        print "unknown data_type"
     
     parameters.halos = sp.array(halos)    
     masses = sp.array([halo.mass for halo in parameters.halos])
@@ -464,11 +488,12 @@ def choose_halos(parameters,observed_halos):
         chosen_halos = find_halos_around_massive_halo(parameters,observed_halos) 
         
     if parameters.observed_halos == 'from_HOD':
-        chosen_halos = distribute_galaxies_according_to_HOD(parameters,observed_halos)
+        chosen_halos = observed_galaxies_from_HOD(parameters,observed_halos)
         
     return chosen_halos
     
-def distribute_galaxies_according_to_HOD(parameters,observed_halos):
+#def observed_galaxies_from_HOD(parameters,observed_halos):
+#    print "This function (", inspect.stack()[0][3], ") has not been implementet yet."
 
 
 def find_halos_around_massive_halo(parameters,observed_halos):
@@ -549,6 +574,193 @@ def mass_weighted_selection_of_halos(parameters,observed_halos):
                 break
             
     return chosen_halos
+        
+def identify_particle_files_for_halos(particle_file,parameters):  
+
+    halo_IDs_in_file = []
+    number_of_particles_in_halos = []
+
+    with open(particle_file.name) as f:
+        for i in range(24):
+            f.readline()
+        line = f.readline()
+        count = 0
+        while (line[1] != "P") & (count < 1e7):
+            data = line[1:].split()    
+            halo_ID = int(data[0])
+            halo_number_of_particles = int(data[2])
+            halo_IDs_in_file.append(halo_ID)
+            number_of_particles_in_halos.append(halo_number_of_particles)
+            
+            line = f.readline()
+            count = count+1
+
+            if count >= 1e7:
+                print "Break in function", inspect.stack()[0][3]
+                exit(0)
+
+#    halos_in_file = [halo for halo in parameters.halos if halo.ID in halo_IDs_in_file]    
+    particle_file.halo_IDs_in_file = halo_IDs_in_file 
+
+ 
+#    halos_in_file = [halo for halo in parameters.halos if halo.ID in halo_IDs_in_file]    
+#    particle_file.halos = halos_in_file 
+                
+    return particle_file
+
+def assign_particle_files(parameters):
+
+    for halo in parameters.halos:
+        for particle_file in parameters.particle_files:
+            if halo.ID in particle_file.halo_IDs_in_file:
+                halo.particle_file = particle_file
+    
+    return 1    
+    
+def identify_galaxies(parameters):
+    
+
+    particle_filenames = [parameters.particle_file_base+"."+str(file_number)+".particles"\
+                                 for file_number in range(parameters.number_of_particle_files)]
+
+    parameters.particle_files = [hc.Particle_file(particle_filename) for particle_filename in particle_filenames]
+
+    partial_identify_particle_files_for_halos = partial(identify_particle_files_for_halos,parameters=parameters)
+    partial_find_central_galaxies = partial(find_central_galaxies,parameters=parameters)
+    partial_find_satellite_galaxies = partial(find_satellite_galaxies,parameters=parameters)            
+                                              
+
+            
+    if parameters.parallel_processing:
+
+        # Identify which halos are listed in which files.
+        # Write the halo IDs to the instance of the particle_file class
+        pool = multiprocessing.Pool()
+        parameters.particle_files = pool.map(partial_identify_particle_files_for_halos,parameters.particle_files)
+        pool.close()
+        pool.join()
+
+        # Assign the names of the particle files to the halos
+        assign_particle_files(parameters)
+
+        # Distribute central galaxies in the halos          
+        pool = multiprocessing.Pool()
+        parameters.halos = pool.map(partial_find_central_galaxies,parameters.halos)
+        pool.close()
+        pool.join()
+        
+        # Distribute satellite galaxies in the halos
+        pool = multiprocessing.Pool()
+        parameters.halos = pool.map(partial_find_satellite_galaxies,parameters.halos)
+        pool.close()
+        pool.join()
+    else:
+        map(partial_identify_particle_files_for_halos,parameters.particle_files)
+        assign_particle_files(parameters)
+        map(partial_find_central_galaxies,parameters.halos)
+        map(partial_find_satellite_galaxies,parameters.halos)
+
+
+
+    central_galaxies = [central_galaxy for halo in parameters.halos\
+                                       for central_galaxy in halo.central_galaxies]
+
+    satellite_galaxies = [satellite_galaxy for halo in parameters.halos\
+                                           for satellite_galaxy in halo.satellite_galaxies]
+
+    parameters.galaxies = sp.append(central_galaxies,satellite_galaxies)
+    
+    return 1      
+    
+    
+    
+
+def dist_central_galaxies(parameters,mass):
+    return 0.5*(1+erf((sp.log10(mass)-parameters.logMmin)/parameters.sigma_logM))
+
+def dist_satellites(parameters,mass):
+    M0 = 10**parameters.logM0    
+    M1_prime = 10**parameters.logM1_prime
+    if mass > M0:
+        mean_for_given_halo_mass = dist_central_galaxies(parameters,mass)*((mass-M0)/M1_prime)**parameters.alpha
+        return mean_for_given_halo_mass
+    else:
+        return 0
+
+    
+    
+
+def find_central_galaxies(halo,parameters):
+
+        
+    if dist_central_galaxies(parameters,halo.mass) > 0.5:
+
+        central_galaxy_position = halo.position
+
+        sigma_c = parameters.alpha_c*halo.vrms 
+        factor =sp.exp(-sp.sqrt(2)/sigma_c)*sigma_c/sp.sqrt(2) # Scipys laplace distribution != the papers                                    
+
+        central_galaxy_velocity = halo.velocity+stats.laplace.rvs(size=3)*factor
+        central_galaxy_host_ID = halo.ID
+        central_galaxy = hc.Galaxy(central_galaxy_position,central_galaxy_velocity,central_galaxy_host_ID)
+        halo.central_galaxies.append(central_galaxy)
+         
+    return halo
+
+
+
+
+def find_satellite_galaxies(halo,parameters):
+
+    random.seed(0)
+
+    halo_IDs_in_file = halo.particle_file.halo_IDs_in_file
+    halos_in_file = [h for h in parameters.halos if h.ID in halo_IDs_in_file]    
+    
+    satellites = sp.empty((0,1))
+    
+
+    # Set the linenumber just before the satellites of the first halo:
+    headerlines = 25+len(halos_in_file)
+    
+
+    # Counting how many particles go before we get to this halos particles:
+    nparticles_for_halos_in_file_with_lower_ID = [h.number_of_particles for h in halos_in_file \
+                                                  if h.ID < halo.ID]
+        
+    pastlines = int(headerlines+sp.sum(nparticles_for_halos_in_file_with_lower_ID))
+
+        
+    mean_number_of_satellites = dist_satellites(parameters,halo.mass)
+    if mean_number_of_satellites == 0:
+        halo.number_of_satellites = 0
+    else:
+        halo.number_of_satellites = int(stats.poisson.rvs(mean_number_of_satellites))
+
+    
+    # Start point inclusive, endpoint non-inclusive
+    satellite_numbers = random.sample(range(0, halo.number_of_particles),halo.number_of_satellites)
+    sorted_satellite_numbers = sp.sort(satellite_numbers)
+
+    for satellite_number in sorted_satellite_numbers:
+        
+        line = linecache.getline(halo.particle_file.name,pastlines+satellite_number)
+        data = line.split()
+        assert int(data[-1]) == halo.ID
+        position = sp.double(sp.array(data[0:3]))
+        vh = halo.velocity
+        vp = sp.double(sp.array(data[3:6]))
+
+        velocity = vh+parameters.alpha_s*(vp-vh)
+
+        satellite = hc.Galaxy(position,velocity,halo.ID)
+        satellites = sp.append(satellites,satellite)
+
+    halo.satellite_galaxies = satellites
+    
+    return halo
+
+
         
         
 def print_hubbleconstants_to_file(parameters,observers):
@@ -718,6 +930,7 @@ def calculate_Hs_for_varying_number_of_SNe(parameters,observed_halos):
     
     number_of_SNe_Hubbleconstants_array = sp.zeros((len(parameters.numbers_of_SNe),len(parameters.bindistances)))
 
+    random.seed(0)
     
     for row, number_of_SNe in enumerate(parameters.numbers_of_SNe):
         observed_sample_of_halos = random.sample(observed_halos,number_of_SNe)
@@ -798,7 +1011,8 @@ def read_snapshot(parameters):
             ID = p
             ID_host = -1
             
-            particle = hc.Halo(position,velocity,M,ID,ID_host)
+            vrms = 0
+            particle = hc.Halo(position,velocity,M,vrms,ID,ID_host)
             particles[p] = particle
     
     if parameters.data_type == "snapshot":
