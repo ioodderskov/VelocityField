@@ -5,16 +5,16 @@
 path: ../cases/Planck512/
 parallel_processing: 0
 data_type: ROCKSTAR # ROCKSTAR (default), CoDECS, snapshot or grid
-data_to_observe: grid # grid or halos
+data_to_observe: halos # grid or halos
 ##########################################################################
 
         
 ##########################################################################
         # Identify and save galaxies using a HOD?
 ##########################################################################
-use_HOD: 1
+use_HOD: 0
 number_of_particle_files: 48
-particle_file_base: halos_11 
+particle_file_base: ../cases/Planck512/halos_11 
         # Parameters for HOD
 logMmin: 11.95
 sigma_logM: 0.16
@@ -48,9 +48,9 @@ beta_c: 0
 ##########################################################################
         # Division in bins
 ##########################################################################
-mind: 145
-maxd: 155
-width: 10
+mind: 142
+maxd: 158
+width: 16
 skyfraction: 1
 ##########################################################################
 
@@ -117,11 +117,11 @@ SN_mass_max: 0
         # Assigning values to a grid
 ##########################################################################
 # Should positions, velocities and masses be assigned to a grid?
-assign_to_grid: 1
-#velocities_on_grid: 0
+assign_to_grid: 0
+velocities_on_grid: 1
 Ng: 15
 smoothing: 1
-smoothing_radius: 3 # Mpc/h
+smoothing_radius: 15
 ##########################################################################
 
         
@@ -132,6 +132,6 @@ smoothing_radius: 3 # Mpc/h
 # Create a map of the velocityfield?
 map_velocityfield: 0
 calculate_powerspectra: 1
-nside: 8
+nside: 16
 lmax: 20
 ##########################################################################

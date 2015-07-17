@@ -26,7 +26,7 @@ def fln(x,a,b):
 
 def plot_histogram(bins,bars,color,sub,xlabel,ylabel,text,xtics,yticks):
 
-    alpha=0.4
+    alpha=0.1
     bin_width = bins[1]-bins[0]    
     fig = plt.gcf()
     ax = fig.add_subplot(sub)
@@ -76,7 +76,7 @@ plt.figure(figsize=(6,2))
 
 #plotlabel = "EXP003"
 #models = ["EXP003", "EXP003", "EXP003","EXP003"]
-###
+#
 #min_dists = ["0.0", "1.0", "5.0", "10.0"]
 #texts = ["R="+min_dists[0]+"Mpc/h","R="+min_dists[1]+"Mpc/h",
 #         "R="+min_dists[2]+"Mpc/h","R="+min_dists[3]+"Mpc/h"]
@@ -116,8 +116,8 @@ for i in range(len(models)):
     
     bins, bars = hif.make_normalised_histogram(nbins,H_uncorrected)
     ax = plot_histogram(bins,bars,'b',sub,xlabel,ylabel,text,xticks,yticks)
-    fitted_bars = hif.fit_distribution_to_normalised_histogram(bins,bars,func)
-    ax.plot(bins,fitted_bars,'b',label='Uncorrected')
+    bins_fine,fitted_bars = hif.fit_distribution_to_normalised_histogram(bins,bars,func)
+    ax.plot(bins_fine,fitted_bars,'b',label='Uncorrected')
     
     things_be_crazy = True
     if things_be_crazy:
@@ -133,8 +133,8 @@ for i in range(len(models)):
     if not min_dist == '0.0':
         bins, bars = hif.make_normalised_histogram(nbins,H_corrected)
         ax = plot_histogram(bins,bars,'g',sub,xlabel,ylabel,text,xticks,yticks)
-        fitted_bars = hif.fit_distribution_to_normalised_histogram(bins,bars,func)
-        ax.plot(bins,fitted_bars,'g',label='Corrected')
+        bins_fine, fitted_bars = hif.fit_distribution_to_normalised_histogram(bins,bars,func)
+        ax.plot(bins_fine,fitted_bars,'g',label='Corrected')
 
     if not model == 'LCDM':
         case_LCDM = "CoDECS_LCDM"
@@ -144,14 +144,14 @@ for i in range(len(models)):
 
         
         bins_LCDM, bars_LCDM = hif.make_normalised_histogram(nbins,H_uncorrected_LCDM)
-        fitted_bars_LCDM = hif.fit_distribution_to_normalised_histogram(bins_LCDM, bars_LCDM, func)
-        ax.plot(bins_LCDM,fitted_bars_LCDM,'k--',linewidth=1,label='$\Lambda$CDM')
+        bins_fine_LCDM, fitted_bars_LCDM = hif.fit_distribution_to_normalised_histogram(bins_LCDM, bars_LCDM, func)
+        ax.plot(bins_fine_LCDM,fitted_bars_LCDM,'m',linewidth=1,alpha=0.5,label='$\Lambda$CDM')
 
         if not min_dist == '0.0':
             H_corrected_LCDM = sp.loadtxt(fname_LCDM)[:,2]/100        
             bins_LCDM, bars_LCDM = hif.make_normalised_histogram(nbins,H_corrected_LCDM)
-            fitted_bars_LCDM = hif.fit_distribution_to_normalised_histogram(bins_LCDM,bars_LCDM,func)
-            ax.plot(bins_LCDM, fitted_bars_LCDM, 'k--',linewidth=1)
+            bins_fine_LCDM, fitted_bars_LCDM = hif.fit_distribution_to_normalised_histogram(bins_LCDM,bars_LCDM,func)
+            ax.plot(bins_fine_LCDM, fitted_bars_LCDM, 'm',linewidth=1,alpha=0.5)
 
     if text in ['EXP001',"R="+min_dists[1]+"Mpc/h"]:    
         plt.legend(bbox_to_anchor=(1, 1),prop={'size':8},frameon=False)

@@ -32,7 +32,7 @@ class Parameters:
         # Identify and save galaxies using a HOD?
         self.use_HOD = int(param.get("use_HOD",default))
         self.number_of_particle_files = int(param.get("number_of_particle_files",default))
-        self.particle_file_base = self.path+str(param.get("particle_file_base",default))
+        self.particle_file_base = str(param.get("particle_file_base",default))
         # Parameters for HOD
         self.logMmin = sp.double(param.get("logMmin",default))
         self.sigma_logM = sp.double(param.get("sigma_logM",default))
@@ -502,7 +502,12 @@ class Observer:
         vrs_peculiar = [observed_halo.vr_peculiar for observed_halo in self.chosen_halos]
         
         vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar) 
-        vrmap = pf.fill_empty_entries(parameters,vrmap)
+#        vrmap = pf.fill_empty_entries(parameters,vrmap)
+        print "I am no longer filling empty entries! Implement the mask-functionality instead."
+        print "Note: you only need the mask for the incomplete sky coverage. There should be\
+            no empty pixels with a proper grid."
+        
+        pf.find_largest_hole(parameters,vrmap)
         
 #        if parameters.smoothing:
 #            vrmap = pf.smooth_map(parameters,vrmap)

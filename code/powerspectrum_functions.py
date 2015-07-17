@@ -27,10 +27,19 @@ def find_largest_hole(parameters,ar):
             minimal_distance = sp.minimum(minimal_distance,angular_distance)
             
         minimal_distances.append(minimal_distance)
-        
+         
     radius_of_largest_hole = max(minimal_distances)
 
-    print "radius of largest hole = ", radius_of_largest_hole  
+    print "The angular radius of largest hole = ", radius_of_largest_hole
+    print "With nside = ", parameters.nside,\
+        " the distance between adjecent pixels is approximately", 2*sp.pi/(6*parameters.nside)
+    theta_0, phi_0 = hp.pix2ang(parameters.nside,0)
+    theta_1, phi_1 = hp.pix2ang(parameters.nside,1)
+    print "Example:", hp.rotator.angdist([theta_0,phi_0],[theta_1,phi_1])
+    d_shell = sp.mean((parameters.mind,parameters.maxd))
+    print "At a distance of", d_shell, \
+        "Mpc/h, an angular distance of", radius_of_largest_hole,\
+        "corresponds to a physical distance of", radius_of_largest_hole*d_shell,"Mpc/h"
     return radius_of_largest_hole
             
 
