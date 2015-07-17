@@ -75,8 +75,37 @@ def ngp(parameters,positions,values):
     
 
     return values_ngp     
+
+def smoothing(parameters,gridvals):
+    cellsize = parameters.boxsize/parameters.Ng
+    smoothing_radius_cells = parameters.smoothing_radius/cellsize
+    kernel_res = 3
+    kernel = make_kernel([kernel_res,kernel_res,kernel_res],smoothing_radius_cells)
+    smoothed_vals = copy(gridvals)
     
+    smoothed_vals = convolve(smoothed_vals,kernel,boundary='wrap')
+    n = 0
+    while sp.any(sp.isnan(smoothed_vals)):
+        smoothed_vals = convolve(smoothed_vals,kernel,boundary='wrap')
+    print "Went through the convolving-loop", n, "times"
+        
+    return smoothed_vals
+
+
+def density_field(parameters,positions,masses):
     
+    rho_tsc = tsc(parameters,positions,masses)
+    
+    if parameters.smoothing:
+        rho = smoothing(parameters,rho_tsc)
+    else:
+        rho = rho_tsc
+        
+    gridpoint_positions, gridpoint_rhos = positions_and_values_from_grid(parameters,rho)
+    
+    return gridpoint_positions, gridpoint_rhos
+    
+
 def velocity_field(parameters,positions,velocities):
     
 
@@ -88,29 +117,10 @@ def velocity_field(parameters,positions,velocities):
 
 
     if parameters.smoothing:  
-        cellsize = parameters.boxsize/parameters.Ng
-        smoothing_radius_cells = parameters.smoothing_radius/cellsize
-#        kernel_res = int(smoothing_radius_cells*2*3)
-#        if sp.mod(kernel_res,2) == 0:
-#            kernel_res = kernel_res+1
-        kernel_res = 3
-        print "the kernel resolution is", kernel_res
-        kernel = make_kernel([kernel_res,kernel_res,kernel_res],smoothing_radius_cells)
+        vx = smoothing(parameters,vx_ngp)
+        vy = smoothing(parameters,vy_ngp)
+        vz = smoothing(parameters,vz_ngp)
 
-        vx_ngp_smoothed = copy(vx_ngp)
-        vy_ngp_smoothed = copy(vy_ngp)
-        vz_ngp_smoothed = copy(vz_ngp)
-
-        n = 0
-        while sp.any(sp.isnan(vx_ngp_smoothed)):
-            n = n+1
-            vx_ngp_smoothed = convolve(vx_ngp_smoothed,kernel,boundary='wrap') 
-            vy_ngp_smoothed = convolve(vy_ngp_smoothed,kernel,boundary='wrap') 
-            vz_ngp_smoothed = convolve(vz_ngp_smoothed,kernel,boundary='wrap') 
-        print "Went through the convolving-loop", n, "times"
-
-
-        vx,vy,vz = vx_ngp_smoothed,vy_ngp_smoothed,vz_ngp_smoothed
 
     else:
         vx,vy,vz = vx_ngp,vy_ngp,vz_ngp
@@ -195,6 +205,11 @@ def write_grid_to_file(parameters,gridpoint_positions,gridpoint_rho,gridpoint_ve
     f.write("#x \t y \t z\t rho \t vx \t vy \t vz\n")
     for gridpoint_position,rho,gridpoint_velocity in zip(gridpoint_positions,gridpoint_rho,gridpoint_velocities):
         x,y,z = gridpoint_position[0],gridpoint_position[1],gridpoint_position[2]
+
+        if parameters.reduced_box:
+            if (x > parameters.reduced_boxsize) or (y > parameters.reduced_boxsize) or (z > parameters.reduced_boxsize):
+                continue
+        
         vx,vy,vz = gridpoint_velocity[0],gridpoint_velocity[1],gridpoint_velocity[2]        
         f.write("%.2f\t%.2f\t%.2f\t%.2e\t%.2f\t%.2f\t%.2f\n" % (x,y,z,rho,vx,vy,vz))
                 
@@ -210,8 +225,9 @@ def create_density_and_velocity_grid(parameters):
         masses = sp.array([halo.mass for halo in parameters.halos])
 
 
-    rho_tsc = tsc(parameters,positions,masses)
-    gridpoint_positions, gridpoint_rho = positions_and_values_from_grid(parameters,rho_tsc)
+#    rho_tsc = tsc(parameters,positions,masses)
+#    gridpoint_positions, gridpoint_rho = positions_and_values_from_grid(parameters,rho_tsc)
+    gridpoint_positions, gridpoint_rho = density_field(parameters,positions,masses)
 
     if parameters.velocities_on_grid:
         if parameters.use_HOD:

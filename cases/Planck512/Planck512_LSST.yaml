@@ -20,6 +20,11 @@ logMmin: 11.95
 sigma_logM: 0.16
 logM0: 12.10
 logM1_prime: 13.33
+        # Parameters for HOD
+logMmin: 11.95
+sigma_logM: 0.16
+logM0: 12.10
+logM1_prime: 13.33
 alpha: 1.08
 alpha_c: 0.25
 alpha_s: 0.84
@@ -89,7 +94,7 @@ powerspectrafile: powerspectra.txt
 observer_choice: random_halos 
 observerfile:  # If from_file, specify the file here
 observer_indices_file:  # If indices_from_file, specify the file here
-number_of_observers: 1 # Specify the number of observers you want to use
+number_of_observers: 3 # Specify the number of observers you want to use
 # If subhalos, specify the mass-requirements here
 sub_min_m: 1e12
 sub_max_m: 1e13
@@ -117,8 +122,14 @@ SN_mass_max: 0
         # Assigning values to a grid
 ##########################################################################
 # Should positions, velocities and masses be assigned to a grid?
-assign_to_grid: 0
+assign_to_grid: 1
 velocities_on_grid: 1
+Ng: 15
+smoothing: 1
+smoothing_radius: 3 # Mpc/h
+##########################################################################
+
+        
 Ng: 15
 smoothing: 1
 smoothing_radius: 15

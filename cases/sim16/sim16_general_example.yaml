@@ -154,6 +154,8 @@ assign_to_grid: 0
 Ng: 10
 smoothing: 1
 smoothing_radius: 3 # Mpc/h
+reduced_box: 0
+reduced_boxsize: 8
 ##########################################################################
 
         

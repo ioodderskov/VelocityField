@@ -113,6 +113,8 @@ class Parameters:
         self.Ng = int(param.get("Ng",default))
         self.smoothing = int(param.get("smoothing",default))    
         self.smoothing_radius = sp.double(param.get("smoothing_radius",default))
+        self.reduced_box = int(param.get("reduced_box",default))
+        self.reduced_boxsize = sp.double(param.get("reduced_boxsize",default))
 
 
         
