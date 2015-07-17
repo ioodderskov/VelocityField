@@ -4,6 +4,7 @@ import scipy as sp
 from copy import copy
 from astropy.convolution import convolve 
 from astropy_make_kernel import make_kernel
+import pdb
 
 periodic_boundaries = 1
 
@@ -89,9 +90,9 @@ def velocity_field(parameters,positions,velocities):
     if parameters.smoothing:  
         cellsize = parameters.boxsize/parameters.Ng
         smoothing_radius_cells = parameters.smoothing_radius/cellsize
-        kernel_res = int(smoothing_radius_cells*2*3)
-        if sp.mod(kernel_res,2) == 0:
-            kernel_res = kernel_res+1
+#        kernel_res = int(smoothing_radius_cells*2*3)
+#        if sp.mod(kernel_res,2) == 0:
+#            kernel_res = kernel_res+1
         kernel_res = 3
         print "the kernel resolution is", kernel_res
         kernel = make_kernel([kernel_res,kernel_res,kernel_res],smoothing_radius_cells)
@@ -106,7 +107,7 @@ def velocity_field(parameters,positions,velocities):
             vx_ngp_smoothed = convolve(vx_ngp_smoothed,kernel,boundary='wrap') 
             vy_ngp_smoothed = convolve(vy_ngp_smoothed,kernel,boundary='wrap') 
             vz_ngp_smoothed = convolve(vz_ngp_smoothed,kernel,boundary='wrap') 
-        print "Went through the while-loop", n, "times"
+        print "Went through the convolving-loop", n, "times"
 
 
         vx,vy,vz = vx_ngp_smoothed,vy_ngp_smoothed,vz_ngp_smoothed
@@ -194,22 +195,37 @@ def write_grid_to_file(parameters,gridpoint_positions,gridpoint_rho,gridpoint_ve
     f.write("#x \t y \t z\t rho \t vx \t vy \t vz\n")
     for gridpoint_position,rho,gridpoint_velocity in zip(gridpoint_positions,gridpoint_rho,gridpoint_velocities):
         x,y,z = gridpoint_position[0],gridpoint_position[1],gridpoint_position[2]
+
+        if parameters.reduced_box:
+            if (x > parameters.reduced_boxsize) or (y > parameters.reduced_boxsize) or (z > parameters.reduced_boxsize):
+                continue
+        
         vx,vy,vz = gridpoint_velocity[0],gridpoint_velocity[1],gridpoint_velocity[2]        
-        f.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (x,y,z,rho,vx,vy,vz))
+        f.write("%.2f\t%.2f\t%.2f\t%.2e\t%.2f\t%.2f\t%.2f\n" % (x,y,z,rho,vx,vy,vz))
                 
     f.close()
     
 def create_density_and_velocity_grid(parameters):
-    positions = sp.array([halo.position for halo in parameters.halos])
-    masses = sp.array([halo.mass for halo in parameters.halos])
+    if parameters.use_HOD:
+#        pdb.set_trace()
+        positions = sp.array([galaxy.position for galaxy in parameters.galaxies])
+        masses = sp.ones(len(positions))        
+    else: 
+        positions = sp.array([halo.position for halo in parameters.halos])
+        masses = sp.array([halo.mass for halo in parameters.halos])
 
 
     rho_tsc = tsc(parameters,positions,masses)
     gridpoint_positions, gridpoint_rho = positions_and_values_from_grid(parameters,rho_tsc)
 
     if parameters.velocities_on_grid:
-        velocities = sp.array([halo.velocity for halo in parameters.halos])
+        if parameters.use_HOD:
+            velocities = sp.array([galaxy.velocity for galaxy in parameters.galaxies])
+        else:
+            velocities = sp.array([halo.velocity for halo in parameters.halos])
+
         gridpoint_positions, gridpoint_velocities = velocity_field(parameters,positions,velocities)
+        
     else:
         gridpoint_velocities = sp.zeros_like(gridpoint_positions)
 

@@ -64,7 +64,14 @@ def velocity_from_matterdistribution(parameters,halo_position,survey_positions,s
     else:
 
         H0_astro = 100.
-        f = parameters.omegam**0.55
+        f_old = parameters.omegam**0.55
+        gamma = 0.56
+        epsilon_c = 2.4
+        omega_m = parameters.omegam
+        omega_cdm = parameters.omegam-parameters.omega_b
+        f = omega_m**gamma*(1+gamma*omega_cdm/omega_m*epsilon_c*parameters.beta_c**2)
+
+        print "ratio btw new and old f = ", f/f_old    
     
         vx_from_matterdistribution = f*H0_astro/(4*sp.pi*rho_mean)*sp.sum(individual_contributions[:,0])#+f*H0_astro/3*(halo_position[0]-observer_position[0])
         vy_from_matterdistribution = f*H0_astro/(4*sp.pi*rho_mean)*sp.sum(individual_contributions[:,1])#+f*H0_astro/3*(halo_position[1]-observer_position[1])
@@ -119,7 +126,7 @@ def plot_velocity_field(parameters,observer,chosen_halos,halos_around_massive_ha
     obs_x = observer.position[0]
     obs_y = observer.position[1]
 
-    boxplot = 25    
+    boxplot = 100    
     scale = 2000
     linear_halo_bias = 1
     
@@ -209,7 +216,7 @@ def plot_velocity_field(parameters,observer,chosen_halos,halos_around_massive_ha
 
 
 
-    plt.savefig("/home/io/Dropbox/SharedStuff/Cepheids/Observation.pdf")
+    plt.savefig(parameters.plottet_velocity_field_file+"_"+str(parameters.plot_velocity_field_n)+"_.pdf")
 
     
     print "ready to plot!"

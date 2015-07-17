@@ -63,7 +63,7 @@ hubblefile: Hubbleconstants.txt
 use_snapshot_for_background: 0
 correct_for_peculiar_velocities: 1
 survey_radius: 866
-min_dist: 5 # Mpc/h
+min_dist: 15 # Mpc/h
 plot_velocity_field: 1 # The velocity field will be plottet for the first [number] observers
 plottet_velocity_field_file: Observation.pdf
 ##########################################################################

@@ -2,18 +2,35 @@
 ##########################################################################
         # Path and choices for how and what to run        
 ##########################################################################
-path: ../cases/CoDECS_LCDM/
+path: ../cases/sim16/
 parallel_processing: 1
-data_type: CoDECS # ROCKSTAR (default), CoDECS, snapshot or grid
+data_type: ROCKSTAR # ROCKSTAR (default), CoDECS, snapshot or grid
+data_to_observe: grid # grid or halos
 ##########################################################################
 
+
+
+##########################################################################
+        # Identify and save galaxies using a HOD?
+##########################################################################
+use_HOD: 1
+number_of_particle_files: 48
+particle_file_base: /home/isho07/Rockstar/sim16_output/halos_11 
+        # Parameters for HOD
+logMmin: 11.95
+sigma_logM: 0.16
+logM0: 12.10
+logM1_prime: 13.33
+alpha: 1.08
+alpha_c: 0.25
+alpha_s: 0.84
+##########################################################################
         
         
 ##########################################################################
         # Halo catalogues
 ##########################################################################
-halocatalogue_file: LCDM_CoDECS_SubGroups_092.tar
-CoDECShosts_file: LCDM_CoDECS_Groups_092.tar
+halocatalogue_file: parents_11
 ##########################################################################
 
         
@@ -21,10 +38,10 @@ CoDECShosts_file: LCDM_CoDECS_Groups_092.tar
 ##########################################################################
         # Parameters for the simulation/catalogue
 ##########################################################################
-boxsize: 1000
-omegam: 0.2711
-omega_b: 0.0451 
-h: 0.703
+boxsize: 16
+omegam: 0.306843
+omega_b: 0
+h: 0.678
 beta_c: 0
 ##########################################################################
 
@@ -33,18 +50,28 @@ beta_c: 0
 ##########################################################################
         # Division in bins
 ##########################################################################
-mind: 45
-maxd: 95
-width: 50
+mind: 2
+maxd: 10
+width: 8
 skyfraction: 1
 ##########################################################################
 
-
+        
         
 ##########################################################################
         # Snapshots
 ##########################################################################
-snapshot_file: LCDM_CoDECS_snap_092.tar
+snapshot_file: snapshot_011
+##########################################################################
+
+        
+        
+##########################################################################
+        # Grid file (both read and write)
+##########################################################################
+#The gridfile is both the one that will be written if assign_to_grid = 1, 
+#and the one that will be read if use_grid = 1
+gridfile: grid.txt
 ##########################################################################
 
         
@@ -52,46 +79,23 @@ snapshot_file: LCDM_CoDECS_snap_092.tar
 ##########################################################################
         # Outputfiles
 ##########################################################################
-hubblefile: Hubbleconstants.txt
+powerspectrafile: powerspectra.txt
 ##########################################################################
 
-        
-        
-##########################################################################
-        # Correction for peculiar velocities (using first order pertubation theory)
-##########################################################################
-use_snapshot_for_background: 0
-correct_for_peculiar_velocities: 1
-survey_radius: 866
-min_dist: 5 # Mpc/h
-plot_velocity_field: 1 # The velocity field will be plottet for the first [number] observers
-plottet_velocity_field_file: Observation.pdf
-##########################################################################
-
-        
-        
-##########################################################################
-        # Cepheids, tracking of local motion        
-##########################################################################
-use_local_velocity: 0
-radius_local_group: 3 # Mpc/h
-##########################################################################
-        
-        
         
 ##########################################################################
         # Choices for the observers        
 ##########################################################################
 #indices_from_file, from_file, subhalos, random_positions, random_halos, all
-observer_choice: subhalos
-observerfile:  # If from_file, specify the file here
-observer_indices_file:  # If indices_from_file, specify the file here
-number_of_observers: 1000 # Specify the number of observers you want to use
+observer_choice: random_halos 
+observerfile: ../cases/sim16/howdy16.txt # If from_file, specify the file here
+observer_indices_file: observer_indices.txt # If indices_from_file, specify the file here
+number_of_observers: 10 # Specify the number of observers you want to use
 # If subhalos, specify the mass-requirements here
-sub_min_m: 1e12
-sub_max_m: 1e13
-host_min_m: 5e14
-host_max_m: 5e15
+sub_min_m: 1.6e12
+sub_max_m: 2.8e12
+host_min_m: 1.1e13 
+host_max_m: 2.3e13
 ##########################################################################
 
         
@@ -99,7 +103,36 @@ host_max_m: 5e15
 ##########################################################################
         # Choices for the observed halos
 ##########################################################################
-use_CoM: 1
+use_CoM: 0
+min_dist: 2
+number_of_SNe: 0
 # How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
-observed_halos: centered_around_massive_halo
+observed_halos: all
+SN_mass_min: 0
+SN_mass_max: 0
+##########################################################################
+
+        
+        
+##########################################################################
+        # Assigning values to a grid
+##########################################################################
+# Should positions, velocities and masses be assigned to a grid?
+assign_to_grid: 1
+velocities_on_grid: 1
+Ng: 15
+smoothing: 1
+smoothing_radius: 3 # Mpc/h
+##########################################################################
+
+        
+        
+##########################################################################
+        # Angular powerspectra for the radial peculiar velocities
+##########################################################################
+# Create a map of the velocityfield?
+map_velocityfield: 0
+calculate_powerspectra: 1
+nside: 8
+lmax: 20
 ##########################################################################

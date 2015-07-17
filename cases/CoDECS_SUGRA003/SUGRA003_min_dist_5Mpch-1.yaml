@@ -2,7 +2,7 @@
 ##########################################################################
         # Path and choices for how and what to run        
 ##########################################################################
-path: ../cases/CoDECS_LCDM/
+path: ../cases/CoDECS_SUGRA003/
 parallel_processing: 1
 data_type: CoDECS # ROCKSTAR (default), CoDECS, snapshot or grid
 ##########################################################################
@@ -12,8 +12,8 @@ data_type: CoDECS # ROCKSTAR (default), CoDECS, snapshot or grid
 ##########################################################################
         # Halo catalogues
 ##########################################################################
-halocatalogue_file: LCDM_CoDECS_SubGroups_092.tar
-CoDECShosts_file: LCDM_CoDECS_Groups_092.tar
+halocatalogue_file: SUGRA003_CoDECS_SubGroups_092.tar
+CoDECShosts_file: SUGRA003_CoDECS_Groups_092.tar
 ##########################################################################
 
         
@@ -23,9 +23,9 @@ CoDECShosts_file: LCDM_CoDECS_Groups_092.tar
 ##########################################################################
 boxsize: 1000
 omegam: 0.2711
-omega_b: 0.0451 
+omega_b: 0.0451
 h: 0.703
-beta_c: 0
+beta_c: -0.15
 ##########################################################################
 
         
@@ -44,7 +44,7 @@ skyfraction: 1
 ##########################################################################
         # Snapshots
 ##########################################################################
-snapshot_file: LCDM_CoDECS_snap_092.tar
+snapshot_file: SUGRA003_CoDECS_snap_092.tar
 ##########################################################################
 
         

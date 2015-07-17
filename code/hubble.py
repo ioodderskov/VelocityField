@@ -8,7 +8,7 @@ import parallel_processing as pp
 import multiprocessing
 from functools import partial
 import scipy as sp
-#import cPickle
+import cPickle
 import assignment_to_grid as ag
 import resource
 from scipy import stats # Import the scipy.stats module
@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 import os
 import scipy.integrate as integrate
 import pdb
+#import pickle
 
 # There is one argument, namely the parameterfile
 if len(sys.argv) != 2:
@@ -26,22 +27,29 @@ parameterfile = sys.argv[1]
 parameters = hc.Parameters(parameterfile)
 
 
-if parameters.snapshot:
+if parameters.data_type == "snapshot":
     hf.read_snapshot(parameters) # technically, its particles, not halos, in this case. But never mind.
-    observers = hf.initiate_observers(parameters)
-
-elif parameters.use_lightcone:
-    observers = hf.initiate_observers(parameters)
     
 else:
     halocatalogue = hf.load_halocatalogue(parameters,parameters.halocatalogue_file)
     hf.initiate_halos(parameters,halocatalogue)
-    observers = hf.initiate_observers(parameters)
-    print "observers = ", observers
+    if parameters.use_HOD:
+        hf.identify_galaxies(parameters)
+
+
+if parameters.assign_to_grid:     
+    ag.create_density_and_velocity_grid(parameters)
+    
+if parameters.data_to_observe == 'grid':
+    hf.initiate_grid(parameters)
+
+observers = hf.initiate_observers(parameters)
 
 particles = []
 if parameters.use_snapshot_for_background:
     particles = hf.read_snapshot(parameters)
+#else:
+#    particles = parameters.halos
 
 partial_observe_and_analyse = partial(pp.observe_and_analyse,parameters=parameters,particles=particles)
 
@@ -54,67 +62,23 @@ else:
     observers = map(partial_observe_and_analyse,observers)
 
 
-if parameters.assign_to_grid:    
-    ag.create_density_and_velocity_grid(parameters)
-
-
 if parameters.calculate_hubble_constants:
     hf.print_hubbleconstants_to_file(parameters,observers)
     
 if parameters.calculate_powerspectra:
     pf.print_powerspectra_to_file(parameters,observers)
 
-if parameters.observer_choice == 'all':
-    print "Not saving the observers - there are too many!"
-else:
+if parameters.calculate_pairwise_velocities:
+    hf.calculate_pairwise_velocities(parameters,observers)
+
+if len(observers) <= 2000:
     sp.save(parameters.path+str(parameters.min_dist)+'observers.npy',observers)
 
-if parameters.calculate_pairwise_velocities:
-
-    pairwise_velocities = []
-    radial_distances = []
-    pair_masses = []
-    for observer in observers:
-        for velocity, radial_distance, pair_mass in zip(observer.observed_radial_peculiar_velocities,observer.radial_distances,observer.pair_masses):
-            pairwise_velocities.append(velocity)
-            radial_distances.append(radial_distance)
-            pair_masses.append(pair_mass)
-
-    central_halo_mass = (parameters.min_halo_mass+parameters.max_halo_mass)/2
-
-    if parameters.CoDECS:
-        sp.save(parameters.path+'pairwise_velocities_%0.2e' %central_halo_mass,sp.array(pairwise_velocities))
-        sp.save(parameters.path+'radial_distances_%0.2e' %central_halo_mass,sp.array(radial_distances))
-        sp.save(parameters.path+'pair_masses_%0.2e' %central_halo_mass,sp.array(pair_masses))
-
-    else:
-        sp.save(parameters.path+'ROCKSTAR_pairwise_velocities_%0.2e' %central_halo_mass,sp.array(pairwise_velocities))
-        sp.save(parameters.path+'ROCKSTAR_radial_distances_%0.2e' %central_halo_mass,sp.array(radial_distances))
-        sp.save(parameters.path+'ROCKSTAR_pair_masses_%0.2e' %central_halo_mass,sp.array(pair_masses))
 
 if parameters.correct_for_peculiar_velocities:
+    hf.calculate_velocity_correlation_coefficients(parameters,observers)
 
-    if parameters.use_local_velocity:
-
-        print "------ observers --------"
-        local_velocities = sp.array([observer.local_velocity for observer in observers if len(observer.local_velocity) != 0] )
-        local_velocity_corrections = sp.array([observer.local_velocity_correction for observer in observers if len(observer.local_velocity) != 0])
-        
-        
-        print "correlation coefficients:"
-        print "x:", sp.corrcoef(local_velocities[:,0],local_velocity_corrections[:,0])
-        print "y:", sp.corrcoef(local_velocities[:,1],local_velocity_corrections[:,1])
-        print "z:", sp.corrcoef(local_velocities[:,2],local_velocity_corrections[:,2])
-        print "abs(local_velocities)/abs(local_velocity_corrections)",\
-        sp.mean(sp.absolute(local_velocities),axis=0)/sp.mean(sp.absolute(local_velocity_corrections),axis=0)
-        
+f = open('../cases/sim16/parameters.save','w')    
+cPickle.dump(parameters,f)
+f.close()
     
-    print "------ observed halos --------"
-    observed_velocities = sp.array([observer.chosen_halos[0].observed_velocity for observer in observers if len(observer.chosen_halos) == 1])
-    velocity_corrections = sp.array([observer.chosen_halos[0].velocity_correction for observer in observers if len(observer.chosen_halos) == 1])
-    print "correlation coefficients:"
-    print "x:", sp.corrcoef(observed_velocities[:,0],velocity_corrections[:,0])
-    print "y:", sp.corrcoef(observed_velocities[:,1],velocity_corrections[:,1])
-    print "z:", sp.corrcoef(observed_velocities[:,2],velocity_corrections[:,2])
-    print "abs(observed_velocities)/abs(velocity_corrections)",\
-    sp.mean(sp.absolute(observed_velocities),axis=0)/sp.mean(sp.absolute(velocity_corrections),axis=0)

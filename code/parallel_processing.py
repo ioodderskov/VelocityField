@@ -19,4 +19,7 @@ def observe_and_analyse(observer,parameters,particles):
         observer.calculate_powerspectra(parameters)  
         
     return observer
+    
+    
+     
         
