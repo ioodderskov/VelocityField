@@ -38,6 +38,7 @@ def calculate_bindistances(mind, maxd, width):
         mind_bin = maxd_bin
         maxd_bin = maxd_bin_tmp
     
+    print "bindistances = ", bindistances
     return bindistances
     
     

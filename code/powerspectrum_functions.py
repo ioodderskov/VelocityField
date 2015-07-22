@@ -147,29 +147,50 @@ def Ios_smoothing(parameters,ar,b):
 
 
 def smooth_map(parameters,vrmap):
-    if not (parameters.preset_smoothinglength | parameters.smooth_largest_hole):
-        print "If you want to smooth the map, you need to make a choice for the smoothinglength"
+#    if not (parameters.preset_smoothinglength | parameters.smooth_largest_hole):
+#        print "If you want to smooth the map, you need to make a choice for the smoothinglength"
 
-    if parameters.preset_smoothinglength:
-        smoothing_fwhm = parameters.smoothing_fwhm
+#    if parameters.preset_smoothinglength:
+#        smoothing_fwhm = parameters.smoothing_fwhm
     
-    if parameters.smooth_largest_hole:
-        smoothing_fwhm = find_largest_hole(parameters,vrmap)
-        
-    #vrmap = Ios_smoothing(parameters,vrmap,smoothing_fwhm)
-    vrmap = hp.smoothing(vrmap,fwhm=smoothing_fwhm)
-        
+#    if parameters.smooth_largest_hole:
+#        smoothing_fwhm = find_largest_hole(parameters,vrmap)
 
+    dist_shell = sp.mean((parameters.mind,parameters.maxd))
+    smoothing_fwhm = parameters.smoothing_radius/dist_shell
+    print "The smoothing length in radians is", smoothing_fwhm    
+    #vrmap = Ios_smoothing(parameters,vrmap,smoothing_fwhm)
+    print "Attention! The smoothing and the mask have not been tested yet."
+    mask = sp.zeros_like(vrmap)
+    mask[vrmap == parameters.badval] = 1
+    vrmap_masked = hp.ma(vrmap)
+    vrmap_masked.mask = mask
+
+
+#    vrmap_smoothed = hp.smoothing(vrmap_masked,fwhm=smoothing_fwhm) # The fwhm is in radians
+        
+#    pdb.set_trace()
+
+    return vrmap_masked
+    
+    
+def mask_map(parameters,vrmap):
+ 
+    vrmap = hp.ma(vrmap)
+    mask = sp.zeros_like(vrmap)
+    mask[vrmap == parameters.badval] = 1
+    vrmap.mask = mask
+    
     return vrmap
         
 
 def do_harmonic_analysis(parameters,vrmap):
 
-    mask = [vrmap == parameters.unseen]
-    masked_vrmap = hp.ma(vrmap)
-    masked_vrmap.mask = mask
+#    mask = [vrmap == parameters.unseen]
+#    masked_vrmap = hp.ma(vrmap)
+#    masked_vrmap.mask = mask
 
-    cls = hp.anafast(masked_vrmap,lmax=parameters.lmax)
+    cls = hp.anafast(vrmap,lmax=parameters.lmax)
     ls = sp.arange(parameters.lmax+1)
         
     return ls,cls

@@ -55,9 +55,9 @@ beta_c: 0
 ##########################################################################
         # Division in bins
 ##########################################################################
-mind: 8
-maxd: 12
-width: 4
+mind: 2
+maxd: 8
+width: 3
 skyfraction: 1
 ##########################################################################
 
@@ -123,10 +123,10 @@ SN_mass_max: 0
         # Assigning values to a grid
 ##########################################################################
 # Should positions, velocities and masses be assigned to a grid?
-assign_to_grid: 1
-velocities_on_grid: 1
+assign_to_grid: 0
+velocities_on_grid: 0
 Ng: 10
-smoothing: 1
+smoothing: 0
 smoothing_radius: 10
 ##########################################################################
 
@@ -136,8 +136,9 @@ smoothing_radius: 10
         # Angular powerspectra for the radial peculiar velocities
 ##########################################################################
 # Create a map of the velocityfield?
-map_velocityfield: 0
-calculate_powerspectra: 0
+map_velocityfield: 1
+masked_map: 1
+calculate_powerspectra: 1
 nside: 2
 lmax: 8
 ##########################################################################

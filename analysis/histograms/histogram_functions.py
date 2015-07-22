@@ -37,7 +37,7 @@ def fit_distribution_to_normalised_histogram(bins,bars,f):
     print "for x: mu = ", mu , "sigma = ", sigma
 #    pdb.set_trace()
     
-    bins_fine = sp.linspace(bins[0],bins[-1],100)
+    bins_fine = sp.linspace(bins[0],bins[-1],1000)
     
     # I make a finer spacing of the bins in order to make the fits look smooth
     fitted_bars = f(bins_fine,*popt)

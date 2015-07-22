@@ -8,6 +8,7 @@ import gravitational_instability as gi
 import resource
 import pdb
 import copy
+import matplotlib.pyplot as plt
 
 
 
@@ -141,6 +142,7 @@ class Parameters:
 
         # Angular powerspectra for the radial peculiar velocities
         self.map_velocityfield = int(param.get("map_velocityfield",default))
+        self.masked_map = int(param.get("masked_map",default))
         self.calculate_powerspectra = int(param.get("calculate_powerspectra",default))
         self.nside = int(param.get("nside",default))
         self.lmax = int(param.get("lmax",default))
@@ -499,23 +501,34 @@ class Observer:
                     
     def calculate_powerspectra(self,parameters):
         
-        thetas = [observed_halo.theta for observed_halo in self.chosen_halos]
-        phis = [observed_halo.phi for observed_halo in self.chosen_halos]
-        vrs_peculiar = [observed_halo.vr_peculiar for observed_halo in self.chosen_halos]
+        def calculate_powerspectrum(halos_in_bin):
         
-        vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar) 
-#        vrmap = pf.fill_empty_entries(parameters,vrmap)
-        print "I am no longer filling empty entries! Implement the mask-functionality instead."
-        print "Note: you only need the mask for the incomplete sky coverage. There should be\
-            no empty pixels with a proper grid."
-        
-        pf.find_largest_hole(parameters,vrmap)
-        
-#        if parameters.smoothing:
-#            vrmap = pf.smooth_map(parameters,vrmap)
-        
-        self.ls, self.cls = pf.do_harmonic_analysis(parameters,vrmap)
-        self.vrmap = vrmap
+            thetas = [halo_in_bin.theta for halo_in_bin in halos_in_bin]
+            phis = [halo_in_bin.phi for halo_in_bin in halos_in_bin]
+            vrs_peculiar = [halo_in_bin.vr_peculiar for halo_in_bin in halos_in_bin]
+            
+            vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar) 
+                    
+            if parameters.masked_map:
+                vrmap = pf.mask_map(parameters,vrmap)
+                
+            
+            ls, cls = pf.do_harmonic_analysis(parameters,vrmap)
+            
+            return ls, cls, vrmap
+            
+        for mind_bin, maxd_bin in zip(parameters.bindistances[0:-1],parameters.bindistances[1:]):
+
+            halos_in_bin = [observed_halo for observed_halo in self.chosen_halos\
+                            if (mind_bin < observed_halo.r) & (observed_halo.r < maxd_bin)]
+
+            ls, cls, vrmap = calculate_powerspectrum(halos_in_bin)
+
+            self.ls.append(ls)
+            self.cls.append(cls)
+            self.vrmap = vrmap
+       
+        return 0
         
 
 
