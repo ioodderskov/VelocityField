@@ -16,7 +16,7 @@ export OMP_NUM_THREADS=32
 
 python hubble.py ../cases/CoDECS_LCDM/LCDM_make_grid.yaml
 python hubble.py ../cases/CoDECS_EXP003/EXP003_make_grid.yaml
-python hubble.py ../cases/CoDECS_EXP008e3/EXP008e3_make_grid.yaml
+#python hubble.py ../cases/CoDECS_EXP008e3/EXP008e3_make_grid.yaml
 
 
 echo "========= Job finished at `date` =========="
