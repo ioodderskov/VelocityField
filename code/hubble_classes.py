@@ -8,6 +8,7 @@ import gravitational_instability as gi
 import resource
 import pdb
 import copy
+import matplotlib.pyplot as plt
 
 
 
@@ -141,6 +142,7 @@ class Parameters:
 
         # Angular powerspectra for the radial peculiar velocities
         self.map_velocityfield = int(param.get("map_velocityfield",default))
+        self.masked_map = int(param.get("masked_map",default))
         self.calculate_powerspectra = int(param.get("calculate_powerspectra",default))
         self.nside = int(param.get("nside",default))
         self.lmax = int(param.get("lmax",default))
@@ -511,11 +513,27 @@ class Observer:
         
         pf.find_largest_hole(parameters,vrmap)
         
-#        if parameters.smoothing:
-#            vrmap = pf.smooth_map(parameters,vrmap)
+#        if parameters.data_to_observe != "grid":
+#            if parameters.smoothing:
+#                vrmap = pf.smooth_map(parameters,vrmap)
+                
+        if parameters.masked_map:
+            vrmap = pf.mask_map(parameters,vrmap)
+            
+#        pdb.set_trace()
         
         self.ls, self.cls = pf.do_harmonic_analysis(parameters,vrmap)
         self.vrmap = vrmap
+
+        plt.figure()        
+        hp.mollview(vrmap,sub=121)
+        
+        plt.subplot(122)
+        plt.plot(self.ls,self.cls)
+        plt.savefig('/home/io/Desktop/harmonic_example.pdf')
+        plt.show()
+        
+        return 0
         
 
 

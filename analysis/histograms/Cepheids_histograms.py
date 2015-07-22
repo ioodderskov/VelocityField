@@ -58,36 +58,36 @@ def plot_histogram(bins,bars,color,sub,xlabel,ylabel,text,xtics,yticks):
     
 os.chdir('/home/io/Dropbox/Projekter/Hubble/VelocityField/code/')
 
-plotlabel = "otherdists"
-models = ["EXP001", "EXP008e3", "SUGRA003"]
-min_dists = ["5.0","5.0","5.0"]
-texts = ["EXP001", "EXP008e3", "SUGRA003"]
-subs =   [131, 132, 133]
-xtickss = [1,1,1]
-ytickss = [1,0,0]
-xlabel = "$H_{loc}/H_0$"
-xlabels = [xlabel, xlabel, xlabel]
-ylabel = "$P(H_{loc}/H_0)$"
-ylabels = [ylabel, "", ""]
-plt.figure(figsize=(6,2))
+#plotlabel = "otherdists"
+#models = ["EXP001", "EXP008e3", "SUGRA003"]
+#min_dists = ["5.0","5.0","5.0"]
+#texts = ["EXP001", "EXP008e3", "SUGRA003"]
+#subs =   [131, 132, 133]
+#xtickss = [1,1,1]
+#ytickss = [1,0,0]
+#xlabel = "$H_{loc}/H_0$"
+#xlabels = [xlabel, xlabel, xlabel]
+#ylabel = "$P(H_{loc}/H_0)$"
+#ylabels = [ylabel, "", ""]
+#plt.figure(figsize=(6,2))
 
-#plotlabel = "LCDM"
-#models = ["LCDM", "LCDM", "LCDM","LCDM"]
+plotlabel = "LCDM"
+models = ["LCDM", "LCDM", "LCDM","LCDM"]
 
 #plotlabel = "EXP003"
 #models = ["EXP003", "EXP003", "EXP003","EXP003"]
 #
-#min_dists = ["0.0", "1.0", "5.0", "10.0"]
-#texts = ["R="+min_dists[0]+"Mpc/h","R="+min_dists[1]+"Mpc/h",
-#         "R="+min_dists[2]+"Mpc/h","R="+min_dists[3]+"Mpc/h"]
-#subs =   [221, 222, 223, 224]
-#xtickss = [0,0,1,1]
-#ytickss = [1,0,1,0]
-#xlabel = "$H_{loc}/H_0$"
-#xlabels = ["","",xlabel,xlabel]
-#ylabel = "$P(H_{loc}/H_0)$"
-#ylabels = [ylabel,"",ylabel,""]
-#plt.figure(figsize=(6,5))
+min_dists = ["0.0", "1.0", "5.0", "10.0"]
+texts = ["R="+min_dists[0]+"Mpc/h","R="+min_dists[1]+"Mpc/h",
+         "R="+min_dists[2]+"Mpc/h","R="+min_dists[3]+"Mpc/h"]
+subs =   [221, 222, 223, 224]
+xtickss = [0,0,1,1]
+ytickss = [1,0,1,0]
+xlabel = "$H_{loc}/H_0$"
+xlabels = ["","",xlabel,xlabel]
+ylabel = "$P(H_{loc}/H_0)$"
+ylabels = [ylabel,"",ylabel,""]
+plt.figure(figsize=(6,5))
 
 
 func = fln
