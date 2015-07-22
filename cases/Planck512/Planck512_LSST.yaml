@@ -94,7 +94,7 @@ powerspectrafile: powerspectra.txt
 observer_choice: subhalos 
 observerfile:  # If from_file, specify the file here
 observer_indices_file:  # If indices_from_file, specify the file here
-number_of_observers: 3 # Specify the number of observers you want to use
+number_of_observers: 1 # Specify the number of observers you want to use
 # If subhalos, specify the mass-requirements here
 sub_min_m: 1e12
 sub_max_m: 1e13
@@ -138,6 +138,6 @@ smoothing_radius: 0
 map_velocityfield: 1
 masked_map: 1
 calculate_powerspectra: 1
-nside: 16
+nside: 8
 lmax: 20
 ##########################################################################

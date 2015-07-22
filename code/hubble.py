@@ -65,8 +65,8 @@ else:
 if parameters.calculate_hubble_constants:
     hf.print_hubbleconstants_to_file(parameters,observers)
     
-if parameters.calculate_powerspectra:
-    pf.print_powerspectra_to_file(parameters,observers)
+#if parameters.calculate_powerspectra:
+#    pf.print_powerspectra_to_file(parameters,observers)
 
 if parameters.calculate_pairwise_velocities:
     hf.calculate_pairwise_velocities(parameters,observers)
@@ -78,7 +78,13 @@ if len(observers) <= 2000:
 if parameters.correct_for_peculiar_velocities:
     hf.calculate_velocity_correlation_coefficients(parameters,observers)
 
-f = open('../cases/sim16/parameters.save','w')    
+pdb.set_trace()
+
+parameters.halos = []
+parameters.subhalos = []
+f = open(parameters.path+'parameters.save','w')    
 cPickle.dump(parameters,f)
 f.close()
+
+
     
