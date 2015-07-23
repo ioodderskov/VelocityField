@@ -71,18 +71,21 @@ if parameters.calculate_hubble_constants:
 if parameters.calculate_pairwise_velocities:
     hf.calculate_pairwise_velocities(parameters,observers)
 
+# Here I am removing some stuff from the arrays that I want to save #
+parameters.halos = []
+parameters.subhalos = []
+for observer in observers:
+    observer.chosen_halos = []
+
 if len(observers) <= 2000:
-    sp.save(parameters.path+str(parameters.min_dist)+'observers.npy',observers)
+    sp.save(parameters.path+'observers'+str(parameters.skyfraction)+'.npy',observers)
 
 
 if parameters.correct_for_peculiar_velocities:
     hf.calculate_velocity_correlation_coefficients(parameters,observers)
 
-pdb.set_trace()
 
-parameters.halos = []
-parameters.subhalos = []
-f = open(parameters.path+'parameters.save','w')    
+f = open(parameters.path+'parameters'+str(parameters.skyfraction)+'.save','w')    
 cPickle.dump(parameters,f)
 f.close()
 

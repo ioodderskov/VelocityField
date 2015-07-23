@@ -14,9 +14,7 @@ export LD_LIBRARY_PATH=${opmpi}:${intel}:$LD_LIBRARY_PATH
 cd $PBS_O_WORKDIR
 export OMP_NUM_THREADS=32
 
-python hubble.py ../cases/CoDECS_LCDM/LCDM_make_grid.yaml
-python hubble.py ../cases/CoDECS_EXP003/EXP003_make_grid.yaml
-#python hubble.py ../cases/CoDECS_EXP008e3/EXP008e3_make_grid.yaml
-
+python hubble.py ../cases/Planck512/Planck512_LSST1.0.yaml
+python hubble.py ../cases/Planck512/Planck512_LSST0.5.yaml
 
 echo "========= Job finished at `date` =========="

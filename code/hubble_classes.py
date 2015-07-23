@@ -526,7 +526,7 @@ class Observer:
 
             self.ls.append(ls)
             self.cls.append(cls)
-            self.vrmap = vrmap
+            self.vrmap.append(vrmap)
        
         return 0
         

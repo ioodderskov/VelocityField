@@ -179,6 +179,7 @@ def mask_map(parameters,vrmap):
     vrmap = hp.ma(vrmap)
     mask = sp.zeros_like(vrmap)
     mask[vrmap == parameters.badval] = 1
+    mask[vrmap == parameters.unseen] = 1
     vrmap.mask = mask
     
     return vrmap
