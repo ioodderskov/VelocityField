@@ -61,7 +61,7 @@ if parameters.parallel_processing:
 else:
     observers = map(partial_observe_and_analyse,observers)
 
-
+    
 if parameters.calculate_hubble_constants:
     hf.print_hubbleconstants_to_file(parameters,observers)
     
@@ -72,13 +72,12 @@ if parameters.calculate_pairwise_velocities:
     hf.calculate_pairwise_velocities(parameters,observers)
 
 if len(observers) <= 2000:
-    sp.save(parameters.path+str(parameters.min_dist)+'observers.npy',observers)
+    sp.save(parameters.path+'observers.npy',observers)
 
 
 if parameters.correct_for_peculiar_velocities:
     hf.calculate_velocity_correlation_coefficients(parameters,observers)
 
-pdb.set_trace()
 
 parameters.halos = []
 parameters.subhalos = []

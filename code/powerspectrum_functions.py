@@ -190,7 +190,9 @@ def do_harmonic_analysis(parameters,vrmap):
 #    masked_vrmap = hp.ma(vrmap)
 #    masked_vrmap.mask = mask
 
-    cls = hp.anafast(vrmap,lmax=parameters.lmax)
+    print "Note: I am rescaling the Cls by 1/skyfraction"
+
+    cls = hp.anafast(vrmap,lmax=parameters.lmax)/parameters.skyfraction
     ls = sp.arange(parameters.lmax+1)
         
     return ls,cls

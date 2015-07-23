@@ -56,7 +56,7 @@ beta_c: 0
 mind: 30
 maxd: 256
 width: 80
-skyfraction: 1
+skyfraction: 0.5
 ##########################################################################
 
         
@@ -137,6 +137,8 @@ smoothing_radius: 0
 # Create a map of the velocityfield?
 map_velocityfield: 1
 masked_map: 1
+smoothed_map: 1
+beam_fwhm: 0.05
 calculate_powerspectra: 1
 nside: 8
 lmax: 20
