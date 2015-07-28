@@ -79,11 +79,12 @@ if parameters.correct_for_peculiar_velocities:
     hf.calculate_velocity_correlation_coefficients(parameters,observers)
 
 
-parameters.halos = []
-parameters.subhalos = []
+#parameters.halos = []
 f = open(parameters.path+'parameters.save','w')    
 cPickle.dump(parameters,f)
 f.close()
+
+pdb.set_trace()
 
 
     

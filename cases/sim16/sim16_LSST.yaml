@@ -13,14 +13,9 @@ data_to_observe: halos  # grid or halos
 ##########################################################################
         # Identify and save galaxies using a HOD?
 ##########################################################################
-use_HOD: 0
+use_HOD: 1
 number_of_particle_files: 48
 particle_file_base: ../cases/sim16/halos_11 
-        # Parameters for HOD
-logMmin: 11.95
-sigma_logM: 0.16
-logM0: 12.10
-logM1_prime: 13.33
         # Parameters for HOD
 logMmin: 11.95
 sigma_logM: 0.16
