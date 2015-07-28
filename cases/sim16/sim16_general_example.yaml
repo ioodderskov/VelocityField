@@ -198,6 +198,8 @@ make_hubblediagram: 0
 # Create a map of the velocityfield?
 map_velocityfield: 0
 masked_map: 1
+smoothed_map: 1
+beam_fwhm: 0.05
 calculate_powerspectra: 0
 nside: 4
 lmax: 8

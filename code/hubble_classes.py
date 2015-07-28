@@ -143,6 +143,8 @@ class Parameters:
         # Angular powerspectra for the radial peculiar velocities
         self.map_velocityfield = int(param.get("map_velocityfield",default))
         self.masked_map = int(param.get("masked_map",default))
+        self.smoothed_map = int(param.get("smoothed_map",default))
+        self.beam_fwhm = sp.double(param.get("beam_fwhm",default))
         self.calculate_powerspectra = int(param.get("calculate_powerspectra",default))
         self.nside = int(param.get("nside",default))
         self.lmax = int(param.get("lmax",default))
@@ -511,6 +513,14 @@ class Observer:
                     
             if parameters.masked_map:
                 vrmap = pf.mask_map(parameters,vrmap)
+                
+            if parameters.smoothed_map:
+                nside = parameters.nside
+                approx_pixsize = hp.rotator.angdist(hp.pix2ang(nside,0),hp.pix2ang(nside,1))
+                if parameters.beam_fwhm > approx_pixsize:
+                    print "Warning: The smoothing length shouldn't be larger than the size of the pixels!"
+
+                vrmap = hp.smoothing(vrmap,fwhm=parameters.beam_fwhm)
                 
             
             ls, cls = pf.do_harmonic_analysis(parameters,vrmap)

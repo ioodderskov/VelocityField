@@ -3,6 +3,9 @@ import scipy as sp
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 import pdb
+import cPickle
+sys.path.insert(0, '/home/io/Dropbox/Projekter/Hubble/VelocityField/code')
+import hubble_classes as hc
 
 
 def confidenslimit(h,conf):
@@ -117,15 +120,42 @@ def plot_patch(ls,H,sigma68,sigma95,sigma99):
     return(0)
 
 
-
+datatype = 'from_observers'
 case = 'Planck512'
-fil = 'powerspectra.txt'
-#Ng = 20
-#smoothing_radius = 5
+skyfraction = '1.0'
+path = '/home/io/Dropbox/Projekter/Hubble/VelocityField/cases/'+case+'/'
+if datatype == 'from_file':
+    fil = 'powerspectra.txt'
+    #Ng = 20
+    #smoothing_radius = 5
+    
+    data = sp.loadtxt(path + fil)
+    ls = data[0,2:]
+    Cls = data[1:,2:]
 
-data = sp.loadtxt('../cases/' + case + '/' + fil)
-ls = data[0,2:]
-Cls = data[1:,2:]
+else:
+
+
+    f = open(path+'parameters'+skyfraction+'.save','r')    
+    parameters = cPickle.load(f)
+    f.close()
+#    parameters = sp.load(path + 'parameters.save')
+    observers = sp.load(path+'observers'+skyfraction+'.npy')
+
+
+
+#    bin_number = 0
+    bin_number = 2
+#    bin_number = 11
+    bn = bin_number
+    for mind_bin, maxd_bin in zip(parameters.bindistances[bn:bn+1],parameters.bindistances[bn+1:bn+2]):
+        d = sp.mean((mind_bin,maxd_bin))
+        ls = observers[0].ls[bin_number]
+        Cls = sp.array([observer.cls[bin_number] for observer in observers])
+    #    cls = observers[0].cls[bin_number]
+        bin_number = bin_number+1
+
+
 
 sigma68, sigma95, sigma99 = calc_confidence_intervals(Cls)
 
@@ -133,13 +163,12 @@ mean_Cls = sp.mean(Cls,axis=0)
 scaled_Cls = scale(ls,mean_Cls)
 plt.figure()
 #plt.plot(ls,scaled_Cls)
-#plt.xscale('log')
-#plt.yscale('log')
 plt.xlabel('l')
 plt.ylabel('$\sqrt{C_{l}\cdot l(l+1)}$ [km/s]')
 #plt.xlim([0,10])
 plt.xlim([0,20])
 plt.ylim([0,800])   
+
 #plt.ylim([0,100])
 #scaled_sigma68 = sp.array(sp.sqrt(sigma68[:,0]*ls*(ls+1)))],[sp.array(sp.sqrt(sigma68[:,1]*ls*(ls+1)))]
 plot_patch(ls,Cls,sigma68,sigma95,sigma99)
