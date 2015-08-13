@@ -84,7 +84,6 @@ f = open(parameters.path+'parameters.save','w')
 cPickle.dump(parameters,f)
 f.close()
 
-pdb.set_trace()
 
 
     

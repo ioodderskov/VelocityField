@@ -120,27 +120,13 @@ def plot_patch(ls,H,sigma68,sigma95,sigma99):
     return(0)
 
 
-datatype = 'from_observers'
-case = 'Planck512'
-skyfraction = '0.5'
-path = '/home/io/Dropbox/Projekter/Hubble/VelocityField/cases/'+case+'/'
-if datatype == 'from_file':
-    fil = 'powerspectra.txt'
-    #Ng = 20
-    #smoothing_radius = 5
-    
-    data = sp.loadtxt(path + fil)
-    ls = data[0,2:]
-    Cls = data[1:,2:]
-
-else:
-
-
-    f = open(path+'parameters'+skyfraction+'.save','r')    
+def get_ls_and_Cls_from_observers(parameterfile,observerfile):
+    print "This function has not been tested yet"
+    f = open(parameterfile,'r')    
     parameters = cPickle.load(f)
     f.close()
 #    parameters = sp.load(path + 'parameters.save')
-    observers = sp.load(path+'observers'+skyfraction+'.npy')
+    observers = sp.load(observerfile)
 
 
 
@@ -154,6 +140,29 @@ else:
         Cls = sp.array([observer.cls[bin_number] for observer in observers])
     #    cls = observers[0].cls[bin_number]
         bin_number = bin_number+1
+
+    return ls, Cls
+
+
+
+datatype = 'from_observers'
+case = 'Planck512'
+skyfraction = '1'
+path = '/home/io/Dropbox/Projekter/Hubble/VelocityField/cases/'+case+'/'
+if datatype == 'from_file':
+    fil = 'powerspectra.txt'
+    #Ng = 20
+    #smoothing_radius = 5
+    
+    data = sp.loadtxt(path + fil)
+    ls = data[0,2:]
+    Cls = data[1:,2:]
+
+else:
+
+    parameterfile = path+'parameters'+skyfraction+'.save'
+    observerfile = path+'observers'+skyfraction+'.npy'
+    ls, Cls = get_ls_and_Cls_from_observers(parameterfile,observerfile)
 
 
 

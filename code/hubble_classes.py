@@ -153,7 +153,7 @@ class Parameters:
 #        self.preset_smoothinglength = int(param.get("preset_smoothinglength",default))
 #        self.smoothing_fwhm = sp.double(param.get("smoothing_fwhm",default))
         self.badval = 1e15
-        self.unseen = 0
+        self.unseen = 1e16
 
 
         

@@ -344,7 +344,7 @@ def initiate_observers_subhalos(parameters):
     print "The number of localgroup_halos is", len(localgroup_halos)
     print "The number of virgo_halos is", len(virgo_halos)
     print "The number of potential observers is", len(observers)
-    print "from hubble_functions, observers = ", observers
+#    print "from hubble_functions, observers = ", observers
     
     return observers[0:parameters.number_of_observers]
     
@@ -496,7 +496,8 @@ def choose_halos(parameters,observed_halos):
         
     if parameters.observed_halos == 'from_HOD':
         chosen_halos = observed_galaxies_from_HOD(parameters,observed_halos)
-        
+
+    print "The number of observed SNe is", len(chosen_halos)        
     return chosen_halos
     
 #def observed_galaxies_from_HOD(parameters,observed_halos):

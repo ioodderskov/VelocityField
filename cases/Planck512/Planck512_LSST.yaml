@@ -12,7 +12,7 @@ data_to_observe: halos # grid or halos
 ##########################################################################
         # Identify and save galaxies using a HOD?
 ##########################################################################
-use_HOD: 1
+use_HOD: 0
 number_of_particle_files: 48
 particle_file_base: ../cases/Planck512/reduced
         # Parameters for HOD
@@ -51,7 +51,7 @@ beta_c: 0
 mind: 30
 maxd: 256
 width: 80
-skyfraction: 0.5
+skyfraction: 1
 ##########################################################################
 
         
@@ -86,7 +86,7 @@ powerspectrafile: powerspectra.txt
         # Choices for the observers        
 ##########################################################################
 #indices_from_file, from_file, subhalos, random_positions, random_halos, all
-observer_choice: random_halos
+observer_choice: subhalos
 observerfile:  # If from_file, specify the file here
 observer_indices_file:  # If indices_from_file, specify the file here
 number_of_observers: 1 # Specify the number of observers you want to use
@@ -104,9 +104,9 @@ host_max_m: 5e15
 ##########################################################################
 use_CoM: 0
 min_dist: 2
-number_of_SNe: 0
+number_of_SNe: 7000
 # How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
-observed_halos: all
+observed_halos: random
 SN_mass_min: 0
 SN_mass_max: 0
 ##########################################################################
@@ -130,11 +130,11 @@ smoothing_radius: 0
         # Angular powerspectra for the radial peculiar velocities
 ##########################################################################
 # Create a map of the velocityfield?
-map_velocityfield: 0
+map_velocityfield: 1
 masked_map: 1
 smoothed_map: 1
 beam_fwhm: 0.05
-calculate_powerspectra: 0
+calculate_powerspectra: 1
 nside: 8
 lmax: 20
 ##########################################################################
