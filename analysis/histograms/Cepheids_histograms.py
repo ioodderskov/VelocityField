@@ -110,7 +110,7 @@ for i in range(len(models)):
     
     case = "CoDECS_"+model
     path = '../cases/'+case+'/'
-    fname = path+min_dist+'Hubbleconstants.txt'
+    fname = path+min_dist+'Hubbleconstants_test_before_HS8.txt'
     H_uncorrected = sp.loadtxt(fname)[:,1]/100
     H_corrected = sp.loadtxt(fname)[:,2]/100
     
@@ -157,4 +157,4 @@ for i in range(len(models)):
         plt.legend(bbox_to_anchor=(1, 1),prop={'size':8},frameon=False)
 
     
-plt.savefig("/home/io/Dropbox/SharedStuff/Cepheids/Hdists_"+plotlabel+".pdf",bbox_inches='tight')
+#plt.savefig("/home/io/Dropbox/SharedStuff/Cepheids/Hdists_"+plotlabel+".pdf",bbox_inches='tight')

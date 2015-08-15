@@ -51,7 +51,7 @@ beta_c: 0
 mind: 30
 maxd: 256
 width: 80
-skyfraction: 0.5
+skyfraction: 1
 ##########################################################################
 
         
@@ -104,9 +104,9 @@ host_max_m: 5e15
 ##########################################################################
 use_CoM: 0
 min_dist: 2
-number_of_SNe: 0
+number_of_SNe: 7000
 # How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
-observed_halos: all
+observed_halos: random
 SN_mass_min: 0
 SN_mass_max: 0
 ##########################################################################
