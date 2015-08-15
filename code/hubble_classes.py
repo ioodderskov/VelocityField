@@ -178,7 +178,7 @@ class Parameters:
 
         # Initiating the list for halos and subhalos
         self.halos = []
-        self.subhalos = []
+#        self.subhalos = []
         # Initiating the list for galaxies
         self.galaxies = sp.empty((0,1))
         self.grid = []

@@ -5,6 +5,7 @@
 path: ../cases/CoDECS_LCDM/
 parallel_processing: 1
 data_type: CoDECS # ROCKSTAR (default), CoDECS, snapshot or grid
+data_to_observe: halos
 ##########################################################################
 
         

@@ -54,7 +54,7 @@ if parameters.use_snapshot_for_background:
 partial_observe_and_analyse = partial(pp.observe_and_analyse,parameters=parameters,particles=particles)
 
 if parameters.parallel_processing:
-    pool = multiprocessing.Pool()
+    pool = multiprocessing.Pool(maxtasksperchild=32)
     observers = pool.map(partial_observe_and_analyse,observers)
     pool.close()
     pool.join()
@@ -85,9 +85,10 @@ if parameters.correct_for_peculiar_velocities:
     hf.calculate_velocity_correlation_coefficients(parameters,observers)
 
 
-f = open(parameters.path+'parameters'+str(parameters.skyfraction)+'.save','w')    
+f = open(parameters.path+'parameters.save','w')    
 cPickle.dump(parameters,f)
 f.close()
+
 
 
     

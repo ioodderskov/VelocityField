@@ -122,7 +122,7 @@ def plot_patch(ls,H,sigma68,sigma95,sigma99):
 
 datatype = 'from_observers'
 case = 'Planck512'
-skyfraction = '1.0'
+skyfraction = '0.5'
 path = '/home/io/Dropbox/Projekter/Hubble/VelocityField/cases/'+case+'/'
 if datatype == 'from_file':
     fil = 'powerspectra.txt'
@@ -163,14 +163,20 @@ mean_Cls = sp.mean(Cls,axis=0)
 scaled_Cls = scale(ls,mean_Cls)
 plt.figure()
 #plt.plot(ls,scaled_Cls)
-plt.xlabel('l')
+plt.xlabel('$l$')
 plt.ylabel('$\sqrt{C_{l}\cdot l(l+1)}$ [km/s]')
 #plt.xlim([0,10])
 plt.xlim([0,20])
-plt.ylim([0,800])   
+plt.ylim([0,800])
+plt.grid()   
+
+if skyfraction == '1.0':
+    plt.title("Full sky")
+else:
+    plt.title("Cut sky")
 
 #plt.ylim([0,100])
 #scaled_sigma68 = sp.array(sp.sqrt(sigma68[:,0]*ls*(ls+1)))],[sp.array(sp.sqrt(sigma68[:,1]*ls*(ls+1)))]
 plot_patch(ls,Cls,sigma68,sigma95,sigma99)
 #plt.savefig('../../cases/' + case + '/' + spec + '.pdf')
-plt.savefig('AngularPowerspectrum.pdf')
+plt.savefig('/home/io/Dropbox/SharedStuff/LSSTVelocityField/AngularPowerspectrum_'+skyfraction+'.pdf')

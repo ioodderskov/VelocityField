@@ -189,7 +189,7 @@ def initiate_halos(parameters, halocatalogue):
 
     elif parameters.data_type == "ROCKSTAR": 
         halos = []
-        subhalos = []
+#        subhalos = []
         for h in range(n_halos):
             position = halocatalogue[h,[8,9,10]]
             velocity = halocatalogue[h,[11,12,13]]
@@ -201,24 +201,25 @@ def initiate_halos(parameters, halocatalogue):
             else:
                 mass = halocatalogue[h,20]
             ID = int(halocatalogue[h,0])
-            ID_host = int(halocatalogue[h,33])
+            ID_host = int(halocatalogue[h,-1])
             halo = hc.Halo(position,velocity,mass,vrms,ID,ID_host)
             halo.number_of_particles = int(halocatalogue[h,7])
-            if parameters.calculate_pairwise_velocities:
-                halos.append(halo)
-            else:
-                if ID_host == -1:
-                    halos.append(halo)
-                else:
-			        subhalos.append(halo)
+#            if parameters.calculate_pairwise_velocities:
+            halos.append(halo)
+#            else:
+#                if ID_host == -1:
+#                    halos.append(halo)
+#                else:
+#                    subhalos.append(halo)
+#        
+#        parameters.subhalos = sp.array(subhalos)
         
-        parameters.subhalos = sp.array(subhalos)
         
     else:
         print "unknown data_type"
     
     parameters.halos = sp.array(halos)    
-    masses = sp.array([halo.mass for halo in parameters.halos])
+#    masses = sp.array([halo.mass for halo in parameters.halos])
 #    print "The number of saved halos is", len(parameters.halos)
 #    print "min_halo_mass, max_halo_mass = ", parameters.min_halo_mass, parameters.max_halo_mass
 #    print "min_mass, max_mass in catalogue = ", sp.amin(masses), sp.amax(masses)  
@@ -290,7 +291,8 @@ def initiate_observers_from_file(parameters):
     
 def initiate_observers_random_halos(parameters):
     sp.random.seed(0)
-    random_indices = sp.random.random_integers(0,len(parameters.halos)-1,parameters.number_of_observers)
+    random_indices = sp.random.random_integers(0,len(parameters.halos)-1,
+                                               parameters.number_of_observers)
     
     observers = [None]*len(random_indices)
     
@@ -305,10 +307,14 @@ def initiate_observers_random_halos(parameters):
     return observers[0:parameters.number_of_observers]
     
 def initiate_observers_subhalos(parameters):
+    
+    subhalos = sp.array([halo for halo in parameters.halos\
+            if halo.ID_host != -1])
 
-    localgroup_halos = sp.array([halo for halo in parameters.subhalos\
+    localgroup_halos = sp.array([halo for halo in subhalos\
             if (parameters.sub_min_m < halo.mass) & (halo.mass < parameters.sub_max_m)])
-    localgroup_halo_numbers = sp.array([halo_number for halo,halo_number in zip(localgroup_halos,range(len(parameters.subhalos)))\
+    localgroup_halo_numbers = sp.array([halo_number for halo,halo_number in\
+            zip(localgroup_halos,range(len(subhalos)))\
             if (parameters.sub_min_m < halo.mass) & (halo.mass < parameters.sub_max_m)])
 
     virgo_halos = sp.array([halo for halo in parameters.halos\
@@ -328,10 +334,10 @@ def initiate_observers_subhalos(parameters):
         mass = observer_halo.mass
         observers[observer_number] = hc.Observer(observer_halo_number,position,velocity,mass)
 
-    submasses = sp.array([halo.mass for halo in parameters.subhalos])
+    submasses = sp.array([halo.mass for halo in subhalos])
     hostmasses = sp.array([halo.mass for halo in parameters.halos])
     print "The number of halos is", len(parameters.halos)
-    print "The number of subhalos is", len(parameters.subhalos)
+    print "The number of subhalos is", len(subhalos)
 
     print("The mass range of the subhalos is %0.2f --> %0.2f" % (sp.amin(submasses), sp.amax(submasses)))
     print("The mass range of the hosthalos is %0.2f --> %0.2f" % (sp.amin(hostmasses), sp.amax(hostmasses)))
@@ -582,7 +588,7 @@ def identify_particle_files_for_halos(particle_file,parameters):
     number_of_particles_in_halos = []
 
     with open(particle_file.name) as f:
-        for i in range(24):
+        for i in range(25):
             f.readline()
         line = f.readline()
         count = 0
@@ -610,6 +616,7 @@ def identify_particle_files_for_halos(particle_file,parameters):
     return particle_file
 
 def assign_particle_files(parameters):
+
 
     for halo in parameters.halos:
         for particle_file in parameters.particle_files:
@@ -743,10 +750,11 @@ def find_satellite_galaxies(halo,parameters):
     satellite_numbers = random.sample(range(0, halo.number_of_particles),halo.number_of_satellites)
     sorted_satellite_numbers = sp.sort(satellite_numbers)
 
+
     for satellite_number in sorted_satellite_numbers:
-        
+
         line = linecache.getline(halo.particle_file.name,pastlines+satellite_number)
-        data = line.split()
+        data = line.split()        
         assert int(data[-1]) == halo.ID
         position = sp.double(sp.array(data[0:3]))
         vh = halo.velocity
