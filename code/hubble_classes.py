@@ -56,11 +56,12 @@ class Parameters:
         self.beta_c = sp.double(param.get("beta_c",default))
 
         # Division in bins
-        self.mind = sp.double(param["mind"])
-        self.maxd = sp.double(param["maxd"])
-        self.width = sp.double(param["width"])
+        self.mind = sp.double(param.get("mind",default))
+        self.maxd = sp.double(param.get("maxd",default))
+        self.width = sp.double(param.get("width",default))
         self.skyfraction = sp.double(param.get("skyfraction",default))
-        self.bindistances = hf.calculate_bindistances(self.mind,self.maxd,self.width)
+        if self.mind:
+            self.bindistances = hf.calculate_bindistances(self.mind,self.maxd,self.width)
 
 
         # Use lightcones?
@@ -91,10 +92,10 @@ class Parameters:
         self.radius_local_group = sp.double(param.get("radius_local_group",default))
         
         # Choices for the observers        
-        self.observer_choice = param["observer_choice"]
+        self.observer_choice = param.get("observer_choice",default)
         self.observerfile = self.path+str(param.get("observerfile",default))
         self.observer_indices_file = self.path+str(param.get("observer_indices_file",default))
-        self.number_of_observers = int(param["number_of_observers"])
+        self.number_of_observers = int(param.get("number_of_observers",default))
         self.host_min_m = sp.double(param.get("host_min_m",default))
         self.host_max_m = sp.double(param.get("host_max_m",default))
         self.sub_min_m = sp.double(param.get("sub_min_m",default))
@@ -103,7 +104,7 @@ class Parameters:
         # Choices for the observed halos
         self.use_CoM = int(param.get("use_CoM",default))
         self.number_of_SNe = int(param.get("number_of_SNe",default)) # Not used if use_CoM = 1 (?)
-        self.observed_halos = param["observed_halos"]
+        self.observed_halos = param.get("observed_halos",default)
         self.SN_mass_min = sp.double(param.get("SN_mass_min",default))
         self.SN_mass_max = sp.double(param.get("SN_mass_max",default))
 

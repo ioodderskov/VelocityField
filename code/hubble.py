@@ -43,6 +43,9 @@ if parameters.assign_to_grid:
 if parameters.data_to_observe == 'grid':
     hf.initiate_grid(parameters)
 
+if parameters.observer_choice == 0:
+    raise Exception("Nothing left to do :-)") 
+    
 observers = hf.initiate_observers(parameters)
 
 particles = []
