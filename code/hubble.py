@@ -77,8 +77,8 @@ if parameters.calculate_pairwise_velocities:
 # Here I am removing some stuff from the arrays that I want to save #
 parameters.halos = []
 parameters.subhalos = []
-for observer in observers:
-    observer.chosen_halos = []
+#for observer in observers:
+#    observer.chosen_halos = []
 
 if len(observers) <= 2000:
     sp.save(parameters.path+'observers'+str(parameters.skyfraction)+'.npy',observers)
