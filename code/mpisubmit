@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -l  nodes=1:ppn=32 -q qcap
+#PBS -l  nodes=1:ppn=8 -q q8n
 #PBS -l walltime=20:00:00
 #PBS -N CoDECS_LCDM
 #PBS -m e
@@ -12,12 +12,12 @@ opmpi=/com/openmpi-1.2.5/lib
 intel=/com/intel/fce/10.0.023/lib:/com/intel/cce/10.0.023/lib
 export LD_LIBRARY_PATH=${opmpi}:${intel}:$LD_LIBRARY_PATH
 cd $PBS_O_WORKDIR
-export OMP_NUM_THREADS=32
+export OMP_NUM_THREADS=8
 
 #python hubble.py ../cases/Planck512/Planck512_LSST1.0.yaml
 #python hubble.py ../cases/Planck512/Planck512_LSST0.5.yaml
-#python hubble.py ../cases/Planck512/Planck512_LSST.yaml
-python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_5Mpch-1.yaml
+python hubble.py ../cases/Planck512/Planck512_LSST.yaml
+#python hubble.py ../cases/CoDECS_LCDM/LCDM_min_dist_5Mpch-1.yaml
 #python hubble.py ../cases/Planck512/Planck512_density_and_velocity_grids.yaml
 
 echo "========= Job finished at `date` =========="

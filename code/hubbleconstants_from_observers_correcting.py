@@ -3,6 +3,7 @@ import scipy as sp
 from scipy.optimize import leastsq
 import sys
 from scipy import linalg
+import pdb
 
 if len(sys.argv) != 3:
     print "Wrong number of arguments"
@@ -13,7 +14,7 @@ path = '../cases/'+case+'/'
 #min_dist  = '5.0'
 
 
-observers_file = path+min_dist+'observers.npy'
+observers_file = path+min_dist+'observers_test_before_HS8.npy'
 observers = sp.load(observers_file)
 
 N = len(observers)
@@ -24,6 +25,7 @@ rs = sp.zeros(N)
 
 observed_velocities = []
 velocity_corrections = []
+
 
 print "len(observers) = ", len(observers)
 
@@ -48,6 +50,11 @@ for index,observer in enumerate(observers):
     vrs_correction_plus_hubbleflow[index] = vr_correction_plus_hubbleflow
     vrs_correction[index] = vr_correction
     rs[index] = r
+    
+pdb.set_trace()    
+
+    
+
 	
 #def error(factor,vr_plus_hubbleflow,vr_correction_plus_hubbleflow):
 #    err = vr_plus_hubbleflow-factor*vr_correction_plus_hubbleflow
@@ -57,7 +64,7 @@ for index,observer in enumerate(observers):
 
 observed_velocity_norms = sp.array([linalg.norm(observed_velocity) for observed_velocity in observed_velocities])
 velocity_correction_norms = sp.array([linalg.norm(velocity_correction) for velocity_correction in velocity_corrections])
-
+#pdb.set_trace()
 print "The ratios ranges from", sp.amin(observed_velocity_norms/velocity_correction_norms), "to", sp.amax(observed_velocity_norms/velocity_correction_norms)
 
 
@@ -93,6 +100,7 @@ corr_cosm_param = omega_m_false/omega_m_true*(h_false/h_true)**5
 corr_growth = growth_true/growth_false
 
 factor = corr_cosm_param*corr_growth
+factor = 1
 
 print "I have set factor =" , factor
 
@@ -102,7 +110,7 @@ Hubbleconstants_corrected = (vrs_plus_hubbleflow-factor*vrs_correction)/rs
 print "The mean and variance of the non-corrected Hubbleconstants are", sp.mean(Hubbleconstants_notcorrected), sp.std(Hubbleconstants_notcorrected)
 print "The mean and variance of the corrected Hubbleconstants are", sp.mean(Hubbleconstants_corrected), sp.std(Hubbleconstants_corrected)
 
-f = open(path+min_dist+'Hubbleconstants.txt','w')
+f = open(path+min_dist+'Hubbleconstants_test_before_HS8.txt','w')
 f.write("#observer\t not corrected\t corrected\n")
 for obs,H_notcorr,H_corr in zip(range(len(observers)),Hubbleconstants_notcorrected,Hubbleconstants_corrected):
     f.write("%s\t%0.3f\t%0.3f\n" % (obs,H_notcorr,H_corr))

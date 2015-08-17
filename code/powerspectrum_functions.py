@@ -4,83 +4,9 @@ import scipy as sp
 import pdb
 import copy
 from collections import Counter
+from sympy.physics.quantum.cg import Wigner3j
+from scipy import linalg
 
-def find_largest_hole(parameters,ar):
-    
-    minimal_distances = []
-    all_pixels = sp.array(range(len(ar)))
-    nonempty_pixels = all_pixels[(ar[all_pixels] != parameters.badval) & (ar[all_pixels] != parameters.unseen)]
-
-        
-    for p in nonempty_pixels:
-
-        minimal_distance = 3.14
-        theta,phi = hp.pix2ang(parameters.nside,p)
-        
-        for p_i in nonempty_pixels:
-
-            if p_i == p:
-                continue
-            
-            theta_i, phi_i = hp.pix2ang(parameters.nside,p_i)
-            angular_distance = hp.rotator.angdist([theta,phi],[theta_i,phi_i])
-            minimal_distance = sp.minimum(minimal_distance,angular_distance)
-            
-        minimal_distances.append(minimal_distance)
-         
-    radius_of_largest_hole = max(minimal_distances)
-
-    print "The angular radius of largest hole = ", radius_of_largest_hole
-    print "With nside = ", parameters.nside,\
-        " the distance between adjecent pixels is approximately", 2*sp.pi/(6*parameters.nside)
-    theta_0, phi_0 = hp.pix2ang(parameters.nside,0)
-    theta_1, phi_1 = hp.pix2ang(parameters.nside,1)
-    print "Example:", hp.rotator.angdist([theta_0,phi_0],[theta_1,phi_1])
-    d_shell = sp.mean((parameters.mind,parameters.maxd))
-    print "At a distance of", d_shell, \
-        "Mpc/h, an angular distance of", radius_of_largest_hole,\
-        "corresponds to a physical distance of", radius_of_largest_hole*d_shell,"Mpc/h"
-    return radius_of_largest_hole
-            
-
-
-def fill_empty_entries(parameters,ar):
-    
-#    pixels_without_neighbours = []
-    
-    while parameters.badval in ar:
-    
-        ar_new = copy.copy(ar)
-     
-        for index, x in enumerate(ar):
-            if x != parameters.badval:
-                continue
-            
-            theta,phi = hp.pix2ang(parameters.nside,index)
-            neighbours = hp.get_all_neighbours(parameters.nside,theta, phi=phi)
-            neighbours = neighbours[ar[neighbours] != parameters.badval]
-            neighbours = neighbours[ar[neighbours] != parameters.unseen]
-            
-            if len(neighbours) == 0:
-#                pixels_without_neighbours.append(index)
-                continue
-    
-                
-            x_new = sp.mean(ar[neighbours])
-#            print "mean(ar[neighbours]) = ",sp.mean(ar[neighbours]) 
-            ar_new[index] = x_new
-            
-        ar = ar_new
-        
-#    if len(pixels_without_neighbours) != 0:
-#        print "There are some pixels with no neighbours"
-#        pixel_most_common = Counter(pixels_without_neighbours).most_common(1)[0][0]
-#        ar[pixel_most_common] = 1000
-##        pdb.set_trace()
-#        recurrence_most_common = Counter(pixels_without_neighbours).most_common(1)[0][1]
-#        print "recurrence_most_common = ", recurrence_most_common
-           
-    return ar
 
 def create_map(parameters,thetas,phis,vrs):
     
@@ -109,94 +35,99 @@ def create_map(parameters,thetas,phis,vrs):
     print "The number of pixels outside survey is", len(pix_unseen)
 #    pdb.set_trace()
     return vrmap
-
-
-
-def Gaussian_kernel(angular_distance,b):
-    K = sp.exp(-(angular_distance)**2/(2*b**2))
-    return K
     
+    
+    
+    
+def pixelsize_in_radians(parameters):
+#    example = hp.rotator.angdist(hp.pix2ang(parameters.nside,0),
+#                                 hp.pix2ang(parameters.nside,1))
+    return 2*sp.arccos(1-4*sp.pi/hp.nside2npix(parameters.nside)/(2*sp.pi))
 
-def Ios_smoothing(parameters,ar,b):
+def find_largest_hole(parameters,ar):
     
-    ar_new = sp.zeros_like(ar)
-    
-    for index, x in enumerate(ar):
-        numerator = 0
-        denominator = 0
+    minimal_distances = []
+    all_pixels = sp.array(range(len(ar)))
+    empty_pixels = all_pixels[(ar[all_pixels] == parameters.badval)]
+    if len(empty_pixels) == 0:
+        print "no empty pixels"
+        return 2*sp.pi/(6*parameters.nside)
         
-        theta, phi = hp.pix2ang(parameters.nside,index)
         
+    print "the number of empty pixels is", len(empty_pixels)
+    nonempty_pixels = all_pixels[(ar[all_pixels] != parameters.badval)\
+                                & (ar[all_pixels] != parameters.unseen)]
         
-        for index_i, xi in enumerate(ar):
+    for p in empty_pixels:
+
+        minimal_distance = 3.14
+        theta,phi = hp.pix2ang(parameters.nside,p)
+        
+        for p_i in nonempty_pixels:
             
-            if xi == parameters.badval:
-                continue
+            theta_i, phi_i = hp.pix2ang(parameters.nside,p_i)
+            angular_distance = hp.rotator.angdist([theta,phi],[theta_i,phi_i])
+            minimal_distance = sp.minimum(minimal_distance,angular_distance)
             
-            theta_i, phi_i = hp.pix2ang(parameters.nside,index_i)
-            angular_distance = hp.rotator.angdist([theta, phi],[theta_i, phi_i])
-            kernel = Gaussian_kernel(angular_distance,b)
-            numerator = numerator + kernel*xi
-            denominator = denominator + kernel
+        minimal_distances.append(minimal_distance)
         
-        x_new = numerator/denominator            
-        ar_new[index] = x_new
-        
+         
+    radius_of_largest_hole = sp.amax(minimal_distances)
+
+    print "The angular radius of largest hole = ", radius_of_largest_hole, "rad."
     
-    return ar_new
+    return radius_of_largest_hole
 
 
-def smooth_map(parameters,vrmap):
-#    if not (parameters.preset_smoothinglength | parameters.smooth_largest_hole):
-#        print "If you want to smooth the map, you need to make a choice for the smoothinglength"
 
-#    if parameters.preset_smoothinglength:
-#        smoothing_fwhm = parameters.smoothing_fwhm
+def apply_mask(parameters,ar,mask_badval,mask_unseen):
+    mask = sp.zeros_like(ar)
+    if mask_badval:
+        mask[ar == parameters.badval] = 1
+    if mask_unseen:
+        mask[ar == parameters.unseen] = 1
+
+    ar_masked = hp.ma(ar)
+    ar_masked.mask = mask
     
-#    if parameters.smooth_largest_hole:
-#        smoothing_fwhm = find_largest_hole(parameters,vrmap)
+    return ar_masked, mask
 
-    dist_shell = sp.mean((parameters.mind,parameters.maxd))
-    smoothing_fwhm = parameters.smoothing_radius/dist_shell
-    print "The smoothing length in radians is", smoothing_fwhm    
-    #vrmap = Ios_smoothing(parameters,vrmap,smoothing_fwhm)
-    print "Attention! The smoothing and the mask have not been tested yet."
-    mask = sp.zeros_like(vrmap)
-    mask[vrmap == parameters.badval] = 1
-    vrmap_masked = hp.ma(vrmap)
-    vrmap_masked.mask = mask
+def apply_window(parameters,ar,window_badval,window_unseen,smoothing_radius):
 
 
-#    vrmap_smoothed = hp.smoothing(vrmap_masked,fwhm=smoothing_fwhm) # The fwhm is in radians
-        
-#    pdb.set_trace()
-
-    return vrmap_masked
-    
-    
-def mask_map(parameters,vrmap):
- 
-    vrmap = hp.ma(vrmap)
-    mask = sp.zeros_like(vrmap)
-    mask[vrmap == parameters.badval] = 1
-    mask[vrmap == parameters.unseen] = 1
-    vrmap.mask = mask
-    
-    return vrmap
         
 
 def do_harmonic_analysis(parameters,vrmap):
 
-#    mask = [vrmap == parameters.unseen]
-#    masked_vrmap = hp.ma(vrmap)
-#    masked_vrmap.mask = mask
 
-    print "Note: I am rescaling the Cls by 1/skyfraction"
-
-    cls = hp.anafast(vrmap,lmax=parameters.lmax)/parameters.skyfraction
-    ls = sp.arange(parameters.lmax+1)
+    smoothing_radius = find_largest_hole(parameters,vrmap)*2
+    
+    lmax = int(sp.floor(sp.pi/smoothing_radius))
+    print "The smoothing length is", smoothing_radius, "rad."
+    print "This corresponds to l = pi/%s = %s" \
+        %(smoothing_radius,sp.pi/smoothing_radius)
+    print "The pixel size is", pixelsize_in_radians(parameters), "rad."
+    
+            
+    empty_pixels_total = len(vrmap[(vrmap == parameters.unseen)\
+                                 | (vrmap == parameters.badval)])
+    empty_pixels_fraction = empty_pixels_total/hp.nside2npix(parameters.nside)
+    print "empty_pixels_fraction = ", empty_pixels_fraction
+    
+    
+    ar_dummy, window = apply_window(parameters,vrmap,1,1,smoothing_radius)
+    ar_masked, mask = apply_mask(parameters,vrmap,1,1)
+    ar_final = hp.smoothing(ar_masked*window,fwhm=smoothing_radius)
+    
+    pixels_total = hp.nside2npix(parameters.nside)
+    factor = pixels_total/(pixels_total-empty_pixels_total)
+    print "Note: I am correcting the pseudo and the master coefficients by factor."
+    print "factor = ", factor    
+    
+    ls, pseudo_cls = get_pseudo_powerspectrum(ar_final,lmax)    
+    ls, master_cls = get_MASTER_corrected_powerspectrum(pseudo_cls,window,lmax)
         
-    return ls,cls
+    return ls,master_cls
     
 
     

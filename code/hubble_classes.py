@@ -512,16 +512,16 @@ class Observer:
             
             vrmap = pf.create_map(parameters,thetas,phis,vrs_peculiar) 
                     
-            if parameters.masked_map:
-                vrmap = pf.mask_map(parameters,vrmap)
-                
-            if parameters.smoothed_map:
-                nside = parameters.nside
-                approx_pixsize = hp.rotator.angdist(hp.pix2ang(nside,0),hp.pix2ang(nside,1))
-                if parameters.beam_fwhm > approx_pixsize:
-                    print "Warning: The smoothing length shouldn't be larger than the size of the pixels!"
-
-                vrmap = hp.smoothing(vrmap,fwhm=parameters.beam_fwhm)
+#            if parameters.masked_map:
+#                vrmap = pf.mask_map(parameters,vrmap)
+#                
+#            if parameters.smoothed_map:
+#                nside = parameters.nside
+#                approx_pixsize = hp.rotator.angdist(hp.pix2ang(nside,0),hp.pix2ang(nside,1))
+#                if parameters.beam_fwhm > approx_pixsize:
+#                    print "Warning: The smoothing length shouldn't be larger than the size of the pixels!"
+#
+#                vrmap = hp.smoothing(vrmap,fwhm=parameters.beam_fwhm)
                 
             
             ls, cls = pf.do_harmonic_analysis(parameters,vrmap)
