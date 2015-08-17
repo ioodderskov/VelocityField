@@ -92,24 +92,18 @@ def apply_mask(parameters,ar,mask_badval,mask_unseen):
     
     return ar_masked, mask
 
-def apply_window(parameters,ar,smoothing_radius):
+def apply_window(parameters,ar,window_badval,window_unseen,smoothing_radius):
 
         
     window = sp.ones_like(ar)
-    window[ar == parameters.unseen] = -1            
+    if window_badval:
+        window[ar == parameters.badval] = 0
+    if window_unseen:
+        window[ar == parameters.unseen] = 0            
             
         
     window = hp.smoothing(window,fwhm=smoothing_radius)
-    window[ar == parameters.unseen] = 0
-        
-    window[window > 1] = 1
-    thetas = [hp.pix2ang(parameters.nside,pix)[0] for pix in range(len(window))]
-
-    theta_set = sorted(list(set(thetas)))        
-    for i,theta in zip(range(1,len(theta_set)),theta_set[1:]):
-        window_value_on_previous_ring = window[thetas == theta_set[i-1]][0]
-        if window_value_on_previous_ring == 1:
-            window[thetas == theta] = 1
+    
     ar_windowed = window*ar
     
     
@@ -134,41 +128,11 @@ def get_MASTER_corrected_powerspectrum(pseudo_cls,window,lmax):
             M[l1,l2] = entry        
     print "The determinant of the MASTER matrix is", linalg.det(M)    
     cls_master = linalg.solve(M, pseudo_cls)
-
+    print "Setting the master mono- and dipole to zero"
+    cls_master[0] = 0
+    cls_master[1] = 0
     return ls, cls_master
 
-
-
-def fill_holes_and_smooth(parameters,ar,smoothing_radius):
-
-    while parameters.badval in ar:
-        ar_masked, mask = apply_mask(parameters,ar,1,1)
-        ar_smoothed = hp.smoothing(ar_masked,smoothing_radius)
-
-    
-        empty_pixels = [p for p in range(len(ar)) if ar[p] == parameters.badval]
-        for empty_pixel in empty_pixels:
-            
-            theta,phi = hp.pix2ang(parameters.nside,empty_pixel)
-            neighbours = hp.get_all_neighbours(parameters.nside,theta, phi)
-            neighbours = neighbours[mask[neighbours] != 1]
-            if len(neighbours) == 0:
-#                print "Found a pixel with no usable neighbours"
-                continue
-            
-            neighbours = sp.arange(0,len(ar))[neighbours]
-            weights = [hp.rotator.angdist(hp.pix2ang(parameters.nside,empty_pixel),
-                                          hp.pix2ang(parameters.nside,neighbour))\
-                                          for neighbour in neighbours]    
-            neighbours_vals = sp.reshape(ar_smoothed[neighbours],
-                                         sp.shape(weights))
-
-            ar[empty_pixel] = sp.average(neighbours_vals,weights=weights)
-
-    # Now only unseen need to be masked       
-    ar_masked, mask = apply_mask(parameters,ar,0,1)       
-    ar = hp.smoothing(ar_masked,smoothing_radius)
-    return ar
     
 
 
@@ -193,16 +157,14 @@ def do_harmonic_analysis(parameters,vrmap):
     print "empty_pixels_fraction = ", empty_pixels_fraction
     
     
-    # Get the window for the skycover
-    ar_dummy, window = apply_window(parameters,vrmap,smoothing_radius)
-    ar_filled_and_smoothed = fill_holes_and_smooth(parameters,vrmap,smoothing_radius)
-    ar_final = window*ar_filled_and_smoothed
+    ar_dummy, window = apply_window(parameters,vrmap,1,1,smoothing_radius)
+    ar_masked, mask = apply_mask(parameters,vrmap,1,1)
+    ar_final = hp.smoothing(ar_masked*window,fwhm=smoothing_radius)
     
-    
-    factor = hp.nside2npix(parameters.nside)/sp.sum(window)
+    pixels_total = hp.nside2npix(parameters.nside)
+    factor = pixels_total/(pixels_total-empty_pixels_total)
     print "Note: I am correcting the pseudo and the master coefficients by factor."
-    print "factor = ", factor
-    
+    print "factor = ", factor    
     
     ls, pseudo_cls = get_pseudo_powerspectrum(ar_final,lmax)    
     ls, master_cls = get_MASTER_corrected_powerspectrum(pseudo_cls,window,lmax)
