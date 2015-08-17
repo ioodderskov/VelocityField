@@ -13,7 +13,7 @@ data_to_observe: halos  # grid or halos
 ##########################################################################
         # Identify and save galaxies using a HOD?
 ##########################################################################
-use_HOD: 1
+use_HOD: 0
 number_of_particle_files: 48
 particle_file_base: ../cases/sim16/halos_11 
         # Parameters for HOD
@@ -132,10 +132,6 @@ smoothing_radius: 10
 ##########################################################################
 # Create a map of the velocityfield?
 map_velocityfield: 1
-masked_map: 1
-smoothed_map: 1
-beam_fwhm: 0.05
 calculate_powerspectra: 1
 nside: 4
-lmax: 2
 ##########################################################################
