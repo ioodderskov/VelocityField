@@ -5,6 +5,7 @@
 path: ../cases/sim16/
 parallel_processing: 0
 data_type: ROCKSTAR # ROCKSTAR (default), CoDECS, snapshot or grid
+data_to_observe: halos
 ##########################################################################
 
         
