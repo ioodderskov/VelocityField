@@ -105,9 +105,9 @@ host_max_m: 2.3e13
 ##########################################################################
 use_CoM: 0
 min_dist: 2
-number_of_SNe: 0
+number_of_SNe: 100
 # How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
-observed_halos: all
+observed_halos: mass_weighted
 SN_mass_min: 0
 SN_mass_max: 0
 ##########################################################################
@@ -132,6 +132,6 @@ smoothing_radius: 10
 ##########################################################################
 # Create a map of the velocityfield?
 map_velocityfield: 1
-calculate_powerspectra: 1
+calculate_powerspectra: 0
 nside: 4
 ##########################################################################
