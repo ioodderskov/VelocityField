@@ -94,6 +94,48 @@ def apply_mask(parameters,ar,mask_badval,mask_unseen):
 
 def apply_window(parameters,ar,window_badval,window_unseen,smoothing_radius):
 
+        
+    window = sp.ones_like(ar)
+    if window_badval:
+        window[ar == parameters.badval] = 0
+    if window_unseen:
+        window[ar == parameters.unseen] = 0            
+            
+        
+    window = hp.smoothing(window,fwhm=smoothing_radius)
+    
+    ar_windowed = window*ar
+    
+    
+    return ar_windowed, window
+
+def get_pseudo_powerspectrum(ar,lmax):
+    ls = sp.arange(0,lmax+1)
+    print "I am removing the mono- and dipole"
+    ar = hp.pixelfunc.remove_dipole(ar)    
+    pseudo_cls = hp.anafast(ar, lmax=lmax,use_weights=True)
+    return ls,pseudo_cls
+
+def get_MASTER_corrected_powerspectrum(pseudo_cls,window,lmax):
+    ls = sp.arange(0,lmax+1)
+    Wls = hp.anafast(window,lmax=lmax,use_weights=True)
+    M = sp.matrix(sp.zeros((lmax+1,lmax+1)))
+    for l1 in ls:
+        for l2 in ls:
+            entry = (2*l2+1)/(4*sp.pi)*sp.sum(sp.array([\
+                    Wl*(2*l3+1)*Wigner3j(l1,0,l2,0,l3,0).doit()**2\
+                    for l3,Wl in zip(ls,Wls)]))
+            M[l1,l2] = entry        
+    print "The determinant of the MASTER matrix is", linalg.det(M)    
+    cls_master = linalg.solve(M, pseudo_cls)
+    print "Setting the master mono- and dipole to zero"
+    cls_master[0] = 0
+    cls_master[1] = 0
+    return ls, cls_master
+
+    
+
+
 
         
 
