@@ -267,7 +267,7 @@ class Observer:
         
 
  
-        
+#    @profile
     def observe(self, parameters,particles):
 
         if parameters.use_lightcone:

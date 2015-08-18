@@ -561,6 +561,16 @@ def random_selection_of_halos(parameters,observed_halos):
 
 def mass_weighted_selection_of_halos(parameters,observed_halos):
     
+#    from numpy.random import choice
+#
+# 
+#    masses = sp.array([observed_halo.mass for observed_halo in observed_halos])
+#    weights = masses/sp.sum(masses)
+#    
+#    chosen_halos = [choice(observed_halos, p=weights)\
+#                for i in range(parameters.number_of_SNe)]  
+#    pdb.set_trace()
+    
     total_mass = sp.sum([observed_halo.mass for observed_halo in observed_halos])
     
     cum_mass = 0
@@ -576,10 +586,14 @@ def mass_weighted_selection_of_halos(parameters,observed_halos):
     random.seed(0)
     for n in range(parameters.number_of_SNe):
         rnd = random.random()
-        for chosen_halo_number,chosen_halo in enumerate(chosen_halos):
-            if cum_masses[chosen_halo_number] >= rnd:
-                chosen_halos.append(chosen_halo)
+        for observed_halo_number,observed_halo in enumerate(observed_halos):
+#            pdb.set_trace()
+            if cum_masses[observed_halo_number] >= rnd:
+                chosen_halos.append(observed_halo)
+#                pdb.set_trace()
                 break
+            
+#    pdb.set_trace()
             
     return chosen_halos
         
