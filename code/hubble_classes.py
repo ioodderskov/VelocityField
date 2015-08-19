@@ -143,12 +143,10 @@ class Parameters:
 
         # Angular powerspectra for the radial peculiar velocities
         self.map_velocityfield = int(param.get("map_velocityfield",default))
-        self.masked_map = int(param.get("masked_map",default))
-        self.smoothed_map = int(param.get("smoothed_map",default))
-        self.beam_fwhm = sp.double(param.get("beam_fwhm",default))
         self.calculate_powerspectra = int(param.get("calculate_powerspectra",default))
+        self.smoothing_radius_fwhm = sp.double(param.get("smoothing_radius_fwhm",default))
         self.nside = int(param.get("nside",default))
-        self.lmax = int(param.get("lmax",default))
+#        self.lmax = int(param.get("lmax",default))
 #        self.smooth_map = int(param.get("smooth_map",default))
 #        self.smooth_largest_hole = int(param.get("smooth_largest_hole",default))
 #        self.preset_smoothinglength = int(param.get("preset_smoothinglength",default))
@@ -523,8 +521,8 @@ class Observer:
 #
 #                vrmap = hp.smoothing(vrmap,fwhm=parameters.beam_fwhm)
                 
-            
-            ls, cls = pf.do_harmonic_analysis(parameters,vrmap)
+            bincenter = sp.mean(sp.array([halo_in_bin.r for halo_in_bin in halos_in_bin]))
+            ls, cls = pf.do_harmonic_analysis(parameters,vrmap,bincenter)
             
             return ls, cls, vrmap
             

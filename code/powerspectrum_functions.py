@@ -102,7 +102,7 @@ def apply_window(parameters,ar,window_badval,window_unseen,smoothing_radius):
         window[ar == parameters.unseen] = 0            
             
         
-    window = hp.smoothing(window,fwhm=smoothing_radius)
+    window = hp.smoothing(window,fwhm=smoothing_radius,verbose=False)
     
     ar_windowed = window*ar
     
@@ -139,15 +139,24 @@ def get_MASTER_corrected_powerspectrum(pseudo_cls,window,lmax):
 
         
 
-def do_harmonic_analysis(parameters,vrmap):
+def do_harmonic_analysis(parameters,vrmap,bincenter):
 
 
-    smoothing_radius = find_largest_hole(parameters,vrmap)*2
+    radius_largest_hole = find_largest_hole(parameters,vrmap)
+    smoothing_fwhm_Mpch = parameters.smoothing_radius_fwhm # Mpc/h
+    # bincenter is currently calculated as the mean of the distances to the halos in the bin
+    smoothing_fwhm = smoothing_fwhm_Mpch/bincenter 
     
-    lmax = int(sp.floor(sp.pi/smoothing_radius))
-    print "The smoothing length is", smoothing_radius, "rad."
+
+    
+    
+    lmax = int(sp.floor(sp.pi/smoothing_fwhm))
+    print "The mean distance to the halos in the bin is", bincenter,"Mpc/h"
+    print "The radius of the largest hole is", radius_largest_hole*bincenter, "Mpc/h"     
+    print "The smoothing fwhm is", smoothing_fwhm_Mpch    
+    print "The smoothing fwhm is", smoothing_fwhm, "rad."
     print "This corresponds to l = pi/%s = %s" \
-        %(smoothing_radius,sp.pi/smoothing_radius)
+        %(smoothing_fwhm,sp.pi/smoothing_fwhm)
     print "The pixel size is", pixelsize_in_radians(parameters), "rad."
     
             
@@ -157,9 +166,9 @@ def do_harmonic_analysis(parameters,vrmap):
     print "empty_pixels_fraction = ", empty_pixels_fraction
     
     
-    ar_dummy, window = apply_window(parameters,vrmap,1,1,smoothing_radius)
+    ar_dummy, window = apply_window(parameters,vrmap,1,1,smoothing_fwhm)
     ar_masked, mask = apply_mask(parameters,vrmap,1,1)
-    ar_final = hp.smoothing(ar_masked*window,fwhm=smoothing_radius)
+    ar_final = hp.smoothing(ar_masked*window,fwhm=smoothing_fwhm,verbose=False)
     
     pixels_total = hp.nside2npix(parameters.nside)
     factor = pixels_total/(pixels_total-empty_pixels_total)
