@@ -132,5 +132,6 @@ smoothing_radius: 0
 # Create a map of the velocityfield?
 map_velocityfield: 1
 calculate_powerspectra: 1
+smoothing_radius_fwhm: 30 # Mpc/h
 nside: 16
 ##########################################################################

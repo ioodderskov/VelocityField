@@ -197,12 +197,9 @@ make_hubblediagram: 0
 ##########################################################################
 # Create a map of the velocityfield?
 map_velocityfield: 0
-masked_map: 1
-smoothed_map: 1
-beam_fwhm: 0.05
 calculate_powerspectra: 0
+smoothing_radius_fwhm: 20 # Mpc/h
 nside: 4
-lmax: 8
 #smooth_map: 0
 #smooth_largest_hole: 0
 #preset_smoothinglength: 0
