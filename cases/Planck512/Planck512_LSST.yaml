@@ -3,7 +3,7 @@
         # Path and choices for how and what to run        
 ##########################################################################
 path: ../cases/Planck512/
-parallel_processing: 0
+parallel_processing: 1
 data_type: ROCKSTAR # ROCKSTAR (default), CoDECS, snapshot or grid
 data_to_observe: halos # grid or halos
 ##########################################################################
@@ -89,7 +89,7 @@ powerspectrafile: powerspectra.txt
 observer_choice: subhalos
 observerfile:  # If from_file, specify the file here
 observer_indices_file:  # If indices_from_file, specify the file here
-number_of_observers: 50 # Specify the number of observers you want to use
+number_of_observers: 600 # Specify the number of observers you want to use
 # If subhalos, specify the mass-requirements here
 sub_min_m: 1e12
 sub_max_m: 1e13

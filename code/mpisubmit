@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -l  nodes=1:ppn=8 -q q8n
+#PBS -l  nodes=1:ppn=8 -q q20
 #PBS -l walltime=20:00:00
 #PBS -N CoDECS_LCDM
 #PBS -m e
@@ -12,7 +12,7 @@ opmpi=/com/openmpi-1.2.5/lib
 intel=/com/intel/fce/10.0.023/lib:/com/intel/cce/10.0.023/lib
 export LD_LIBRARY_PATH=${opmpi}:${intel}:$LD_LIBRARY_PATH
 cd $PBS_O_WORKDIR
-export OMP_NUM_THREADS=8
+export OMP_NUM_THREADS=20
 
 #python hubble.py ../cases/Planck512/Planck512_LSST1.0.yaml
 #python hubble.py ../cases/Planck512/Planck512_LSST0.5.yaml
