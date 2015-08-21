@@ -260,7 +260,8 @@ def initiate_observers(parameters):
             observers = initiate_observers_indices_from_file(parameters)
         if parameters.observer_choice == 'all':
             observers = initiate_observers_all(parameters)
-    
+
+    pdb.set_trace()    
     return observers
     
 def initiate_observers_all(parameters):
