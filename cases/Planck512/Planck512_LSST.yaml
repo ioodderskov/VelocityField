@@ -89,7 +89,7 @@ powerspectrafile: powerspectra.txt
 observer_choice: subhalos
 observerfile:  # If from_file, specify the file here
 observer_indices_file:  # If indices_from_file, specify the file here
-number_of_observers: 600 # Specify the number of observers you want to use
+number_of_observers: 1000 # Specify the number of observers you want to use
 # If subhalos, specify the mass-requirements here
 sub_min_m: 1e12
 sub_max_m: 1e13
@@ -104,7 +104,7 @@ host_max_m: 5e15
 ##########################################################################
 use_CoM: 0
 min_dist: 2
-number_of_SNe: 40000
+number_of_SNe: 20000
 # How should the observed halos be selected? mass_weighted, random, all, specified_mass, or centered_around_massive_halo
 observed_halos: mass_weighted
 SN_mass_min: 0
@@ -132,6 +132,6 @@ smoothing_radius: 0
 # Create a map of the velocityfield?
 map_velocityfield: 1
 calculate_powerspectra: 1
-smoothing_radius_fwhm: 30 # Mpc/h
+smoothing_radius_fwhm: 40 # Mpc/h
 nside: 16
 ##########################################################################
