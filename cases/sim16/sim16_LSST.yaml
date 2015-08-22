@@ -90,7 +90,7 @@ powerspectrafile: powerspectra.txt
 observer_choice: random_halos 
 observerfile: ../cases/sim16/howdy16.txt # If from_file, specify the file here
 observer_indices_file: observer_indices.txt # If indices_from_file, specify the file here
-number_of_observers: 1 # Specify the number of observers you want to use
+number_of_observers: 4 # Specify the number of observers you want to use
 # If subhalos, specify the mass-requirements here
 sub_min_m: 1.6e12
 sub_max_m: 2.8e12
